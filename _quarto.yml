@@ -4,7 +4,12 @@ project:
 website:
   title: "ISSS608-VAA_demo"
   navbar:
-    left:
+    left: 
+    - text: "Hands-On Exercise"
+      menu:
+       - text: "Hands-On Exercise 1"
+         href: "HO_EX01.html"
+    right:
       - href: index.qmd
         text: Home
       - about.qmd
