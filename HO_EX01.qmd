@@ -1,4 +1,16 @@
 ---
 title: "Hands-on Exercise 1"
 author: "Yap Jit Wei"
+date: "April 10, 2026"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  warning: false 
+  freeze: true
 ---
+
+```{r}
+pacman::p_load(tidyverse)
+
+```
