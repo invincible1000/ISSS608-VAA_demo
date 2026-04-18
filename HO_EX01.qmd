@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Exercise 1"
+title: "Hands-on Exercise 1 - A Layered Grammar of Graphics: ggplot2 methods"
 author: "Yap Jit Wei"
 date: "April 10, 2026"
 date-modified: "last-modified"
