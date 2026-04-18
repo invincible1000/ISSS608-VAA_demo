@@ -14,3 +14,8 @@ execute:
 pacman::p_load(tidyverse)
 
 ```
+
+```{r}
+exam_data <- read_csv("Data/Exam_data.csv")
+
+```
