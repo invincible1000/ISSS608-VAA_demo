@@ -140,6 +140,26 @@ ggplot(data=exam_data,
 
 :::
 
+#### Extra alternative: Using geom_text_repel()
+
+This alternative uses geom_text_repel() with smaller and lighter labels on the scatterplot. The rest of the chart remains the same as the original example.
+
+This is useful because it reduces visual heaviness and makes the plot look less cluttered.
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS,
+           y = ENGLISH)) +
+  geom_point() +
+  geom_smooth(method = lm,
+              size = 0.5) +
+  geom_text_repel(aes(label = ID),
+                  size = 3,
+                  color = "grey30") +
+  coord_cartesian(xlim = c(0,100),
+                  ylim = c(0,100)) +
+  ggtitle("English scores versus Maths scores for Primary 3")
+```
 
 
 ## Beyond ggplot2 Themes
@@ -211,7 +231,7 @@ ggplot(data=exam_data,
 
 It also provides some extra geoms and scales for ‘ggplot2’. Consult this [vignette](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) to learn more.
 
-#### Extra alternative: Applying wsg()
+#### Extra alternative: Applying wsj()
 
 This alternative applies theme_fivethirtyeight() from the ggthemes package to the scatterplot. It gives the chart a cleaner look with a style similar to Wall Street Journal graphics.
 
@@ -462,6 +482,18 @@ We can plot more complex composite by using appropriate operators. For example, 
 
 To learn more about, refer to [Plot Assembly](https://patchwork.data-imaginist.com/articles/guides/assembly.html).
 
+#### Extra alternative: Changing patchwork layout arrangement
+
+This alternative changes the layout of the composite figure using patchwork by arranging the plots in a different structure.
+
+This is useful because it allows more flexible control over how multiple plots are presented together.
+
+```{r}
+(p1 | p2) / p3
+
+```
+
+
 ### Creating a composite figure with tag
 
 In order to identify subplots in text, patchwork also provides auto-tagging capabilities as shown in the figure below.
@@ -485,6 +517,10 @@ In order to identify subplots in text, patchwork also provides auto-tagging capa
 
 ```
 :::
+
+
+
+
 
 ### Creating figure with insert
 
