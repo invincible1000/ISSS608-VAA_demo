@@ -7,11 +7,12 @@ date-modified: "last-modified"
 format:
   html:
     toc: true
+    toc-depth: 4
     number-sections: true
     
 execute:
   warning: false 
-  freeze: true
+  freeze: false
 ---
 
 # Beyond ggplot2 Fundamentals
@@ -139,6 +140,8 @@ ggplot(data=exam_data,
 
 :::
 
+
+
 ## Beyond ggplot2 Themes
 
 ggplot2 comes with [eight built-in themes](https://ggplot2.tidyverse.org/reference/ggtheme.html), they are: theme_gray(), theme_bw(), theme_classic(), theme_dark(), theme_light(), theme_linedraw(), theme_minimal(), and theme_void().
@@ -207,6 +210,24 @@ ggplot(data=exam_data,
 :::
 
 It also provides some extra geoms and scales for ‘ggplot2’. Consult this [vignette](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) to learn more.
+
+#### Extra alternative: Applying wsg()
+
+This alternative applies theme_fivethirtyeight() from the ggthemes package to the scatterplot. It gives the chart a cleaner look with a style similar to Wall Street Journal graphics.
+
+This is useful because it changes the overall visual style of the chart and can cater to different tastes.
+
+```{r}
+ggplot(data=exam_data, 
+             aes(x = MATHS)) +
+  geom_histogram(bins=20, 
+                 boundary = 100,
+                 color="grey25", 
+                 fill="grey90") +
+  ggtitle("Distribution of Maths scores") +
+  theme_wsj()
+```
+
 
 ### Working with hrbthems package
 
@@ -298,6 +319,8 @@ p1 <- ggplot(data=exam_data,
                  fill="grey90") + 
   coord_cartesian(xlim=c(0,100)) +
   ggtitle("Distribution of Maths scores")
+
+p1
 ```
 
 #### The code
@@ -329,6 +352,8 @@ p2 <- ggplot(data=exam_data,
                  fill="grey90") +
   coord_cartesian(xlim=c(0,100)) +
   ggtitle("Distribution of English scores")
+
+p2
 ```
 
 #### The code
@@ -360,6 +385,8 @@ p3 <- ggplot(data=exam_data,
   coord_cartesian(xlim=c(0,100),
                   ylim=c(0,100)) +
   ggtitle("English scores versus Maths scores for Primary 3")
+
+p3
 ```
 
 #### The code
