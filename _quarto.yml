@@ -9,6 +9,8 @@ website:
       menu:
        - text: "Hands-On Exercise 1 - A Layered Grammar of Graphics: ggplot2 methods"
          href: "HO_EX01.html"
+       - text: "Hands-on Exercise 2 - Beyond ggplot2 Fundamentals"
+         href: "HO_EX02.html"
     right:
       - href: index.qmd
         text: Home
