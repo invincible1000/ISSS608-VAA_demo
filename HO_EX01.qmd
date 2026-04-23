@@ -14,8 +14,7 @@ execute:
   eval: true
   echo: true
   warning: false 
-  freeze: true
-  number-sections: true
+  freeze: false
 ---
 
 # A Layered Grammar of Graphics: ggplot2 methods
