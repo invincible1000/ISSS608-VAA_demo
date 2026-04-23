@@ -241,6 +241,17 @@ ggplot(data=exam_data,
 This approach can be used to colour, fill and alpha of the geometric.
 :::
 
+#### Extra alternative 1: Overlapping histogram by gender
+
+This alternative uses overlapping histograms to compare the distribution of Maths scores by gender in a single view. Transparency is applied using alpha = 0.5 so that both groups remain visible and easier to compare.
+
+```{r}
+ggplot(exam_data, aes(x = MATHS, fill = GENDER)) +
+  geom_histogram(binwidth = 5, alpha = 0.5, position = "identity")
+```
+
+
+
 ### Geometric Objects: geom-density()
 
 [geom-density()](https://ggplot2.tidyverse.org/reference/geom_density.html) computes and plots [kernel density estimate](https://en.wikipedia.org/wiki/Kernel_density_estimation), which is a smoothed version of the histogram.
@@ -263,6 +274,18 @@ ggplot(data=exam_data,
            colour = GENDER)) +
   geom_density()
 ```
+
+#### Extra alternative 2: Filled density plot by gender
+
+This alternative uses a filled density plot to compare the distribution of Maths scores by gender. The fill aesthetic is mapped to GENDER, and transparency is applied using alpha = 0.3 so that overlapping areas remain visible.
+
+This design is useful because it highlights the overall shape, peaks, and spread of each group’s distribution more smoothly than a histogram, making it easier to compare differences between genders.
+
+```{r}
+ggplot(exam_data, aes(x = MATHS, fill = GENDER)) +
+  geom_density(alpha = 0.3)
+```
+
 
 ### Geometric Objects: geom_boxplot()
 
@@ -288,6 +311,20 @@ ggplot(data=exam_data,
   geom_boxplot(notch=TRUE)
 ```
 
+#### Extra alternative 3: Boxplot with jittered data points
+
+This alternative combines a boxplot with jittered data points to show the distribution of Maths scores by gender. The boxplot shows the median and quartiles, while geom_jitter() adds the individual data points and spreads them out slightly so they do not overlap too much.
+
+This is useful because it lets us see both the overall summary and the actual data points at the same time, making it easier to compare the two groups and spot patterns such as clustering and outliers.
+
+```{r}
+ggplot(exam_data, aes(x = GENDER, y = MATHS, color = GENDER)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2, alpha = 0.5)
+```
+
+
+
 ### Geometric Objects: geom_violin()
 
 [geom_violin()](https://ggplot2.tidyverse.org/reference/geom_violin.html) is designed for creating violin plot. Violin plots are a way of comparing multiple data distributions. With ordinary density curves, it is difficult to compare more than just a few distributions because the lines visually interfere with each other. With a violin plot, it’s easier to compare several distributions since they’re placed side by side.
@@ -300,6 +337,18 @@ ggplot(data=exam_data,
            x= GENDER)) +
   geom_violin()
 ```
+#### Extra alternative 4: Violin plot with boxplot overlay
+
+This alternative combines a violin plot with a boxplot to show the distribution of Maths scores by gender. The violin plot shows the overall shape of the distribution, while the boxplot highlights the median and quartiles.
+
+This is useful because it shows both the distribution and the summary at the same time, making it easier to compare how the scores are spread out and where the centre lies for each group.
+
+```{r}
+ggplot(exam_data, aes(x = GENDER, y = MATHS, fill = GENDER)) +
+  geom_violin(alpha = 0.5) +
+  geom_boxplot(width = 0.15, outlier.shape = NA, alpha = 0.7)
+```
+
 
 ### Geometric Objects: geom_point()
 
@@ -431,6 +480,18 @@ ggplot(data=exam_data,
   geom_histogram(bins=20) +
     facet_wrap(~ CLASS)
 ```
+#### Extra alternative 5: Faceted histogram by gender
+
+This alternative uses faceting to create separate histograms of Maths scores for each gender. Instead of overlapping the groups in one plot, each group is shown in its own panel using facet_wrap().
+
+This is useful because it avoids overlap between the groups and makes it easier to compare the distribution of scores side by side.
+
+```{r}
+ggplot(exam_data, aes(x = MATHS)) +
+  geom_histogram(binwidth = 5, fill = "lightblue", color = "black") +
+  facet_wrap(~ GENDER)
+```
+
 
 ### facet_grid() function
 
