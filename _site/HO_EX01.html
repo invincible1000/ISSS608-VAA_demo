@@ -171,7 +171,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#a-layered-grammar-of-graphics-ggplot2-methods" id="toc-a-layered-grammar-of-graphics-ggplot2-methods" class="nav-link active" data-scroll-target="#a-layered-grammar-of-graphics-ggplot2-methods"><span class="header-section-number">1</span> A Layered Grammar of Graphics: ggplot2 methods</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link" data-scroll-target="#learning-outcomes"><span class="header-section-number">1.1</span> Learning Outcomes</a></li>
   <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">1.2</span> Getting Started</a>
   <ul class="collapse">
@@ -194,10 +194,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#geometric-objects-geom_dotplot" id="toc-geometric-objects-geom_dotplot" class="nav-link" data-scroll-target="#geometric-objects-geom_dotplot"><span class="header-section-number">1.7.2</span> Geometric Objects: geom_dotplot()</a></li>
   <li><a href="#geometric-objects-geom_histogram" id="toc-geometric-objects-geom_histogram" class="nav-link" data-scroll-target="#geometric-objects-geom_histogram"><span class="header-section-number">1.7.3</span> Geometric Objects: geom_histogram()</a></li>
   <li><a href="#modifying-a-geometric-object-by-changing-geom" id="toc-modifying-a-geometric-object-by-changing-geom" class="nav-link" data-scroll-target="#modifying-a-geometric-object-by-changing-geom"><span class="header-section-number">1.7.4</span> Modifying a geometric object by changing geom()</a></li>
-  <li><a href="#modifying-a-geometric-object-by-changing-aes" id="toc-modifying-a-geometric-object-by-changing-aes" class="nav-link" data-scroll-target="#modifying-a-geometric-object-by-changing-aes"><span class="header-section-number">1.7.5</span> Modifying a geometric object by changing aes()</a></li>
-  <li><a href="#geometric-objects-geom-density" id="toc-geometric-objects-geom-density" class="nav-link" data-scroll-target="#geometric-objects-geom-density"><span class="header-section-number">1.7.6</span> Geometric Objects: geom-density()</a></li>
-  <li><a href="#geometric-objects-geom_boxplot" id="toc-geometric-objects-geom_boxplot" class="nav-link" data-scroll-target="#geometric-objects-geom_boxplot"><span class="header-section-number">1.7.7</span> Geometric Objects: geom_boxplot()</a></li>
-  <li><a href="#geometric-objects-geom_violin" id="toc-geometric-objects-geom_violin" class="nav-link" data-scroll-target="#geometric-objects-geom_violin"><span class="header-section-number">1.7.8</span> Geometric Objects: geom_violin()</a></li>
+  <li><a href="#modifying-a-geometric-object-by-changing-aes" id="toc-modifying-a-geometric-object-by-changing-aes" class="nav-link" data-scroll-target="#modifying-a-geometric-object-by-changing-aes"><span class="header-section-number">1.7.5</span> Modifying a geometric object by changing aes()</a>
+  <ul class="collapse">
+  <li><a href="#extra-alternative-1-overlapping-histogram-by-gender" id="toc-extra-alternative-1-overlapping-histogram-by-gender" class="nav-link" data-scroll-target="#extra-alternative-1-overlapping-histogram-by-gender"><span class="header-section-number">1.7.5.1</span> Extra alternative 1: Overlapping histogram by gender</a></li>
+  </ul></li>
+  <li><a href="#geometric-objects-geom-density" id="toc-geometric-objects-geom-density" class="nav-link" data-scroll-target="#geometric-objects-geom-density"><span class="header-section-number">1.7.6</span> Geometric Objects: geom-density()</a>
+  <ul class="collapse">
+  <li><a href="#extra-alternative-2-filled-density-plot-by-gender" id="toc-extra-alternative-2-filled-density-plot-by-gender" class="nav-link" data-scroll-target="#extra-alternative-2-filled-density-plot-by-gender"><span class="header-section-number">1.7.6.1</span> Extra alternative 2: Filled density plot by gender</a></li>
+  </ul></li>
+  <li><a href="#geometric-objects-geom_boxplot" id="toc-geometric-objects-geom_boxplot" class="nav-link" data-scroll-target="#geometric-objects-geom_boxplot"><span class="header-section-number">1.7.7</span> Geometric Objects: geom_boxplot()</a>
+  <ul class="collapse">
+  <li><a href="#extra-alternative-3-boxplot-with-jittered-data-points" id="toc-extra-alternative-3-boxplot-with-jittered-data-points" class="nav-link" data-scroll-target="#extra-alternative-3-boxplot-with-jittered-data-points"><span class="header-section-number">1.7.7.1</span> Extra alternative 3: Boxplot with jittered data points</a></li>
+  </ul></li>
+  <li><a href="#geometric-objects-geom_violin" id="toc-geometric-objects-geom_violin" class="nav-link" data-scroll-target="#geometric-objects-geom_violin"><span class="header-section-number">1.7.8</span> Geometric Objects: geom_violin()</a>
+  <ul class="collapse">
+  <li><a href="#extra-alternative-4-violin-plot-with-boxplot-overlay" id="toc-extra-alternative-4-violin-plot-with-boxplot-overlay" class="nav-link" data-scroll-target="#extra-alternative-4-violin-plot-with-boxplot-overlay"><span class="header-section-number">1.7.8.1</span> Extra alternative 4: Violin plot with boxplot overlay</a></li>
+  </ul></li>
   <li><a href="#geometric-objects-geom_point" id="toc-geometric-objects-geom_point" class="nav-link" data-scroll-target="#geometric-objects-geom_point"><span class="header-section-number">1.7.9</span> Geometric Objects: geom_point()</a></li>
   <li><a href="#geom-objects-can-be-combined" id="toc-geom-objects-can-be-combined" class="nav-link" data-scroll-target="#geom-objects-can-be-combined"><span class="header-section-number">1.7.10</span> geom objects can be combined</a></li>
   </ul></li>
@@ -210,7 +222,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#essential-grammatical-elements-in-ggplot2-facets" id="toc-essential-grammatical-elements-in-ggplot2-facets" class="nav-link" data-scroll-target="#essential-grammatical-elements-in-ggplot2-facets"><span class="header-section-number">1.9</span> Essential Grammatical Elements in ggplot2: Facets</a>
   <ul class="collapse">
-  <li><a href="#working-with-facet_wrap" id="toc-working-with-facet_wrap" class="nav-link" data-scroll-target="#working-with-facet_wrap"><span class="header-section-number">1.9.1</span> Working with facet_wrap()</a></li>
+  <li><a href="#working-with-facet_wrap" id="toc-working-with-facet_wrap" class="nav-link" data-scroll-target="#working-with-facet_wrap"><span class="header-section-number">1.9.1</span> Working with facet_wrap()</a>
+  <ul class="collapse">
+  <li><a href="#extra-alternative-5-faceted-histogram-by-gender" id="toc-extra-alternative-5-faceted-histogram-by-gender" class="nav-link" data-scroll-target="#extra-alternative-5-faceted-histogram-by-gender"><span class="header-section-number">1.9.1.1</span> Extra alternative 5: Faceted histogram by gender</a></li>
+  </ul></li>
   <li><a href="#facet_grid-function" id="toc-facet_grid-function" class="nav-link" data-scroll-target="#facet_grid-function"><span class="header-section-number">1.9.2</span> facet_grid() function</a></li>
   </ul></li>
   <li><a href="#essential-grammatical-elements-in-ggplot2-coordinates" id="toc-essential-grammatical-elements-in-ggplot2-coordinates" class="nav-link" data-scroll-target="#essential-grammatical-elements-in-ggplot2-coordinates"><span class="header-section-number">1.10</span> Essential Grammatical Elements in ggplot2: Coordinates</a>
