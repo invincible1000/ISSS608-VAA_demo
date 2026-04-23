@@ -140,7 +140,7 @@ ggplot(data=exam_data,
 
 :::
 
-#### Extra alternative: Using geom_text_repel()
+#### Extra alternative 1: Using geom_text_repel()
 
 This alternative uses geom_text_repel() with smaller and lighter labels on the scatterplot. The rest of the chart remains the same as the original example.
 
@@ -231,7 +231,7 @@ ggplot(data=exam_data,
 
 It also provides some extra geoms and scales for ‘ggplot2’. Consult this [vignette](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) to learn more.
 
-#### Extra alternative: Applying wsj()
+#### Extra alternative 2: Applying wsj() theme
 
 This alternative applies theme_fivethirtyeight() from the ggthemes package to the scatterplot. It gives the chart a cleaner look with a style similar to Wall Street Journal graphics.
 
@@ -246,6 +246,25 @@ ggplot(data=exam_data,
                  fill="grey90") +
   ggtitle("Distribution of Maths scores") +
   theme_wsj()
+```
+
+#### Extra alernative 3: Applying a colorblind friendly scale
+
+This alternative maps gender to the fill aesthetic and applies scale_fill_colorblind() from the ggthemes package.
+
+This is useful because it improves accessibility and makes the groups easier to distinguish in the same plot.
+
+```{r}
+ggplot(data = exam_data, 
+       aes(x = MATHS, fill = GENDER)) +
+  geom_histogram(bins = 20, 
+                 boundary = 100,
+                 color = "grey25",
+                 position = "identity",
+                 alpha = 0.6) +
+  ggtitle("Distribution of Maths scores by gender") +
+  scale_fill_colorblind() +
+  theme_minimal()
 ```
 
 
@@ -322,6 +341,7 @@ ggplot(data=exam_data,
 - `base_size` argument is used to increase the default axis label to 15, and
 - `grid` argument is used to remove the x-axis grid lines.
 :::
+
 
 ## Beyond Single Graph
 
@@ -482,7 +502,7 @@ We can plot more complex composite by using appropriate operators. For example, 
 
 To learn more about, refer to [Plot Assembly](https://patchwork.data-imaginist.com/articles/guides/assembly.html).
 
-#### Extra alternative: Changing patchwork layout arrangement
+#### Extra alternative 4: Changing patchwork layout arrangement
 
 This alternative changes the layout of the composite figure using patchwork by arranging the plots in a different structure.
 
@@ -518,7 +538,19 @@ In order to identify subplots in text, patchwork also provides auto-tagging capa
 ```
 :::
 
+#### Extra alternative 5: Adding a shared title and caption with plot_annotation()
 
+This alternative uses plot_annotation() to add a shared title and caption to the composite figure.
+
+This is useful because it helps combine the separate plots into one complete figure and makes the overall presentation clearer.
+
+```{r}
+(p1 | p2) / p3 +
+  plot_annotation(
+    title = "Composite Figure of Exam Score Plots",
+    caption = "Created using patchwork"
+  )
+```
 
 
 
