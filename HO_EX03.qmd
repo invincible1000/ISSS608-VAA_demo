@@ -474,7 +474,6 @@ girafe(
 ```
 
 ::: callout-warning
-## Warning
 
 Note that click actions must be a string column in the dataset containing valid javascript instructions.
 :::
