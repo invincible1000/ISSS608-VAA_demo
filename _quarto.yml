@@ -11,6 +11,8 @@ website:
          href: "HO_EX01.html"
        - text: "Hands-on Exercise 2 - Beyond ggplot2 Fundamentals"
          href: "HO_EX02.html"
+       - text: "Hands-on Exercise 3 - Programming Interactive Data Visualisation with R"
+         href: "HO_EX03.html"
     - text: "In-class Exercise"
       menu:
        - text: "In-Class Exercise 2"
