@@ -12,7 +12,7 @@ format:
     
 execute:
   warning: false 
-  freeze: false
+  freeze: auto
 ---
 
 # Programming Interactive Data Visualisation with R

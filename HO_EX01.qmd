@@ -14,7 +14,7 @@ execute:
   eval: true
   echo: true
   warning: false 
-  freeze: false
+  freeze: auto
 ---
 
 # A Layered Grammar of Graphics: ggplot2 methods
