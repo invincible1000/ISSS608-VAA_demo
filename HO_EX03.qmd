@@ -134,6 +134,36 @@ girafe(
 
 The first three lines of codes in the code chunk create a new field called tooltip. At the same time, it populates text in ID and CLASS fields into the newly created field. Next, this newly created field is used as tooltip field as shown in the code of line 7.
 
+#### Extra Alternative 1: Richer tooltip with more student details
+
+```{r}
+exam_data$tooltip <- c(paste0(     
+  "Name = ", exam_data$ID,         
+  "\n Class = ", exam_data$CLASS,
+  "\n Race = ", exam_data$RACE,
+  "\n Maths = ", exam_data$MATHS,
+  "\n English = ", exam_data$ENGLISH,
+  "\n Science = ", exam_data$SCIENCE)) 
+
+p <- ggplot(data=exam_data, 
+       aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(tooltip = exam_data$tooltip), 
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  scale_y_continuous(NULL,               
+                     breaks = NULL)
+
+girafe(
+  ggobj = p,
+  width_svg = 8,
+  height_svg = 8*0.618
+)
+```
+
+This alternative builds on the earlier tooltip example by adding more information into the tooltip. Instead of only showing the student ID and class, it also shows Race, Maths, English, and Science scores. This makes the chart more useful because users can inspect more student details directly from the tooltip.
+
 ### Interactivity
 
 By hovering the mouse pointer on an data point of interest, the student’s ID and Class will be displayed.
@@ -423,6 +453,80 @@ girafe(
 )                                        
 ```
 
+#### Extra Alternative 2: Tooltip and hover using student ID
+
+```{r}
+exam_data$tooltip <- c(paste0(     
+  "Name = ", exam_data$ID,         
+  "\n Class = ", exam_data$CLASS,
+  "\n Race = ", exam_data$RACE,
+  "\n Maths = ", exam_data$MATHS,
+  "\n English = ", exam_data$ENGLISH,
+  "\n Science = ", exam_data$SCIENCE)) 
+
+p <- ggplot(data=exam_data, 
+       aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(
+      tooltip = exam_data$tooltip,
+      data_id = CLASS
+    ), 
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  scale_y_continuous(NULL,               
+                     breaks = NULL)
+
+girafe(
+  ggobj = p,
+  width_svg = 8,
+  height_svg = 8*0.618,
+  options = list(
+    opts_hover(css = "fill:#202020;"),
+    opts_hover_inv(css = "opacity:0.2;")
+  )
+)
+```
+
+This alternative builds on Extra Alternative 1 by adding a hover effect using data_id = CLASS. While the tooltip shows individual student details, the hover effect highlights other students from the same class. This makes it easier to inspect both the selected student and their class grouping at the same time.
+
+#### Extra Alternative 3: Tooltip with individual student hover
+
+```{r}
+exam_data$tooltip <- c(paste0(     
+  "Name = ", exam_data$ID,         
+  "\n Class = ", exam_data$CLASS,
+  "\n Race = ", exam_data$RACE,
+  "\n Maths = ", exam_data$MATHS,
+  "\n English = ", exam_data$ENGLISH,
+  "\n Science = ", exam_data$SCIENCE)) 
+
+p <- ggplot(data=exam_data, 
+       aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(
+      tooltip = exam_data$tooltip,
+      data_id = ID
+    ), 
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  scale_y_continuous(NULL,               
+                     breaks = NULL)
+
+girafe(
+  ggobj = p,
+  width_svg = 8,
+  height_svg = 8*0.618,
+  options = list(
+    opts_hover(css = "fill:#202020;"),
+    opts_hover_inv(css = "opacity:0.2;")
+  )
+)
+```
+
+This alternative builds on Extra Alternative 2 by changing the hover interaction from class-level highlighting to individual student highlighting. Instead of using data_id = CLASS, this version uses data_id = ID. This makes the interaction more precise because hovering over a point highlights only the selected student, while the tooltip still shows the student’s details.
+
 ### Click effect with onclick
 
 onclick argument of ggiraph provides hotlink interactivity on the web.
@@ -556,6 +660,64 @@ girafe(code = print(p1 + p2),
 ```
 
 Notice that when a data point of one of the dotplot is selected, the corresponding data point ID on the second data visualisation will be highlighted too.
+
+#### Extra Alternative 4: Three coordinated dotplots
+
+```{r}
+p1 <- ggplot(data=exam_data, 
+             aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(
+      tooltip = exam_data$tooltip,
+      data_id = ID
+    ),
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  coord_cartesian(xlim = c(0,100)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "Maths")
+
+p2 <- ggplot(data=exam_data, 
+             aes(x = ENGLISH)) +
+  geom_dotplot_interactive(
+    aes(
+      tooltip = exam_data$tooltip,
+      data_id = ID
+    ),
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  coord_cartesian(xlim = c(0,100)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "English")
+
+p3 <- ggplot(data=exam_data, 
+             aes(x = SCIENCE)) +
+  geom_dotplot_interactive(
+    aes(
+      tooltip = exam_data$tooltip,
+      data_id = ID
+    ),
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  coord_cartesian(xlim = c(0,100)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "Science")
+
+girafe(
+  code = print(p1 + p2 + p3),
+  width_svg = 9,
+  height_svg = 3,
+  options = list(
+    opts_hover(css = "fill:#202020;"),
+    opts_hover_inv(css = "opacity:0.2;")
+  )
+)
+```
+
+This alternative builds on the coordinated multiple views example by adding a third dotplot for Science. The same data_id = ID is used across all three plots, so hovering over one student in one subject highlights the same student across the other subject plots. This makes it easier to compare the same student’s performance across Maths, English, and Science.
 
 ## Interactive Data Visualisation - plotly methods!
 
@@ -727,6 +889,21 @@ Thing to learn from the code chunk:
 ```{r}
 DT::datatable(exam_data, class= "compact")
 ```
+
+#### Extra Alternative 5: Filterable Interactive Data Table
+
+```{r}
+DT::datatable(
+  exam_data,
+  class = "compact",
+  filter = "top",
+  options = list(
+    pageLength = 10,
+    autoWidth = TRUE
+  )
+)
+```
+This alternative builds on the basic interactive data table by adding column filters. Users can filter variables such as class, race, and subject scores directly from the table. This makes the table more useful for focused data exploration instead of only scrolling through all records.
 
 ### Linked brushing: crosstalk method
 
