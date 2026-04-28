@@ -166,8 +166,8 @@ Code chunk below uses [opts_tooltip()](https://davidgohel.github.io/ggiraph/refe
 
 ```{r}
 #| eval: false
-tooltip_css <- "background-color:white; #<<
-font-style:bold; color:black;" #<<
+tooltip_css <- "background-color:black; #<<
+font-style:bold; color:white;" #<<
 
 p <- ggplot(data=exam_data, 
        aes(x = MATHS)) +
@@ -192,8 +192,8 @@ Notice that the background colour of the tooltip is black and the font colour is
 
 ```{r}
 #| echo: false
-tooltip_css <- "background-color:white; #<<
-font-style:bold; color:black;" #<<
+tooltip_css <- "background-color:black; #<<
+font-style:bold; color:white;" #<<
 
 p <- ggplot(data=exam_data, 
        aes(x = MATHS)) +
