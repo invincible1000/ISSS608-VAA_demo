@@ -375,36 +375,29 @@ bp
 
 ::: 
 
-#### Extra Alternative 5: plot_ly Animation with Clearer Animation Controls
+#### Extra Alternative 5: plot_ly Animation for Selected Countries
 
 ```{r}
-top10_pop <- globalPop %>%
-  group_by(Year) %>%
-  slice_max(order_by = Population, n = 10) %>%
-  ungroup() %>%
-  mutate(Year = as.factor(Year))
+selected_countries <- globalPop %>%
+  filter(Country %in% c("China", "India", "United States", "Japan"))
 
-bp <- top10_pop %>%
-  plot_ly(x = ~Population,
-          y = ~reorder(Country, Population),
-          color = ~Continent,
-          frame = ~Year,
-          type = "bar",
-          orientation = "h",
-          text = ~Country,
-          hoverinfo = "text") %>%
-  layout(showlegend = TRUE,
-         xaxis = list(title = "Population"),
-         yaxis = list(title = "Country")) %>%
-  animation_opts(frame = 800,
-                 transition = 300,
-                 redraw = TRUE) %>%
-  animation_slider(currentvalue = list(prefix = "Year: "))
+bp <- selected_countries %>%
+  plot_ly(x = ~Old, 
+          y = ~Young, 
+          size = ~Population, 
+          color = ~Country,
+          sizes = c(2, 100),
+          frame = ~Year, 
+          text = ~Country, 
+          hoverinfo = "text",
+          type = "scatter",
+          mode = "markers") %>%
+  layout(showlegend = TRUE)
 
 bp
 ```
 
-This alternative uses a plotly animated bar chart instead of an animated bubble plot. For each year, it shows the top 10 countries by population. This gives a different visual flow because the focus is now on ranking and comparison, rather than movement across two percentage variables.
+This alternative keeps the same plot_ly animated bubble plot structure, but filters the data to selected countries only. This makes the animation easier to read because there are fewer bubbles moving across the chart.Colour is also changed from Continent to Country, so each selected country can be followed more clearly over time.
 
 ## Reference
 
