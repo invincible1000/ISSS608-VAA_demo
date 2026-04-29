@@ -122,6 +122,23 @@ ggplot(globalPop, aes(x = Old, y = Young,
        y = '% Young') 
 ```
 
+#### Extra Alternative 1: Static Bubble Plot by Continent
+
+```{r}
+ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Continent)) +
+  geom_point(alpha = 0.7, 
+             show.legend = TRUE) +
+  scale_size(range = c(2, 12)) +
+  labs(title = "Population Structure by Continent",
+       x = "% Aged", 
+       y = "% Young",
+       colour = "Continent")
+```
+
+This alternative builds on the static bubble plot by changing the colour grouping from country to continent. Since there are many countries, colouring every country separately can make the chart visually crowded. Grouping by continent makes the chart easier to read and supports broader regional comparison.
+
 ### Building the animated bubble plot
 
 In the code chunk below,
@@ -145,6 +162,45 @@ ggplot(globalPop, aes(x = Old, y = Young,
 ```
 
 The animated bubble chart is shown above
+
+#### Extra Alternative 2: Animated Bubble Plot with Continent Facets
+
+```{r}
+ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country)) +
+  geom_point(alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  facet_wrap(~Continent) +
+  labs(title = "Year: {frame_time}", 
+       x = "% Aged", 
+       y = "% Young") +
+  transition_time(Year) +       
+  ease_aes("linear")
+```
+
+This alternative builds on the animated bubble plot by adding facet_wrap(~Continent). Instead of showing all countries in one panel, the animation is separated by continent. This reduces visual clutter and makes it easier to compare ageing and youth population patterns across regions over time.
+
+#### Extra Alternative 3: Animated Bubble Plot with Past Shadow
+
+```{r}
+ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country)) +
+  geom_point(alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(title = "Year: {frame_time}", 
+       x = "% Aged", 
+       y = "% Young") +
+  transition_time(Year) +       
+  ease_aes("linear") +
+  shadow_mark(alpha = 0.2, size = 1)
+```
+This alternative builds on the animated bubble plot by adding shadow_mark(). The shadow keeps earlier positions visible in the animation, making it easier to see how countries have moved over time instead of only seeing their current position in each frame.
 
 ## Animated Data Visualisation: plotly
 
@@ -247,6 +303,31 @@ ggplotly(gg)
 
 ::: 
 
+#### Extra Alternative 4: Animated Line Chart of Aging Trend by Continent
+
+```{r}
+continent_age <- globalPop %>%
+  group_by(Year, Continent) %>%
+  summarise(avg_old = mean(Old, na.rm = TRUE),
+            .groups = "drop")
+
+ggplot(continent_age, 
+       aes(x = Year, 
+           y = avg_old, 
+           colour = Continent,
+           group = Continent)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(title = "Year: {frame_along}",
+       x = "Year",
+       y = "Average % Aged",
+       colour = "Continent") +
+  transition_reveal(Year) +
+  ease_aes("linear")
+```
+
+This alternative uses a different animated visual flow from the bubble plot. Instead of showing country bubbles moving across two percentage variables, it uses an animated line chart to show how the average aged population changes over time by continent. This makes the long-term ageing trend easier to see.
+
 ### Building an animated bubble plot: plot_ly() method
 
 In this sub-section, you will learn how to create an animated bubble plot by using plot_ly() method.
@@ -293,6 +374,37 @@ bp
 ```
 
 ::: 
+
+#### Extra Alternative 5: plot_ly Animation with Clearer Animation Controls
+
+```{r}
+top10_pop <- globalPop %>%
+  group_by(Year) %>%
+  slice_max(order_by = Population, n = 10) %>%
+  ungroup() %>%
+  mutate(Year = as.factor(Year))
+
+bp <- top10_pop %>%
+  plot_ly(x = ~Population,
+          y = ~reorder(Country, Population),
+          color = ~Continent,
+          frame = ~Year,
+          type = "bar",
+          orientation = "h",
+          text = ~Country,
+          hoverinfo = "text") %>%
+  layout(showlegend = TRUE,
+         xaxis = list(title = "Population"),
+         yaxis = list(title = "Country")) %>%
+  animation_opts(frame = 800,
+                 transition = 300,
+                 redraw = TRUE) %>%
+  animation_slider(currentvalue = list(prefix = "Year: "))
+
+bp
+```
+
+This alternative uses a plotly animated bar chart instead of an animated bubble plot. For each year, it shows the top 10 countries by population. This gives a different visual flow because the focus is now on ranking and comparison, rather than movement across two percentage variables.
 
 ## Reference
 
