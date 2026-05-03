@@ -12,7 +12,7 @@ format:
     
 execute:
   warning: false 
-  freeze: auto
+  freeze: true
 ---
 
 # Beyond ggplot2 Fundamentals

@@ -12,7 +12,7 @@ format:
     
 execute:
   warning: false 
-  freeze: auto
+  freeze: true
 ---
 
 # Programming Animated Statistical Graphics with R
