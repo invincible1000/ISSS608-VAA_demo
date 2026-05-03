@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Exercise 4 -  Programming Animated Statistical Graphics with R"
+title: "Hands-on Exercise 3b -  Programming Animated Statistical Graphics with R"
 author: "Yap Jit Wei"
 date: "April 28, 2026"
 date-modified: "last-modified"
