@@ -17,6 +17,8 @@ website:
          href: "HO_EX03b.html"
        - text: "Hands-on Exercise 4a - Visualising Distribution"
          href: "HO_EX04a.html"
+       - text: "Hands-on Exercise 4b -Visual Statistical Analysis"
+         href: "HO_EX04b.html"
     - text: "In-class Exercise"
       menu:
        - text: "In-Class Exercise 2"
