@@ -248,7 +248,29 @@ fp_ggplotly <- ggplotly(p,
 fp_ggplotly
 ```
 
-### References
+## Extra Alternative
+
+```{r}
+funnel_plot(
+  .data = covid19,
+  numerator = Death,
+  denominator = Positive,
+  group = `District`,
+  data_type = "PR",
+  xrange = c(0, 6500),
+  yrange = c(0, 0.05),
+  label = NA,
+  title = "Fatality rates are more consistent\nwhen viewed at District level",
+  x_label = "Cumulative COVID-19 Positive Cases",
+  y_label = "Cumulative Fatality Rate"
+)
+```
+
+The exercise plots fatality rates at Sub-district level, resulting in 267 data points and several outliers. This alternative changes the group argument from Sub-district to District, aggregating the data to a higher geographic level. With fewer points and less granular variation, almost all districts fall within the control limits, therefore suggesting that the outliers seen at Sub-district level may reflect localised anomalies rather than systemic differences across Jakarta's broader districts.
+
+
+
+## References
 
 -   [funnelPlotR](https://nhs-r-community.github.io/FunnelPlotR/index.html) package.
 

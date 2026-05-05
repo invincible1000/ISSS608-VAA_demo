@@ -481,4 +481,39 @@ ggplot(data = exam,
   theme_bw() + 
   transition_states(.draw, 1, 3)
 ```
+## Extra Alternative
+
+```{r}
+exam %>%
+  ggplot(aes(x = GENDER, 
+             y = ENGLISH)) +
+  stat_pointinterval(
+    .width = c(0.95, 0.99),
+    .point = median,
+    .interval = qi,
+    aes(colour = after_stat(level))
+  ) +
+  scale_colour_manual(
+    values = c("0.95" = "steelblue",
+               "0.99" = "grey30"),
+    labels = c("0.95" = "95% CI",
+               "0.99" = "99% CI")
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.text = element_text(size = 10),
+    plot.title = element_text(size = 11)
+  ) +
+  labs(
+    title = "Female students show higher median English scores\nwith less uncertainty",
+    subtitle = "Median point + 95% and 99% CI by Gender",
+    x = "Gender",
+    y = "English Score",
+    colour = "Interval"
+  )
+```
+The exercise uses stat_pointinterval() to visualise uncertainty in Maths scores by Race. This alternative applies the same function to English scores by Gender instead, making it easier to see whether the gap between male and female students is statistically meaningful. A manual colour scale is added to clearly distinguish the 95% and 99% confidence intervals.
+
 

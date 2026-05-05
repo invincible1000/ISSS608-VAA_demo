@@ -476,6 +476,50 @@ ggplot(exam,
 ```
 :::
 
+## Extra Alternative
+
+```{r}
+ggplot(exam, 
+       aes(x = CLASS, 
+           y = MATHS,
+           fill = CLASS,        
+           colour = CLASS)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA,
+               alpha = 0.6) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA,
+               colour = "grey30",
+               fill = "white",
+               alpha = 0.5) +
+  stat_dots(side = "left", 
+            justification = 1.2, 
+            binwidth = .5,
+            dotsize = 1.0,
+            alpha = 0.5) +
+  scale_fill_viridis_d(option = "C", guide = "none") +
+  scale_colour_viridis_d(option = "C", guide = "none") +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank(),
+    axis.text = element_text(size = 10),
+    plot.title = element_text(size = 11),
+    plot.margin = margin(10, 10, 10, 20)
+  ) +
+  labs(
+    title = "Maths score distributions vary notably across classes",
+    subtitle = "Distribution of Maths scores by Class",
+    x = NULL,
+    y = "Maths Score"
+  )
+```
+
+The base raincloud plot looks at English scores by Race. This alternative switches to Maths scores by Class. Two things stand out immediately: classes seem to be streamed by ability, with 3I scoring lowest and 3A scoring highest. More interestingly, 3A shows notable variation within the class itself. This means that the students are not uniformly strong but spread across quite different score ranges, with distinct clusters visible in the density curve. A regular boxplot would just show 3A as a high-scoring class, but the raincloud reveals that performance within the class is far more varied than the median suggests.
+
 ## Reference
 
 -   [Introducing Ridgeline Plots (formerly Joyplots)](https://blog.revolutionanalytics.com/2017/07/joyplots.html)

@@ -171,3 +171,30 @@ ggbarstats(exam1,
            x = MATHS_bins, 
            y = GENDER)
 ```
+
+## Extra Alternative
+
+```{r}
+set.seed(1234)
+
+ggcorrmat(
+  data = exam,
+  cor.vars = c(ENGLISH, MATHS, SCIENCE),
+  type = "nonparametric",
+  sig.level = 0.05,
+  p.adjust.method = "holm",
+  colors = c("#D6604D", "white", "#2166AC"),
+  title = "MATHS and SCIENCE scores are \nmost strongly correlated",
+  caption = "Spearman correlations, Holm-corrected | n = 322 | Source: Exam_data.csv",
+  ggtheme = theme_minimal(base_size = 13),
+  ggplot.component = list(
+    theme(
+      plot.title = element_text(face = "bold", size = 14),
+      plot.caption = element_text(colour = "grey55", size = 8),
+      legend.position = "none"
+    )
+  )
+)
+```
+
+The exercise looks at MATHS and ENGLISH scores in isolation using ggscatterstats(). This alternative uses ggcorrmat() to compare all three subjects at once. The matrix shows that MATHS and SCIENCE scores tend to move together most closely (ρ = 0.86), while ENGLISH is somewhat less tied to either. In other words, students who do well in one tend to do well in the other, but this pattern is strongest between the two non-language subjects.
