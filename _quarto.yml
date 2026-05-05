@@ -22,7 +22,7 @@ website:
        - text: "Hands-on Exercise 4c - Visualising Uncertainty"
          href: "HO_EX04c.html"
        - text: "Hands-on Exercise 4d - Funnel Plots for Fair Comparisons"
-         href: "HO_EX04c.html"
+         href: "HO_EX04d.html"
     - text: "In-class Exercise"
       menu:
        - text: "In-Class Exercise 2"
