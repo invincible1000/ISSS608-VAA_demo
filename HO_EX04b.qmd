@@ -174,6 +174,8 @@ ggbarstats(exam1,
 
 ## Extra Alternative
 
+### Extra Alternative 1 
+
 ```{r}
 set.seed(1234)
 
@@ -197,4 +199,22 @@ ggcorrmat(
 )
 ```
 
-The exercise looks at MATHS and ENGLISH scores in isolation using ggscatterstats(). This alternative uses ggcorrmat() to compare all three subjects at once. The matrix shows that MATHS and SCIENCE scores tend to move together most closely (ρ = 0.86), while ENGLISH is somewhat less tied to either. In other words, students who do well in one tend to do well in the other, but this pattern is strongest between the two non-language subjects.
+The exercise looks at Maths and English scores in isolation using ggscatterstats(). This alternative uses ggcorrmat() to compare all three subjects at once. The matrix shows that Maths and Science scores tend to move together most closely (ρ = 0.86), while English is somewhat less tied to either. In other words, students who do well in one tend to do well in the other, but this pattern is strongest between the two non-language subjects.
+
+
+### Extra Alternative 2
+
+```{r}
+ggscatterstats(
+  data = exam,
+  x = MATHS,
+  y = SCIENCE,
+  marginal = FALSE,
+  type = "nonparametric",
+  ggtheme = theme_minimal(base_size = 13),
+  title = "Maths and Science scores are strongly linked",
+  xlab = "Maths Score",
+  ylab = "Science Score"
+)
+```
+The base exercise uses ggscatterstats() to examine the relationship between Maths and English scores. This alternative applies the same function to Maths and Science instead, which is the pair that the correlation matrix identified as most strongly correlated (ρ = 0.86). Where the matrix gives an overview across all three subjects, this plot zooms into that relationship at the individual student level, making it easier to spot outliers and see whether the correlation holds uniformly across the full score range.
