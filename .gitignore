@@ -1,5 +1,6 @@
 # R session files
 .RData
+.RDataTmp
 .Rhistory
 .Rproj.user/
 .Ruserdata
@@ -8,13 +9,5 @@
 Data/motor_clean.rds
 Data/Dataset of motor insurance portfolio.csv
 
-# Quarto build artifacts
-*_files/
-_files/
+# Quarto cache only
 .quarto/
-_site/
-_freeze/
-.RDataTmp
-
-/.quarto/
-**/*.quarto_ipynb
