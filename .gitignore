@@ -14,3 +14,7 @@ _files/
 .quarto/
 _site/
 _freeze/
+.RDataTmp
+
+/.quarto/
+**/*.quarto_ipynb

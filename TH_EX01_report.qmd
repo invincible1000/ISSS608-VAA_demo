@@ -53,6 +53,10 @@ The data is a real-world Spanish motor insurance portfolio published through Men
 
 The granularity of premium and incurred figures permits coverage-specific loss-ratio decomposition in addition to portfolio-level analysis. This level of detail is uncommon in publicly available motor insurance datasets, and the report exploits it where it adds analytical leverage.
 
+::: callout-note
+**Reproducibility**: The raw data file (`Dataset of motor insurance portfolio.csv`, approximately 90MB) exceeds GitHub's recommended file size limit and is therefore excluded from this repository via `.gitignore`. To reproduce the analysis, download the dataset from Mendeley Data and place it in the `Data/` folder at the project root. The analytical sandbox (`motor_clean.rds`) is generated on first render by the code in Section 2 and does not need to be committed.
+:::
+
 ## Report structure
 
 Section 2 documents the analytical sandbox preparation: import, cleaning, type encoding, and derivation of the profitability and volatility variables. Section 3 presents the univariate distributional analysis. Section 4 examines bivariate relationships with statistical validation of the observed effects. Section 5 introduces two visual analytics methods that extend beyond the techniques covered in class. Section 6 synthesises the findings into recommended actions.
