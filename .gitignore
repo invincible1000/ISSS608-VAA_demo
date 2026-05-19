@@ -1,0 +1,16 @@
+# R session files
+.RData
+.Rhistory
+.Rproj.user/
+.Ruserdata
+
+# Large data files
+Data/motor_clean.rds
+Data/Dataset of motor insurance portfolio.csv
+
+# Quarto build artifacts
+*_files/
+_files/
+.quarto/
+_site/
+_freeze/

@@ -1,0 +1,18 @@
+---
+title: "In-Class Exercise 2"
+author: "Yap Jit Wei"
+date: "April 25, 2026"
+date-modified: "last-modified"
+
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    number-sections: true
+    
+execute:
+  eval: true
+  echo: true
+  warning: false 
+  freeze: false
+---
