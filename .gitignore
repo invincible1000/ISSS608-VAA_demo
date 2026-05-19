@@ -11,3 +11,6 @@ Data/Dataset of motor insurance portfolio.csv
 
 # Quarto cache only
 .quarto/
+
+/.quarto/
+**/*.quarto_ipynb
