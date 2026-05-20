@@ -87,6 +87,40 @@ pacman::p_load(tidyverse, readxl, janitor, skimr, naniar,
                patchwork, scales, knitr)
 ```
 
+```{r}
+# House style for all charts 
+theme_house <- function(base_size = 11) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(colour = "grey40",
+                                   size = base_size - 1,
+                                   margin = margin(b = 10)),
+      plot.caption = element_text(colour = "grey50",
+                                  size = base_size - 3,
+                                  hjust = 0),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text = element_text(size = base_size - 2),
+      axis.title = element_text(size = base_size - 1.5),
+      axis.title.x = element_text(margin = margin(t = 8)),
+      axis.title.y = element_text(margin = margin(r = 8)),
+      plot.margin = margin(t = 10, r = 15, b = 15, l = 10),
+      legend.position = "top",
+      legend.title = element_text(size = base_size - 2, face = "bold"),
+      legend.text = element_text(size = base_size - 2)
+    )
+}
+
+# House colour palette
+house_highlight <- "#C44E52"      # red — for the one important data point
+house_muted     <- "grey75"       # for everything else
+house_benchmark <- "grey40"       # for reference lines and benchmarks
+house_sequential <- "RdYlBu"      # for diverging palettes (loss ratio gradients)
+```
+
+
+
 ## Importing the raw data
 
 The portfolio file is a semicolon-delimited CSV using European decimal conventions. The companion data dictionary is a small Excel workbook documenting variable meanings and units, used as a reference during encoding decisions.
@@ -271,183 +305,300 @@ clean <- read_rds("Data/motor_clean.rds")
 ### Driver age
 
 ```{r}
-#| fig-cap: "Distribution of driver age. Histogram (top) and boxplot (bottom)."
-#| fig-height: 4.5
+#| fig-height: 4
 
-p_hist <- ggplot(clean, aes(x = driver_age)) +
-  geom_histogram(binwidth = 2, fill = "#4C72B0", colour = "white") +
-  scale_y_continuous(labels = comma) +
-  labs(x = NULL, y = "Policies") +
-  theme_minimal()
+h_age <- ggplot(clean, aes(x = driver_age)) +
+  geom_histogram(bins = 40, fill = "#4C72B0", colour = "white") +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.05))) +
+  labs(x = NULL, y = "Number of policies") +
+  theme_house(base_size = 11) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
 
-p_box <- ggplot(clean, aes(x = driver_age)) +
-  geom_boxplot(fill = "#4C72B0", alpha = 0.6, outlier.size = 0.5) +
+b_age <- ggplot(clean, aes(x = driver_age)) +
+  geom_boxplot(fill = "#4C72B0", colour = "grey30",
+               width = 0.5, outlier.alpha = 0.1) +
+  scale_y_continuous(breaks = NULL) +
   labs(x = "Driver age (years)", y = NULL) +
-  theme_minimal() +
+  theme_house(base_size = 11) +
   theme(axis.text.y = element_blank())
 
-p_hist / p_box + plot_layout(heights = c(3, 1))
+(h_age / b_age + plot_layout(heights = c(4, 1))) +
+  plot_annotation(
+    title = "Driver age ranges from 22 to 82, centred in mid-40s",
+    subtitle = "Distribution of driver age across 352,340 policy-years",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).",
+    theme = theme(
+      plot.title = element_text(face = "bold", size = 13),
+      plot.subtitle = element_text(colour = "grey40", size = 10,
+                                   margin = margin(b = 10)),
+      plot.caption = element_text(colour = "grey50", size = 8, hjust = 0)
+    )
+  )
 ```
 
-The driver-age distribution is right-skewed with a mode around the early forties and a long tail of older drivers. The under-25 segment is small in volume but structurally important. It is the conventional high-risk pool in motor underwriting and becomes a focal point of the bivariate analysis. The 65+ tail is similarly relevant, as senior drivers carry distinct accident-risk profiles.
+The driver-age distribution spans 22 to 82 years, centred in the mid-40s, with a modest right tail of older drivers. The under-25 segment is small in volume but structurally important: it is the conventional high-risk pool in motor underwriting and becomes a focal point of the bivariate analysis. The 65+ tail is similarly relevant, as senior drivers carry distinct accident-risk profiles.
 
 ### Vehicle age
 
 ```{r}
-#| fig-cap: "Distribution of vehicle age."
-#| fig-height: 4.5
+#| fig-height: 4
 
-p_hist <- ggplot(clean, aes(x = vehicle_age)) +
-  geom_histogram(binwidth = 1, fill = "#55A868", colour = "white") +
-  scale_y_continuous(labels = comma) +
-  labs(x = NULL, y = "Policies") +
-  theme_minimal()
+h_va <- ggplot(clean, aes(x = vehicle_age)) +
+  geom_histogram(bins = 30, fill = "#4C72B0", colour = "white") +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.05))) +
+  labs(x = NULL, y = "Number of policies") +
+  theme_house(base_size = 11) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
 
-p_box <- ggplot(clean, aes(x = vehicle_age)) +
-  geom_boxplot(fill = "#55A868", alpha = 0.6, outlier.size = 0.5) +
+b_va <- ggplot(clean, aes(x = vehicle_age)) +
+  geom_boxplot(fill = "#4C72B0", colour = "grey30",
+               width = 0.5, outlier.alpha = 0.1) +
+  scale_y_continuous(breaks = NULL) +
   labs(x = "Vehicle age (years)", y = NULL) +
-  theme_minimal() +
+  theme_house(base_size = 11) +
   theme(axis.text.y = element_blank())
 
-p_hist / p_box + plot_layout(heights = c(3, 1))
+(h_va / b_va + plot_layout(heights = c(4, 1))) +
+  plot_annotation(
+    title = "Most insured vehicles are between 18 and 36 years old",
+    subtitle = "Distribution of vehicle age across 352,340 policy-years",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).",
+    theme = theme(
+      plot.title = element_text(face = "bold", size = 13),
+      plot.subtitle = element_text(colour = "grey40", size = 10,
+                                   margin = margin(b = 10)),
+      plot.caption = element_text(colour = "grey50", size = 8, hjust = 0)
+    )
+  )
 ```
 
-Vehicle age is approximately uniform from 0 to about 15 years, then declines sharply. The median is around 10 years, indicating a mature vehicle fleet. The shape suggests two underwriting considerations. Theft exposure peaks for newer, higher-value vehicles. Breakdown and mechanical-failure claims rise with vehicle age. These tensions show up in the bivariate analysis of coverage tier.
+The vehicle-age distribution spans 0 to about 60 years, with most vehicles concentrated between 18 and 36 years old (the IQR) and a median around 25 years. This is an unusually aged portfolio: the bulk of insured vehicles are over 15 years old, with a long tail of vehicles older than 40. The shape suggests two underwriting considerations. Theft exposure tends to concentrate in newer, higher-value vehicles, of which this portfolio has few. Breakdown and mechanical-failure claims rise with vehicle age, which this portfolio has in abundance. These tensions surface in the bivariate analysis of coverage tier and in the driver-age × vehicle-age risk surface.
 
 ### Vehicle value
 
 ```{r}
-#| fig-cap: "Distribution of vehicle value (euros)."
-#| fig-height: 4.5
+#| fig-height: 4
 
-p_hist <- ggplot(clean, aes(x = vehicle_value)) +
-  geom_histogram(bins = 60, fill = "#C44E52", colour = "white") +
-  scale_x_continuous(labels = label_comma(), trans = "log10") +
-  scale_y_continuous(labels = comma) +
-  labs(x = NULL, y = "Policies") +
-  theme_minimal()
+h_vv <- ggplot(clean, aes(x = vehicle_value)) +
+  geom_histogram(bins = 50, fill = "#4C72B0", colour = "white") +
+  scale_x_log10(labels = label_currency(prefix = "€", scale = 1e-3,
+                                         suffix = "k")) +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.05))) +
+  labs(x = NULL, y = "Number of policies") +
+  theme_house(base_size = 11) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
 
-p_box <- ggplot(clean, aes(x = vehicle_value)) +
-  geom_boxplot(fill = "#C44E52", alpha = 0.6, outlier.size = 0.5) +
-  scale_x_continuous(labels = label_comma(), trans = "log10") +
+b_vv <- ggplot(clean, aes(x = vehicle_value)) +
+  geom_boxplot(fill = "#4C72B0", colour = "grey30",
+               width = 0.5, outlier.alpha = 0.1) +
+  scale_x_log10(labels = label_currency(prefix = "€", scale = 1e-3,
+                                         suffix = "k")) +
+  scale_y_continuous(breaks = NULL) +
   labs(x = "Vehicle value (€, log scale)", y = NULL) +
-  theme_minimal() +
+  theme_house(base_size = 11) +
   theme(axis.text.y = element_blank())
 
-p_hist / p_box + plot_layout(heights = c(3, 1))
+(h_vv / b_vv + plot_layout(heights = c(4, 1))) +
+  plot_annotation(
+    title = "Vehicle value clusters around €20-30k with a heavy upper tail",
+    subtitle = "Distribution of vehicle value across 352,340 policy-years (log scale)",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nLog scale used to reveal the central distribution; the small fraction of high-value vehicles extends beyond €100k.",
+    theme = theme(
+      plot.title = element_text(face = "bold", size = 13),
+      plot.subtitle = element_text(colour = "grey40", size = 10,
+                                   margin = margin(b = 10)),
+      plot.caption = element_text(colour = "grey50", size = 8, hjust = 0)
+    )
+  )
 ```
 
-Vehicle value spans roughly three orders of magnitude, from a few hundred euros to over €100,000. The distribution is heavily right-skewed on a linear scale. Plotting on a log-10 scale reveals an approximately log-normal shape centred on €10,000 to €15,000. The log transformation matters for analytical choices. Any segmentation that uses vehicle value as a discriminating variable should band on percentiles (quartiles, as used in `vehicle_value_band`) rather than equal intervals.
+Vehicle value is right-skewed, with the bulk of policies covering vehicles worth between €20,000 and €30,000 and a small share covering higher-value vehicles above €100,000. The log-scale histogram makes the central concentration visible; on a linear scale, the rare high-value outliers would compress the typical distribution into the left edge. This concentration in mid-value vehicles is consistent with the older fleet composition described above.
 
 ### Power-to-weight ratio
 
 ```{r}
-#| fig-cap: "Distribution of power-to-weight ratio."
-#| fig-height: 4.5
+h_pw <- ggplot(clean, aes(x = power_to_weight_ratio)) +
+  geom_histogram(bins = 50, fill = "#4C72B0", colour = "white") +
+  scale_x_log10() +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.05))) +
+  labs(x = NULL, y = "Number of policies") +
+  theme_house(base_size = 11) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
 
-p_hist <- ggplot(clean, aes(x = power_to_weight_ratio)) +
-  geom_histogram(bins = 40, fill = "#8172B2", colour = "white") +
-  scale_y_continuous(labels = comma) +
-  labs(x = NULL, y = "Policies") +
-  theme_minimal()
-
-p_box <- ggplot(clean, aes(x = power_to_weight_ratio)) +
-  geom_boxplot(fill = "#8172B2", alpha = 0.6, outlier.size = 0.5) +
-  labs(x = "Power-to-weight ratio", y = NULL) +
-  theme_minimal() +
+b_pw <- ggplot(clean, aes(x = power_to_weight_ratio)) +
+  geom_boxplot(fill = "#4C72B0", colour = "grey30",
+               width = 0.5, outlier.alpha = 0.1) +
+  scale_x_log10() +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "Power-to-weight ratio (log scale)", y = NULL) +
+  theme_house(base_size = 11) +
   theme(axis.text.y = element_blank())
 
-p_hist / p_box + plot_layout(heights = c(3, 1))
+(h_pw / b_pw + plot_layout(heights = c(4, 1))) +
+  plot_annotation(
+    title = "Most vehicles have a power-to-weight ratio between 10 and 15",
+    subtitle = "Distribution of power-to-weight ratio across 352,340 policy-years (log scale)",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).",
+    theme = theme(
+      plot.title = element_text(face = "bold", size = 13),
+      plot.subtitle = element_text(colour = "grey40", size = 10,
+                                   margin = margin(b = 10)),
+      plot.caption = element_text(colour = "grey50", size = 8, hjust = 0)
+    )
+  )
 ```
 
-Power-to-weight is approximately symmetric around a typical mid-range value, with a moderately long right tail representing high-performance vehicles. The tail carries the structural risk concern. Power-to-weight correlates with claim frequency and severity in motor portfolios, and a small number of high-performance policies can disproportionately affect segment-level loss ratios.
+Power-to-weight ratio is right-skewed on the raw scale and approximately log-normal once transformed. Most vehicles fall in the 10-15 range, with a long upper tail of high-performance vehicles and a smaller tail at the low end. The upper tail carries the underwriting risk concern: power-to-weight correlates with claim frequency and severity in motor portfolios, and a small number of high-performance policies can disproportionately affect segment-level loss ratios.
 
 ## Categorical variables
 
 ### Policy type
 
 ```{r}
-#| fig-cap: "Distribution of policy types."
 #| fig-height: 3.5
 
-clean |>
-  count(policy_type) |>
-  mutate(pct = n / sum(n)) |>
-  ggplot(aes(x = fct_reorder(policy_type, n), y = n)) +
-  geom_col(fill = "#4C72B0") +
-  geom_text(aes(label = paste0(comma(n), "\n(", percent(pct, accuracy = 0.1), ")")),
-            hjust = -0.1, size = 3.2, lineheight = 0.9) +
-  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.2))) +
-  coord_flip() +
-  labs(x = NULL, y = "Policies") +
-  theme_minimal()
+ggplot(clean, aes(x = fct_infreq(policy_type))) +
+  geom_bar(fill = "#4C72B0", colour = "white") +
+  geom_text(stat = "count",
+            aes(label = comma(after_stat(count))),
+            vjust = -0.4, size = 3.2, colour = "grey30") +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.15))) +
+  labs(
+    title = "Most policies cluster in the mid-comprehensive tier (CC)",
+    subtitle = "Distribution of Policy Type across 352,340 policy-years",
+    x = NULL,
+    y = "Number of policies",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data)."
+  ) +
+  theme_house(base_size = 11)
 ```
 
-CC (combined) and TPG dominate the policy book, accounting for the majority of records. COMP_N (comprehensive without excess) and COMP_E (comprehensive with excess) are the smaller, higher-coverage tiers. As Section 4 shows, these tiers carry the highest loss intensity relative to premium charged.
+The portfolio is dominated by the two combined tiers: CC (204,318 policies, around 58%) and COMP_E (90,320 policies, around 26%). The third-party tiers (TP and TPG) together account for around 12% of policies, and COMP_N (comprehensive without excess) is a small but consequential segment at around 5%. As Section 4 shows, COMP_N carries by far the highest loss intensity relative to premium charged, while CC and COMP_E sit closer to the portfolio benchmark.
 
-### Bonus score
+### Bonus-Malus Category
 
 ```{r}
-#| fig-cap: "Distribution of bonus-malus categories."
-#| fig-height: 3
+#| fig-height: 3.5
 
-clean |>
-  count(bonus_score) |>
-  mutate(pct = n / sum(n)) |>
-  ggplot(aes(x = bonus_score, y = n)) +
-  geom_col(fill = "#55A868") +
-  geom_text(aes(label = paste0(comma(n), " (", percent(pct, accuracy = 0.1), ")")),
-            vjust = -0.5, size = 3.2) +
+ggplot(clean, aes(x = fct_infreq(bonus_score))) +
+  geom_bar(fill = "#4C72B0", colour = "white") +
+  geom_text(stat = "count",
+            aes(label = comma(after_stat(count))),
+            vjust = -0.4, size = 3.2, colour = "grey30") +
   scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.15))) +
-  labs(x = "Bonus-malus category", y = "Policies") +
-  theme_minimal()
+  labs(
+    title = "97% of policy-years are in the Good bonus-malus category",
+    subtitle = "Distribution of bonus-malus category across 352,340 policy-years",
+    x = NULL,
+    y = "Number of policies",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data)."
+  ) +
+  theme_house(base_size = 11)
 ```
 
-The bonus-malus distribution is heavily concentrated. The vast majority of policies sit in the Good category, with the Neutral and Bad segments accounting for a small share. This concentration matters analytically. With so few records in the worst category, within-segment variance estimates are noisier and statistical tests need to account for the imbalance.
+The bonus-malus distribution is extreme: 96.5% of policy-years sit in the Good category, with Neutral (2.2%) and Bad (1.3%) together accounting for the remaining 3.5%. The two smaller categories are sufficient in absolute volume for statistical testing (several thousand records each) but small in relative terms. This imbalance becomes important in Section 4.4, where the analysis shows that the small Neutral pool carries a disproportionate share of the portfolio's loss-ratio deterioration.
 
 ### Other categoricals
 
 ```{r}
+#| fig-height: 7
+
 cat_vars <- c("policy_status", "business_type", "payment_frequency",
               "fuel_type", "municipality_type", "circulation_area")
 
-clean |>
+cat_summary <- clean |>
   select(all_of(cat_vars)) |>
   pivot_longer(everything(), names_to = "variable", values_to = "value") |>
   count(variable, value) |>
   group_by(variable) |>
   mutate(pct = n / sum(n)) |>
   ungroup() |>
-  ggplot(aes(x = fct_reorder(value, n), y = n)) +
-  geom_col(fill = "#C44E52") +
+  mutate(variable = factor(variable,
+                            levels = cat_vars,
+                            labels = c("Policy status",
+                                       "Business type",
+                                       "Payment frequency",
+                                       "Fuel type",
+                                       "Municipality type",
+                                       "Circulation area")))
+
+ggplot(cat_summary, aes(x = fct_reorder(value, n), y = n)) +
+  geom_col(fill = "#4C72B0") +
   geom_text(aes(label = percent(pct, accuracy = 0.1)),
-            hjust = -0.1, size = 2.8) +
+            hjust = -0.1, size = 2.8, colour = "grey30") +
   scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.2))) +
   coord_flip() +
   facet_wrap(~ variable, scales = "free", ncol = 2) +
-  labs(x = NULL, y = "Policies") +
-  theme_minimal()
+  labs(
+    title = "Most categorical variables are heavily concentrated in their dominant category",
+    subtitle = "Distribution of six categorical variables across 352,340 policy-years",
+    x = NULL,
+    y = "Number of policies",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nPercentages are within-variable; bars within each facet are sorted by frequency."
+  ) +
+  theme_house(base_size = 11) +
+  theme(
+    strip.text = element_text(face = "bold", colour = "grey20", size = 10),
+    strip.background = element_rect(fill = "grey95", colour = NA),
+    panel.grid.major.y = element_blank(),
+    panel.spacing = unit(1.2, "lines")
+  )
 ```
 
-Several concentrations are worth noting. The portfolio is predominantly persistent business (renewals) rather than new business, indicating a mature book. Annual payment dominates over instalment options. Diesel vehicles outnumber gasoline. Urban circulation outweighs rural, reflecting the demographic distribution of policyholders. The interior region is the largest. The islands and coastal regions are non-trivial and, as Section 4 reveals, carry distinct loss-ratio profiles.
+Several concentrations are worth noting. The portfolio is predominantly new business (69%) rather than persistent renewals (31%), pointing to rapid book growth across the period. New business typically carries higher loss ratios than renewals because insurers price renewals more precisely from claims history, so a fast-growing book can deteriorate even without underlying segment changes. Annual payment dominates over instalment options. Diesel vehicles outnumber gasoline by roughly two to one. Urban and rural circulation are close to balanced (54% vs 46%), though within-category loss-ratio profiles differ markedly as Section 4.5 shows. Interior locations dominate the geographic distribution (65%), with coastal and islands together accounting for 35%; despite their smaller volume, the islands segment carries the widest within-category loss-ratio spread.
 
 ## Distribution of derived KPIs
 
 The three derived KPIs are themselves variables worth profiling. At the policy level, they are highly skewed: most policies have no claims, so most loss ratios and frequencies are zero. Restricting the view to policies with at least one claim reveals the within-distribution shape that matters for segment-level analysis.
 
 ```{r}
+share_above_be <- clean |>
+  filter(total_claims > 0, is.finite(loss_ratio)) |>
+  summarise(share = mean(loss_ratio > 1)) |>
+  pull(share)
+
 clean |>
-  filter(total_claims > 0) |>
-  ggplot(aes(x = loss_ratio)) +
-  geom_histogram(bins = 60, fill = "#4C72B0", colour = "white") +
-  scale_x_continuous(trans = "log10", labels = label_percent(accuracy = 1)) +
-  scale_y_continuous(labels = comma) +
-  geom_vline(xintercept = 1, linetype = "dashed", colour = "red") +
-  labs(x = "Loss ratio (log scale)", y = "Policies") +
-  theme_minimal()
+  filter(total_claims > 0, is.finite(loss_ratio),
+         loss_ratio >= 0.01, loss_ratio <= 100) |>
+  ggplot(aes(x = loss_ratio, fill = loss_ratio > 1)) +
+  geom_histogram(bins = 50, boundary = 1, colour = "white") +
+  scale_x_continuous(
+    trans  = "log10",
+    breaks = c(0.01, 0.1, 1, 10, 100),
+    labels = c("1%", "10%", "100%", "1,000%", "10,000%")
+  ) +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.12))) +
+  scale_fill_manual(
+    values = c("FALSE" = house_muted, "TRUE" = house_highlight),
+    guide  = "none"
+  ) +
+  geom_vline(xintercept = 1, linetype = "dashed", colour = house_benchmark) +
+  annotate(
+    "text",
+    x = 1.15, y = Inf,
+    label  = "Break-even (100%)",
+    hjust  = 0, vjust = 1.2,
+    colour = house_benchmark, size = 3.2
+  ) +
+  labs(
+    title    = "A substantial share of claim-bearing policies exceed break-even",
+    subtitle = paste0(
+      scales::percent(share_above_be, accuracy = 0.1),
+      " of claim-bearing policy-years have losses exceeding their premium"
+    ),
+    x       = "Loss ratio (log scale)",
+    y       = "Policy-years",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data)."
+  ) +
+  theme_house()
 ```
 
-Among policies with at least one claim, the loss-ratio distribution spans nearly four orders of magnitude. The red dashed line marks the break-even point (100% loss ratio), where losses equal premium. A substantial mass of policies sits above this line, meaning these individual policies returned more in claims than they collected in premium. Segment-level mean loss ratios mask this within-segment variance, which is what the volatility (coefficient of variation) analysis in Section 4 surfaces.
+Among policies with at least one claim, the loss-ratio distribution spans nearly four orders of magnitude. The dashed grey line marks the break-even point where losses equal premium. The red bars to the right represent policy-years that returned more in claims than they collected in premium. Segment-level mean loss ratios mask this within-policy variance, which is what the volatility (coefficient of variation) analysis in Section 4 surfaces.
+
 
 ## Summary of univariate observations
 
@@ -456,6 +607,59 @@ The univariate view raises three structural features the bivariate analysis must
 1.  **Strong distributional skew** in vehicle value and the derived KPIs. Linear-scale plots will mislead. Log scales and percentile bands are appropriate.
 2.  **Heavy class imbalance** in `bonus_score` (concentrated in Good) and `policy_type` (concentrated in CC and TPG). Statistical tests must account for unequal group sizes.
 3.  **The zero-claim majority**. Roughly 85% of policy-years have no claims, making policy-level loss ratio a noisy individual measure but a clean segment-level one when aggregated by exposure-weighted sums.
+
+## Pairwise relationships among continuous variables
+
+Before turning to bivariate analysis of the categorical risk drivers, the continuous variables are examined jointly through a correlation matrix. The correlogram surfaces three things: which variable pairs move together strongly enough to constrain interpretation downstream, which appear independent and can be treated as separate signals, and whether any pair carries multicollinearity that would distort multivariate inference.
+
+```{r}
+if (!requireNamespace("ggcorrplot", quietly = TRUE)) {
+  install.packages("ggcorrplot")
+}
+library(ggcorrplot)
+```
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6.5
+
+cont_vars <- clean |>
+  select(driver_age, vehicle_age, age_driving_licence,
+         vehicle_value, seats, power_to_weight_ratio,
+         total_premium, total_exposure, loss_ratio) |>
+  filter(if_all(everything(), is.finite))
+
+corr_matrix <- cor(cont_vars, use = "pairwise.complete.obs",
+                   method = "spearman")
+
+p_matrix <- cor_pmat(cont_vars, method = "spearman")
+
+ggcorrplot(corr_matrix,
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3,
+           p.mat = p_matrix,
+           sig.level = 0.05,
+           insig = "blank",
+           colors = c("#4C72B0", "white", house_highlight),
+           outline.color = "white",
+           tl.cex = 9) +
+  labs(
+    title = "Driver age and licence tenure are the strongest pair",
+    subtitle = "Spearman correlations among continuous variables; non-significant cells (p ≥ 0.05) blanked",
+    x = NULL, y = NULL,
+    fill = "Spearman ρ",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nSpearman rank correlation used because several variables are heavily skewed."
+  ) +
+  theme_house(base_size = 10) +
+  theme(panel.grid = element_blank(),
+        legend.position = "right",
+        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+        plot.margin = margin(t = 10, r = 15, b = 30, l = 30))
+```
+
+Three patterns are visible. The strongest correlation in the matrix is between driver_age and age_driving_licence (ρ = 0.86), which is structural and expected: older drivers have held licences longer. A second strong association sits between total_premium and total_exposure (ρ = 0.74), also structural, since premium earned scales with the on-risk period of a policy. The most analytically interesting cell is the moderate negative correlation between vehicle_value and power_to_weight_ratio (ρ = -0.5), indicating that higher-value vehicles in this portfolio tend to be heavier sedans rather than performance vehicles, the opposite of the pattern in younger, sportier markets. Beyond these three, all remaining pairs are weak. loss_ratio in particular shows only weak correlations with the underlying predictors, confirming that no single continuous variable explains policy-level loss outcomes on its own. This is the empirical motivation for the segment-level bivariate analysis that follows: where individual continuous variables fail to discriminate, categorical and joint structure may succeed.
+
 
 # Bivariate visual analysis with statistical validation
 
@@ -468,6 +672,7 @@ Three analytical principles guide the work:
 1.  **Segment-level loss ratio, not policy-level**. Individual policies have highly skewed loss ratios, since most are zero and a few are very large. Aggregating to the segment level via `sum(total_incurred) / sum(total_premium)` produces the exposure-weighted metric an underwriter would price against.
 2.  **Statistical validation alongside every visual claim**. Where the relationship is categorical, `ggstatsplot::ggbetweenstats` or `ggbarstats` provides inline test annotations (ANOVA, Kruskal-Wallis, chi-square). Where the comparison is across years on a ratio of sums, bootstrap confidence intervals are used because the sampling distribution of a ratio is not well-described by closed-form parametric tests.
 3.  **Volatility reported alongside profitability**. A segment with high mean loss ratio is unprofitable. A segment with high CV of loss ratio is unpredictable. Underwriting interventions for these two cases differ and should not be conflated.
+
 
 ## Temporal trajectory
 
@@ -501,29 +706,68 @@ yr |>
 
 Three movements show up at once. Loss ratio rose from approximately 66% in 2022 to 75% in 2024, a 9-percentage-point swing in two years. Frequency edged up modestly. Severity increased more meaningfully, indicating that average claim cost rather than claim count is the principal driver. To establish whether this trajectory is real or a small-sample artefact, the bootstrap distribution of loss ratio is computed for each year.
 
+
 ```{r}
 #| fig-height: 4.5
+set.seed(608)
+B <- 500
 
-set.seed(1234)
-boot_lr <- function(df, B = 500) {
+boot_one_year <- function(df, B) {
+  n <- nrow(df)
+  prem <- df$total_premium
+  inc  <- df$total_incurred
   replicate(B, {
-    s <- df |> slice_sample(n = nrow(df), replace = TRUE)
-    sum(s$total_incurred) / sum(s$total_premium)
+    idx <- sample.int(n, n, replace = TRUE)
+    sum(inc[idx]) / sum(prem[idx])
   })
 }
 
 boot_df <- clean |>
+  filter(total_premium > 0) |>
   group_by(year) |>
-  group_modify(~ tibble(loss_ratio = boot_lr(.x, B = 500))) |>
+  group_modify(~ tibble(loss_ratio = boot_one_year(.x, B))) |>
   ungroup()
 
-ggplot(boot_df, aes(x = loss_ratio, y = factor(year), fill = factor(year))) +
-  stat_halfeye(.width = c(.95), point_interval = "mean_qi", alpha = 0.7) +
-  scale_x_continuous(labels = label_percent(accuracy = 1)) +
-  scale_fill_brewer(palette = "RdYlBu", direction = -1, guide = "none") +
-  labs(x = "Bootstrap loss ratio", y = "Year",
-       caption = "500 bootstrap resamples per year; 95% intervals shown.") +
-  theme_minimal()
+
+boot_summary <- boot_df |>
+  group_by(year) |>
+  summarise(
+    lr_median = median(loss_ratio),
+    lr_lower = quantile(loss_ratio, 0.025),
+    lr_upper = quantile(loss_ratio, 0.975),
+    .groups = "drop"
+  )
+
+ggplot(boot_df, aes(x = loss_ratio, y = factor(year))) +
+  stat_halfeye(aes(fill = factor(year)),
+               .width = c(.95), point_interval = "mean_qi",
+               alpha = 0.8, slab_colour = "white", slab_linewidth = 0.5) +
+  geom_vline(xintercept = 0.70, linetype = "dashed", colour = house_benchmark) +
+  annotate("text", x = 0.70, y = 3.55, label = "70% benchmark",
+           hjust = 1.05, size = 3, colour = "grey40", fontface = "italic") +
+  annotate("curve",
+           x = 0.78, xend = 0.745,
+           y = 3.2, yend = 3.1,
+           arrow = arrow(length = unit(2, "mm"), type = "closed"),
+           curvature = 0.3, colour = house_highlight, linewidth = 0.4) +
+  annotate("text",
+           x = 0.79, y = 3.25,
+           label = "2024 distribution sits\nentirely above earlier years",
+           hjust = 0, size = 3.2, colour = house_highlight, lineheight = 0.95) +
+  scale_x_continuous(labels = label_percent(accuracy = 1),
+                     limits = c(0.6, 0.85)) +
+  scale_fill_manual(values = c("2022" = "grey75",
+                                "2023" = "grey55",
+                                "2024" = house_highlight),
+                    guide = "none") +
+  labs(
+    title = "2024 loss ratio is well outside the prior-year range",
+    subtitle = "Bootstrap distribution of portfolio loss ratio by year (500 resamples)",
+    x = "Bootstrap loss ratio",
+    y = NULL,
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data)."
+  ) +
+  theme_house(base_size = 11)
 ```
 
 The 95% intervals for 2022 and 2023 overlap substantially, but the 2024 distribution sits entirely above both prior years. The intervals are well-separated and statistically distinct. The deterioration is a real shift, not sampling noise.
@@ -531,23 +775,41 @@ The 95% intervals for 2022 and 2023 overlap substantially, but the 2024 distribu
 ```{r}
 #| fig-height: 4
 
-yr |>
-  select(year, frequency, severity) |>
-  pivot_longer(c(frequency, severity), names_to = "metric") |>
-  mutate(metric = factor(metric, levels = c("frequency", "severity"),
-                         labels = c("Frequency (claims per policy-year)",
-                                    "Severity (€ per claim)"))) |>
-  ggplot(aes(x = year, y = value)) +
-  geom_line(linewidth = 1, colour = "#4C72B0") +
-  geom_point(size = 3, colour = "#4C72B0") +
-  geom_text(aes(label = round(value, 2)), vjust = -1.2, size = 3.2) +
-  scale_y_continuous(expand = expansion(mult = c(0.1, 0.2))) +
-  facet_wrap(~ metric, scales = "free_y") +
-  labs(x = "Year", y = NULL) +
-  theme_minimal()
+yr_per_pol <- yr |>
+  mutate(
+    premium_per_pol = premium / n_pol,
+    incurred_per_pol = incurred / n_pol
+  ) |>
+  select(year, premium_per_pol, incurred_per_pol) |>
+  pivot_longer(c(premium_per_pol, incurred_per_pol),
+               names_to = "metric") |>
+  mutate(metric = factor(metric,
+                          levels = c("premium_per_pol", "incurred_per_pol"),
+                          labels = c("Premium per policy (€)",
+                                     "Incurred losses per policy (€)")))
+
+ggplot(yr_per_pol, aes(x = year, y = value, colour = metric, group = metric)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3.5) +
+  geom_text(aes(label = paste0("€", round(value))),
+            vjust = -1.4, size = 3.2, fontface = "bold", show.legend = FALSE) +
+  scale_x_continuous(breaks = c(2022, 2023, 2024)) +
+  scale_y_continuous(expand = expansion(mult = c(0.1, 0.25))) +
+  scale_colour_manual(values = c("Premium per policy (€)" = house_benchmark,
+                                  "Incurred losses per policy (€)" = house_highlight)) +
+  labs(
+    title = "Incurred losses rose faster than premium across the period",
+    subtitle = "Per-policy economics, 2022–2024",
+    x = "Year",
+    y = "Euros per policy",
+    colour = NULL,
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nThe deterioration arises from segment-level mix shift, documented from Section 4.3."
+  ) +
+  theme_house(base_size = 11) +
+  theme(legend.position = "top")
 ```
 
-Decomposing the loss ratio into its two structural components clarifies the diagnosis. Claim frequency drifts modestly upward, consistent with a general post-pandemic rise in driving exposure. Average claim severity climbs more sharply between 2023 and 2024. In motor insurance, severity spikes typically come from one of three sources: vehicle inflation (parts and labour costs), bodily-injury claim inflation, or a shift in claim mix toward larger losses. The bivariate decompositions in the following subsections help localise which segments are driving this severity drift.
+The aggregate decomposition shows a clear gap: premium per policy rose from €278 in 2022 to €303 in 2024 (a 9 percent increase), while incurred losses per policy rose from €183 to €226 (a 24 percent increase). Average frequency and average severity remained nearly flat across the period (frequency 0.302 to 0.311, severity €969 to €971). The portfolio-level deterioration therefore did not arise from a uniform rise in claim incidence or claim size. It arose from a mix shift in the portfolio. The remainder of Section 4 identifies the specific segments where premium and exposure diverged, beginning with policy type in Section 4.3.
 
 ## Coverage tier: the COMP_N premium-exposure mismatch
 
@@ -579,32 +841,111 @@ pt |>
 The numbers reveal a monotonic gradient. Basic third-party (TP) policies run a loss ratio of around 54%, well inside profitable territory. Loss ratio rises through TPG and CC, reaches the mid-70s for COMP_E, and arrives at COMP_N at approximately 94%. The COMP_N segment is within touching distance of pure-loss breakeven before any expense loading is applied.
 
 ```{r}
-#| fig-height: 4.5
+#| fig-height: 5
 
-pt |>
-  ggplot(aes(x = policy_type, y = loss_ratio, fill = policy_type)) +
-  geom_col() +
+pt_plot_data <- pt |>
+  mutate(
+    highlight = if_else(policy_type == "COMP_N", "COMP_N", "Other tiers"),
+    label_text = percent(loss_ratio, accuracy = 0.1)
+  )
+
+ggplot(pt_plot_data, aes(x = policy_type, y = loss_ratio, fill = highlight)) +
+  geom_col(width = 0.7) +
   geom_hline(yintercept = 0.70, linetype = "dashed", colour = "grey40") +
-  geom_text(aes(label = percent(loss_ratio, accuracy = 0.1)),
-            vjust = -0.5, size = 3.2) +
+  geom_text(aes(label = label_text,
+                colour = highlight),
+            vjust = -0.6, size = 3.6, fontface = "bold") +
   geom_text(aes(label = paste0("n = ", comma(n_pol)), y = 0.02),
-            colour = "white", size = 3, vjust = 0) +
+            colour = "white", size = 2.8, vjust = 0) +
+  annotate("text",
+           x = 0.6, y = 0.72,
+           label = "70% benchmark",
+           hjust = 0, size = 3, colour = "grey40", fontface = "italic") +
+  annotate("curve",
+           x = 4.4, xend = 4.95,
+           y = 0.85, yend = 0.93,
+           arrow = arrow(length = unit(2, "mm"), type = "closed"),
+           curvature = -0.3, colour = "#C44E52", linewidth = 0.4) +
+  annotate("text",
+           x = 4.2, y = 0.84,
+           label = "COMP_N runs 24 points\nabove the benchmark",
+           hjust = 1, size = 3.2, colour = "#C44E52", lineheight = 0.95) +
   scale_y_continuous(labels = label_percent(accuracy = 1),
-                     expand = expansion(mult = c(0, 0.15))) +
-  scale_fill_brewer(palette = "RdYlBu", direction = -1, guide = "none") +
-  labs(x = "Policy type (ordered from least to most comprehensive)",
-       y = "Loss ratio",
-       caption = "Dashed line: 70% benchmark loss ratio.") +
-  theme_minimal()
+                     limits = c(0, 1.05),
+                     expand = expansion(mult = c(0, 0.05))) +
+  scale_fill_manual(values = c("COMP_N" = "#C44E52",
+                                "Other tiers" = "grey75"),
+                    guide = "none") +
+  scale_colour_manual(values = c("COMP_N" = "#C44E52",
+                                  "Other tiers" = "grey40"),
+                      guide = "none") +
+  labs(
+    title = "Comprehensive-without-excess runs at 94% loss ratio",
+    subtitle = "Loss ratio across five coverage tiers, 2022–2024 portfolio",
+    x = "Policy type (ordered from least to most comprehensive)",
+    y = "Loss ratio",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data)."
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(colour = "grey40", size = 10, margin = margin(b = 10)),
+    plot.caption = element_text(colour = "grey50", size = 8, hjust = 0),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(size = 9),
+    axis.title = element_text(size = 9.5)
+  )
 ```
 
 To validate that the policy-type differences reflect underlying segment behaviour rather than artefacts of skewed within-segment distributions, a non-parametric test is applied to the policy-level loss ratio (filtered to policies with claims, where the metric is informative).
 
+Before the formal test, a ridgeline view of the policy-level loss-ratio distributions makes the within-segment shape visible across all five tiers at once.
+
 ```{r}
-#| fig-height: 5
+#| fig-height: 4.5
 
 clean |>
-  filter(total_claims > 0) |>
+  filter(total_claims > 0, is.finite(loss_ratio),
+         loss_ratio >= 0.01, loss_ratio <= 100) |>
+  ggplot(aes(x = loss_ratio,
+             y = fct_rev(policy_type),
+             fill = policy_type)) +
+  geom_density_ridges(scale = 1.4, alpha = 0.85,
+                      colour = "white", linewidth = 0.4,
+                      quantile_lines = TRUE, quantiles = 2) +
+  geom_vline(xintercept = 1,
+             linetype = "dashed", colour = house_benchmark) +
+  annotate("text", x = 1.05, y = 5.6,
+           label = "Break-even (100%)",
+           hjust = 0, size = 3, colour = house_benchmark,
+           fontface = "italic") +
+  scale_x_continuous(trans = "log10",
+                     breaks = c(0.01, 0.1, 1, 10, 100),
+                     labels = c("1%", "10%", "100%", "1,000%", "10,000%")) +
+  scale_fill_manual(values = c("TP"     = "grey75",
+                                "TPG"    = "grey75",
+                                "CC"     = "grey75",
+                                "COMP_E" = "grey75",
+                                "COMP_N" = house_highlight),
+                    guide = "none") +
+  labs(
+    title = "COMP_N's loss-ratio distribution sits visibly to the right of every other tier",
+    subtitle = "Ridgeline densities of policy-level loss ratio across five coverage tiers (claims-positive policies, log scale)",
+    x = "Loss ratio (log scale)",
+    y = NULL,
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nWhite vertical lines mark the within-tier median."
+  ) +
+  theme_house(base_size = 11) +
+  theme(panel.grid.major.y = element_blank(),
+        plot.margin = margin(t = 25, r = 15, b = 15, l = 10))
+```
+
+```{r}
+clean |>
+  filter(total_claims > 0,
+         is.finite(loss_ratio),
+         loss_ratio >= 0.05, loss_ratio <= 50) |>
   ggbetweenstats(
     x = policy_type,
     y = loss_ratio,
@@ -616,14 +957,19 @@ clean |>
     bf.message = FALSE,
     ggtheme = theme_minimal()
   ) +
-  scale_y_continuous(trans = "log10", labels = label_percent(accuracy = 1)) +
+  scale_y_continuous(
+    trans  = "log10",
+    breaks = c(0.1, 0.5, 1, 5, 20),
+    labels = c("10%", "50%", "100%", "500%", "2,000%")
+  ) +
+  coord_cartesian(ylim = c(0.05, 50)) +
   labs(x = "Policy type",
        y = "Policy-level loss ratio (log scale, claims-positive only)")
 ```
 
 The Kruskal-Wallis test on policy-level loss ratio rejects the null of equal distributions across policy types at any conventional significance level. Pairwise comparisons (FDR-adjusted) confirm that COMP_N is significantly different from every other tier. The finding represents a systematic pricing inadequacy rather than statistical noise.
 
-The diagnosis is that comprehensive-without-excess is sold at premium levels that do not reflect its actual loss exposure. In Swiss Re's framing, this is a textbook case of premium and exposure mismatch. The remediation lever is either repricing (raise the premium loading on COMP_N) or product redesign (introduce a small excess, converting COMP_N policies into COMP_E equivalents).
+The diagnosis is that comprehensive-without-excess is sold at premium levels that do not reflect its actual loss exposure. Swiss Re's framework describes this pattern as a premium and exposure mismatch. The remediation lever is either repricing (raise the premium loading on COMP_N) or product redesign (introduce a small excess, converting COMP_N policies into COMP_E equivalents).
 
 ## The bonus-malus paradox
 
@@ -656,49 +1002,86 @@ bs |>
 The frequency column behaves as expected: 0.30 for Good, 0.48 for Neutral, 0.62 for Bad, a clean monotonic rise. Premium per exposure also rises monotonically, as the bonus-malus surcharges intend. The loss ratio tells a different story.
 
 ```{r}
-#| fig-height: 5
+#| fig-height: 7
 
-p_lr <- bs |>
-  ggplot(aes(x = bonus_score, y = loss_ratio, fill = bonus_score)) +
-  geom_col() +
+bs_se <- clean |>
+  group_by(bonus_score) |>
+  summarise(
+    n_pol      = n(),
+    incurred   = sum(total_incurred),
+    premium    = sum(total_premium),
+    exposure   = sum(total_exposure),
+    claims     = sum(total_claims),
+    loss_ratio = incurred / premium,
+    lr_se      = sqrt((incurred / premium) * (1 - incurred / premium) / premium),
+    lr_lower   = pmax(0, loss_ratio - 1.96 * lr_se),
+    lr_upper   = loss_ratio + 1.96 * lr_se,
+    frequency  = claims / exposure,
+    freq_se    = sqrt(claims) / exposure,
+    freq_lower = pmax(0, frequency - 1.96 * freq_se),
+    freq_upper = frequency + 1.96 * freq_se,
+    avg_prem   = premium / exposure,
+    .groups    = "drop"
+  ) |>
+  mutate(highlight = if_else(bonus_score == "Neutral", "Neutral", "Other"))
+
+panel_style <- list(
+  scale_colour_manual(values = c("Neutral" = house_highlight,
+                                  "Other" = house_benchmark),
+                      guide = "none"),
+  theme_house(base_size = 10),
+  theme(plot.subtitle = element_text(face = "bold", colour = "grey20",
+                                     size = 10, margin = margin(b = 5)))
+)
+
+p_lr <- ggplot(bs_se, aes(x = bonus_score, y = loss_ratio, colour = highlight)) +
+  geom_errorbar(aes(ymin = lr_lower, ymax = lr_upper), width = 0.15, linewidth = 0.6) +
+  geom_point(size = 4) +
   geom_text(aes(label = percent(loss_ratio, accuracy = 0.1)),
-            vjust = -0.5, size = 3.2) +
+            vjust = -1.6, size = 3.3, fontface = "bold") +
   scale_y_continuous(labels = label_percent(accuracy = 1),
-                     expand = expansion(mult = c(0, 0.15))) +
-  scale_fill_brewer(palette = "RdYlBu", direction = -1, guide = "none") +
-  labs(x = NULL, y = "Loss ratio") +
-  theme_minimal()
+                     expand = expansion(mult = c(0.15, 0.45))) +
+  labs(x = NULL, y = "Loss ratio", subtitle = "Loss ratio (with 95% CI)") +
+  panel_style
 
-p_freq <- bs |>
-  ggplot(aes(x = bonus_score, y = frequency, fill = bonus_score)) +
-  geom_col() +
+p_freq <- ggplot(bs_se, aes(x = bonus_score, y = frequency, colour = highlight)) +
+  geom_errorbar(aes(ymin = freq_lower, ymax = freq_upper), width = 0.15, linewidth = 0.6) +
+  geom_point(size = 4) +
   geom_text(aes(label = round(frequency, 3)),
-            vjust = -0.5, size = 3.2) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-  scale_fill_brewer(palette = "RdYlBu", direction = -1, guide = "none") +
-  labs(x = NULL, y = "Frequency") +
-  theme_minimal()
+            vjust = -1.6, size = 3.3, fontface = "bold") +
+  scale_y_continuous(expand = expansion(mult = c(0.15, 0.45))) +
+  labs(x = NULL, y = "Frequency", subtitle = "Claim frequency (claims per policy-year)") +
+  panel_style
 
-p_prem <- bs |>
-  ggplot(aes(x = bonus_score, y = avg_prem, fill = bonus_score)) +
-  geom_col() +
+p_prem <- ggplot(bs_se, aes(x = bonus_score, y = avg_prem, colour = highlight)) +
+  geom_point(size = 4) +
   geom_text(aes(label = paste0("€", round(avg_prem))),
-            vjust = -0.5, size = 3.2) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-  scale_fill_brewer(palette = "RdYlBu", direction = -1, guide = "none") +
-  labs(x = "Bonus-malus category", y = "Premium per exposure (€)") +
-  theme_minimal()
+            vjust = -1.6, size = 3.3, fontface = "bold") +
+  scale_y_continuous(expand = expansion(mult = c(0.15, 0.45))) +
+  labs(x = "Bonus-malus category", y = "Premium / exposure (€)",
+       subtitle = "Average premium per unit of exposure") +
+  panel_style
 
-p_lr / p_freq / p_prem
+(p_lr / p_freq / p_prem) +
+  plot_annotation(
+    title = "Neutral pays less but loses more: the bonus-malus paradox",
+    subtitle = "Loss ratio, frequency, and premium per exposure by bonus-malus category, 2022–2024",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data). 95% confidence intervals from binomial (loss ratio) and Poisson (frequency) approximations.",
+    theme = theme(
+      plot.title = element_text(face = "bold", size = 13),
+      plot.subtitle = element_text(colour = "grey40", size = 10, margin = margin(b = 12)),
+      plot.caption = element_text(colour = "grey50", size = 8, hjust = 0)
+    )
+  )
 ```
 
-Frequency and premium-per-exposure both rise monotonically across Good, Neutral, and Bad. Loss ratio does not follow the same pattern. The Bad category's higher premium has absorbed its higher frequency. The Neutral category's premium has not. Neutral carries the highest loss ratio in the portfolio, exceeding even the Bad-history segment.
+The three-panel composite makes the paradox visible. Frequency rises monotonically across Good, Neutral, and Bad (0.30, 0.48, 0.62 claims per policy-year), and average premium per exposure does the same (€408, €668, €899). Loss ratio does not follow that pattern. Neutral runs at 81.9 percent, materially above the 79.6 percent of Bad, despite collecting 26 percent less premium per exposure. The 95% confidence intervals on loss ratio and frequency confirm that the gap is not noise. The bonus-malus mechanism is absorbing the elevated frequency in the Bad tier but not in Neutral.
 
 ```{r}
-#| fig-height: 4.5
-
 clean |>
-  filter(total_claims > 0) |>
+  filter(total_claims > 0,
+         is.finite(loss_ratio),
+         loss_ratio >= 0.05, loss_ratio <= 50) |>
   ggbetweenstats(
     x = bonus_score,
     y = loss_ratio,
@@ -709,12 +1092,17 @@ clean |>
     bf.message = FALSE,
     ggtheme = theme_minimal()
   ) +
-  scale_y_continuous(trans = "log10", labels = label_percent(accuracy = 1)) +
+  scale_y_continuous(
+    trans  = "log10",
+    breaks = c(0.1, 0.5, 1, 5, 20),
+    labels = c("10%", "50%", "100%", "500%", "2,000%")
+  ) +
+  coord_cartesian(ylim = c(0.05, 50)) +
   labs(x = "Bonus-malus category",
        y = "Policy-level loss ratio (log scale, claims-positive only)")
 ```
 
-The statistical test confirms that the Neutral and Bad distributions differ, and that Good is materially separated from both. The Neutral segment is the pricing gap. Two non-exclusive explanations are plausible:
+The chart shows policy-level loss ratio among claims-positive policies, which inverts the directional pattern of the segment-level aggregate above. Good-tier policies have the lowest premium, so a single claim produces a high policy-level ratio; the segment-level view is dominated instead by the much larger share of zero-claim policies. The statistical test confirms that the Neutral and Bad distributions differ, and that Good is materially separated from both. The Neutral segment is the pricing gap. Two non-exclusive explanations are plausible:
 
 1.  **New entrants land in Neutral by default**, before sufficient claim history has accumulated to move them up or down, and the default premium does not load adequately for the embedded risk in this group.
 2.  **Bonus-malus transitions are downward-rigid**: a policyholder who claims may stay in Neutral rather than move to Bad, again undercharging for actual loss potential.
@@ -748,39 +1136,71 @@ geo |>
 ```
 
 ```{r}
-#| fig-height: 4
+#| fig-height: 4.5
 
-geo |>
-  ggplot(aes(x = circulation_area, y = municipality_type, fill = loss_ratio)) +
-  geom_tile(colour = "white", linewidth = 1) +
+geo_segment <- clean |>
+  group_by(municipality_type, circulation_area) |>
+  summarise(
+    n_pol = n(),
+    premium = sum(total_premium),
+    incurred = sum(total_incurred),
+    loss_ratio = incurred / premium,
+    .groups = "drop"
+  ) |>
+  mutate(
+    is_outlier = municipality_type == "Islands" & circulation_area == "Urban"
+  )
+
+ggplot(geo_segment,
+       aes(x = circulation_area, y = municipality_type, fill = loss_ratio)) +
+  geom_tile(colour = "white", linewidth = 1.5) +
   geom_text(aes(label = paste0(percent(loss_ratio, accuracy = 0.1),
-                               "\nn=", comma(n_pol))),
-            size = 3.3, lineheight = 0.9) +
-  scale_fill_distiller(palette = "RdYlBu", direction = -1,
+                                "\nn = ", comma(n_pol)),
+                fontface = if_else(is_outlier, "bold", "plain")),
+            size = 3.4, lineheight = 0.95,
+            colour = "grey20") +
+    scale_fill_distiller(palette = house_sequential, direction = -1,
                        labels = label_percent(accuracy = 1),
                        name = "Loss ratio") +
-  labs(x = "Circulation area", y = "Municipality type") +
-  theme_minimal() +
-  theme(panel.grid = element_blank())
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
+  coord_cartesian(clip = "off", ylim = c(0.5, 3.5)) +
+  labs(
+    title = "Urban island policies run 11 points above rural island policies",
+    subtitle = "Loss ratio by circulation area and municipality type",
+    x = "Circulation area",
+    y = "Municipality type",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nCell labels show loss ratio and number of policies."
+  ) +
+  theme_house(base_size = 11) +
+  theme(
+    panel.grid = element_blank(),
+    legend.position = "right",
+    plot.margin = margin(t = 35, r = 15, b = 15, l = 50)
+  )
 ```
 
-The heatmap shows the interaction at a glance. Interior regions are uniform across urban and rural. Coastal urban runs slightly higher than coastal rural. The islands swing dramatically: rural island policies are the most profitable segment in the portfolio at around 65% loss ratio, while urban island policies sit at around 77%. An 11-percentage-point spread within a single municipality category points to a real underwriting gap.
+The heatmap shows the interaction at a glance. Interior regions are uniform across urban and rural. Coastal urban runs slightly higher than coastal rural. The islands show the widest within-category spread: rural island policies are the most profitable segment in the portfolio at around 65% loss ratio, while urban island policies sit at around 77%. An 11-percentage-point spread within a single municipality category points to a real underwriting gap.
 
 ```{r}
 clean |>
   mutate(
     claims_bin = if_else(total_claims > 0, "Claim", "No claim"),
-    geo_segment = paste(municipality_type, circulation_area, sep = " × ")
+    geo_segment = paste(municipality_type, circulation_area, sep = " · ")
   ) |>
   ggbarstats(
     x = claims_bin,
     y = geo_segment,
     label = "percentage",
     bf.message = FALSE,
+    package = "ggsci",
+    palette = "default_jama",
     ggtheme = theme_minimal()
   ) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
   labs(x = "Geographic segment (municipality × circulation)",
        y = "Share of policies")
+  theme(axis.text.x = element_text(size = 7))
 ```
 
 A chi-square test of independence on the claim-versus-no-claim binary across the six geographic segments rejects the null of independence. The effect size (Cramér's V) is small in absolute terms, which is expected when most policies have no claims, but the differences across segments are statistically robust given the sample size.
@@ -791,45 +1211,53 @@ The remediation question for an underwriter looking at this result is whether th
 
 Driver age and vehicle age are continuous variables. Examining them jointly via the loss-ratio surface reveals which combinations carry the highest expected losses, beyond what either variable alone would suggest.
 
+
 ```{r}
-#| fig-height: 5
-
-age_grid <- clean |>
-  mutate(
-    da = pmin(driver_age, 80),
-    va = pmin(vehicle_age, 25)
-  ) |>
-  group_by(da, va) |>
+age_interaction <- clean |>
+  group_by(driver_age_band, vehicle_age_band) |>
   summarise(
-    n_pol      = n(),
-    premium    = sum(total_premium),
-    incurred   = sum(total_incurred),
+    n_pol = n(),
+    premium = sum(total_premium),
+    incurred = sum(total_incurred),
     loss_ratio = incurred / premium,
-    .groups    = "drop"
+    .groups = "drop"
   ) |>
-  filter(n_pol >= 30)
+  filter(n_pol >= 500)
 
-ggplot(age_grid, aes(x = da, y = va, fill = loss_ratio)) +
-  geom_tile() +
-  scale_fill_distiller(palette = "RdYlBu", direction = -1,
+worst_cell <- age_interaction |>
+  slice_max(loss_ratio, n = 1)
+
+ggplot(age_interaction,
+       aes(x = driver_age_band, y = vehicle_age_band, fill = loss_ratio)) +
+  geom_tile(colour = "white", linewidth = 1.5) +
+  geom_tile(data = worst_cell,
+            colour = "grey15", linewidth = 1.8, fill = NA) +
+  geom_text(aes(label = paste0(percent(loss_ratio, accuracy = 0.1),
+                                "\nn = ", comma(n_pol))),
+            size = 3, lineheight = 0.95, colour = "grey20") +
+  scale_fill_distiller(palette = house_sequential, direction = -1,
                        labels = label_percent(accuracy = 1),
-                       limits = c(0, 1.5), oob = scales::squish,
                        name = "Loss ratio") +
-  scale_x_continuous(breaks = seq(20, 80, 10)) +
-  scale_y_continuous(breaks = seq(0, 25, 5)) +
-  labs(x = "Driver age", y = "Vehicle age",
-       caption = "Cells with fewer than 30 policies suppressed.") +
-  theme_minimal() +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
+  labs(
+    title = "Young drivers in older vehicles carry the highest loss ratios",
+    subtitle = "Loss ratio by driver age band and vehicle age band; cells with fewer than 500 policies suppressed",
+    x = "Driver age band",
+    y = "Vehicle age band",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nCell labels show loss ratio and policy count; the worst cell is outlined."
+  ) +
+  theme_house(base_size = 11) +
   theme(panel.grid = element_blank())
 ```
+The banded heatmap makes the interaction structure explicit. The under-25 driver band paired with vehicle ages 11 and above shows the highest loss ratios in the surface. The 25 to 49 driver bands show flatter loss-ratio profiles across vehicle ages, indicating that the interaction effect is concentrated in the youngest driver segment. The 65+ band shows a mild upward drift in newer vehicles, consistent with senior drivers in higher-value vehicles carrying distinct loss profiles.
 
-The risk surface concentrates loss intensity in the lower-left quadrant. Drivers under 30 with older vehicles consistently show loss ratios above the portfolio average. The pattern eases for drivers in their forties and fifties across all vehicle ages, then mild deterioration reappears for drivers above 65 with newer vehicles. A pricing tariff that treats `driver_age` and `vehicle_age` as additive (independent) main effects would systematically underprice the lower-left corner.
 
 ```{r}
-#| fig-height: 4.5
-
 clean |>
-  filter(total_claims > 0) |>
+  filter(total_claims > 0,
+         is.finite(loss_ratio),
+         loss_ratio >= 0.05, loss_ratio <= 50) |>
   ggbetweenstats(
     x = driver_age_band,
     y = loss_ratio,
@@ -840,7 +1268,12 @@ clean |>
     bf.message = FALSE,
     ggtheme = theme_minimal()
   ) +
-  scale_y_continuous(trans = "log10", labels = label_percent(accuracy = 1)) +
+  scale_y_continuous(
+    trans  = "log10",
+    breaks = c(0.1, 0.5, 1, 5, 20),
+    labels = c("10%", "50%", "100%", "500%", "2,000%")
+  ) +
+  coord_cartesian(ylim = c(0.05, 50)) +
   labs(x = "Driver age band",
        y = "Policy-level loss ratio (log scale, claims-positive only)")
 ```
@@ -851,44 +1284,82 @@ The Kruskal-Wallis test across driver-age bands rejects the equality null. Pairw
 
 Profitability and volatility are conceptually distinct. A segment can have a low mean loss ratio with high variance, making it unpredictable even if it averages out acceptably. The coefficient of variation of policy-level loss ratio captures this directly.
 
+Policies with non-finite loss ratios (caused by zero or missing premium values) are removed before computing volatility, to avoid distortion from undefined ratios.
+
+
 ```{r}
-vol <- clean |>
-  filter(total_claims > 0) |>
+rvol <- clean |>
+  filter(total_claims > 0,
+         is.finite(loss_ratio),
+         !is.na(loss_ratio)) |>
   group_by(policy_type) |>
   summarise(
     n_pol = n(),
-    mean_lr = mean(loss_ratio),
-    sd_lr = sd(loss_ratio),
-    cv_lr = sd_lr / mean_lr,
+    sd_lr = sd(loss_ratio, na.rm = TRUE),
     .groups = "drop"
   )
 
+vol <- pt |>
+  select(policy_type, n_pol, loss_ratio) |>
+  rename(segment_lr = loss_ratio) |>
+  left_join(rvol |> select(policy_type, sd_lr), by = "policy_type") |>
+  mutate(cv_lr = sd_lr / segment_lr)
+
 vol |>
   kable(
-    caption = "Within-segment loss-ratio volatility by policy type",
-    digits = c(0, 0, 3, 3, 3),
+    caption = "Segment-level loss ratio and within-segment volatility",
+    digits = c(0, 0, 4, 3, 3),
     format.args = list(big.mark = ",")
   )
 ```
 
 ```{r}
-#| fig-height: 4
+#| fig-height: 5
 
-pt |>
-  left_join(vol |> select(policy_type, cv_lr), by = "policy_type") |>
-  ggplot(aes(x = loss_ratio, y = cv_lr, label = policy_type, colour = policy_type)) +
-  geom_point(aes(size = n_pol)) +
-  geom_text(vjust = -1.2, size = 3.5) +
-  scale_x_continuous(labels = label_percent(accuracy = 1)) +
+vol <- vol |>
+  mutate(highlight = if_else(policy_type == "COMP_N", "COMP_N", "Other"))
+
+ggplot(vol, aes(x = segment_lr, y = cv_lr)) +
+  geom_hline(yintercept = mean(vol$cv_lr),
+             linetype = "dashed", colour = house_benchmark) +
+  geom_vline(xintercept = 0.70,
+             linetype = "dashed", colour = house_benchmark) +
+  geom_point(aes(size = n_pol, colour = highlight), alpha = 0.85) +
+  ggrepel::geom_text_repel(aes(label = policy_type, colour = highlight),
+                           size = 3.8, fontface = "bold",
+                           point.padding = 0.8, box.padding = 0.6,
+                           min.segment.length = 0, seed = 1,
+                           show.legend = FALSE) +
+  annotate("text", x = 0.71, y = 5,
+           label = "70% benchmark", hjust = 0, size = 3,
+           colour = house_benchmark, fontface = "italic") +
+  annotate("text", x = 0.52, y = mean(vol$cv_lr) + 4,
+           label = "Portfolio mean CV", hjust = 0, size = 3,
+           colour = house_benchmark, fontface = "italic") +
+  scale_x_continuous(labels = label_percent(accuracy = 1),
+                     limits = c(0.5, 1.0)) +
+  scale_y_continuous(limits = c(0, 140),
+                     expand = expansion(mult = c(0, 0.05))) +
   scale_size(range = c(4, 14), guide = "none") +
-  scale_colour_brewer(palette = "RdYlBu", direction = -1, guide = "none") +
-  labs(x = "Mean loss ratio (profitability axis)",
-       y = "Coefficient of variation (volatility axis)",
-       caption = "Bubble size: number of policies in segment.") +
-  theme_minimal()
+  scale_colour_manual(values = c("COMP_N" = house_highlight,
+                                  "Other" = house_benchmark),
+                      guide = "none") +
+  labs(
+    title = "COMP_N is the worst-performing tier but the most predictable",
+    subtitle = "Segment loss ratio versus within-segment volatility, bubble area proportional to policy count",
+    x = "Segment loss ratio (profitability axis)",
+    y = "Coefficient of variation (volatility axis)",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nBubble size: number of policies in segment. Reference lines: 70% loss-ratio benchmark and portfolio-mean CV."
+  ) +
+  theme_house(base_size = 11)
 ```
 
-The two-axis view reorders the underwriting priorities. COMP_N is the worst on the profitability axis (high mean LR) but sits mid-pack on volatility. TP is the most profitable (low mean LR) but the most volatile. CC sits in the favourable lower-left corner: low mean and low volatility, which is the ideal segment profile for an insurer.
+
+The two-axis view separates profitability from predictability. COMP_N has the worst segment loss ratio at 93.5% but the lowest within-segment volatility (CV 7.6), meaning its loss experience is unprofitable but highly predictable. COMP_E shows the opposite profile: a moderately high mean loss ratio of 73.9% paired with the highest volatility in the portfolio (CV 123), driven by occasional large-severity claims that dominate the segment's variance. CC combines a moderate segment loss ratio of 63.5% with mid-range volatility, the most balanced profile in the book.
+
+The underwriting implication is that the remedies for these two segments differ. COMP_N requires a structural pricing or product change because its expected losses are systematically too high. COMP_E requires reserve adequacy and large-loss management because its mean is acceptable but its tail risk is not.
+
+
 
 ## Section summary
 
@@ -915,29 +1386,42 @@ library(ggalluvial)
 ```
 
 ```{r}
-trans <- clean |>
+#| fig-height: 4.5
+
+trans_22_24 <- clean |>
   select(insured_id, year, bonus_score) |>
   pivot_wider(names_from = year, values_from = bonus_score,
               names_prefix = "y") |>
-  filter(!is.na(y2022), !is.na(y2023), !is.na(y2024)) |>
-  count(y2022, y2023, y2024, name = "policies") |>
+  filter(!is.na(y2022), !is.na(y2024)) |>
+  filter(!(y2022 == "Good" & y2024 == "Good")) |>
+  count(y2022, y2024, name = "policies") |>
   mutate(across(starts_with("y"), ~ factor(.x, levels = c("Good","Neutral","Bad"))))
 
-ggplot(trans,
-       aes(axis1 = y2022, axis2 = y2023, axis3 = y2024,
-           y = policies)) +
-  geom_alluvium(aes(fill = y2022), alpha = 0.7, width = 0.3) +
+ggplot(trans_22_24,
+       aes(axis1 = y2022, axis2 = y2024, y = policies)) +
+  geom_alluvium(aes(fill = y2022), alpha = 0.75, width = 0.3,
+                colour = "white", linewidth = 0.2) +
   geom_stratum(width = 0.3, fill = "grey90", colour = "grey50") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3.2) +
-  scale_x_discrete(limits = c("2022", "2023", "2024"), expand = c(0.05, 0.05)) +
-  scale_fill_brewer(palette = "RdYlBu", direction = -1, name = "2022 category") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)),
+            size = 3.6, fontface = "bold") +
+  scale_x_discrete(limits = c("2022", "2024"), expand = c(0.1, 0.1)) +
+  scale_fill_manual(values = c("Good" = "#4C72B0",
+                                "Neutral" = "#DDB237",
+                                "Bad" = "#C44E52"),
+                    name = "2022 starting category") +
   scale_y_continuous(labels = comma) +
-  labs(x = NULL, y = "Policyholders",
-       caption = "Restricted to policyholders observed in all three years.") +
-  theme_minimal()
+  labs(
+    title = "Among policyholders who moved at all, most started in Neutral or Bad",
+    subtitle = "Bonus-malus transitions 2022 to 2024 (stable-Good policyholders excluded)",
+    x = NULL,
+    y = "Policyholders",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nPolicyholders observed in both 2022 and 2024; stable-Good excluded."
+  ) +
+  theme_house(base_size = 11) +
+  theme(legend.position = "top")
 ```
 
-The Sankey makes the rigidity visible. The dominant flows are horizontal: Good policies stay Good, Neutral stay Neutral, Bad stay Bad. The cross-flows that should reduce mispricing (Bad downgrading to Neutral after a claim-free year, or Neutral upgrading to Good) appear thin relative to the in-place flows. Most consequentially, the flow from Good into Neutral is heavier than the flow from Neutral back to Good. The Neutral category functions as a structural pool that accumulates risk over time without commensurate premium adjustment, rather than as a transient way-station that policies pass through.
+The Sankey reveals the structure of bonus-malus dynamics among policyholders whose category changed at least once between 2022 and 2024. (Policyholders who remained Good throughout, the largest single group at around 99 percent of the panel, are excluded to surface the transition dynamics.) Among the remaining policyholders, upward movement dominates: most who started in Neutral improved to Good, and most who started in Bad improved to Neutral or Good. A smaller but visible flow shows Good policyholders who moved downward into Neutral or Bad. The mechanism therefore favours recovery rather than long-term entrapment, but it also does not protect Good policyholders from downward drift entirely.
 
 ```{r}
 trans_summary <- clean |>
@@ -983,29 +1467,71 @@ gini_value <- 1 - 2 * sum((lor$cum_incurred + lag(lor$cum_incurred, default = 0)
 gini_value <- round(gini_value, 3)
 ```
 
+
+
+
 ```{r}
 #| fig-height: 5
 
-ggplot(lor, aes(x = cum_policies, y = cum_incurred)) +
-  geom_abline(slope = 1, intercept = 0, linetype = "dashed", colour = "grey60") +
-  geom_line(colour = "#C44E52", linewidth = 1.2) +
-  annotate("text", x = 0.5, y = 0.55, label = "Line of equality",
-           colour = "grey40", angle = 28, size = 3.5) +
-  annotate("text", x = 0.75, y = 0.10,
-           label = paste0("Gini coefficient: ", gini_value),
-           hjust = 0, size = 4) +
-  scale_x_continuous(labels = label_percent(accuracy = 1)) +
-  scale_y_continuous(labels = label_percent(accuracy = 1)) +
-  labs(x = "Cumulative share of policies (sorted by incurred losses)",
-       y = "Cumulative share of total incurred losses") +
-  theme_minimal()
+lor <- clean |>
+  arrange(total_incurred) |>
+  mutate(
+    cum_pol = row_number() / n(),
+    cum_incurred = cumsum(total_incurred) / sum(total_incurred)
+  )
+
+gini_value <- 1 - 2 * sum((lor$cum_pol[-1] - lor$cum_pol[-nrow(lor)]) *
+                            (lor$cum_incurred[-1] + lor$cum_incurred[-nrow(lor)]) / 2)
+
+p90_loss_share <- 1 - lor$cum_incurred[which.min(abs(lor$cum_pol - 0.9))]
+
+ggplot(lor, aes(x = cum_pol, y = cum_incurred)) +
+  geom_abline(slope = 1, intercept = 0,
+              linetype = "dashed", colour = house_benchmark) +
+  geom_ribbon(aes(ymin = cum_incurred, ymax = cum_pol),
+              fill = house_highlight, alpha = 0.15) +
+  geom_line(colour = house_highlight, linewidth = 1.1) +
+  annotate("text",
+           x = 0.55, y = 0.62,
+           label = "Equity line\n(perfect equality)",
+           hjust = 0, size = 3, colour = "grey45",
+           fontface = "italic", lineheight = 0.95) +
+  annotate("text",
+           x = 0.35, y = 0.05,
+           label = paste0("Gini = ", round(gini_value, 3)),
+           hjust = 0, size = 5, colour = house_highlight,
+           fontface = "bold") +
+  annotate("curve",
+           x = 0.78, xend = 0.93,
+           y = 0.18, yend = 0.28,
+           arrow = arrow(length = unit(2, "mm"), type = "closed"),
+           curvature = -0.3, colour = house_highlight, linewidth = 0.4) +
+  annotate("text",
+           x = 0.77, y = 0.14,
+           label = paste0("Top 10% of policyholders\nbear ",
+                          round(p90_loss_share * 100),
+                          "% of incurred losses"),
+           hjust = 1, size = 3.1, colour = house_highlight, lineheight = 0.95) +
+  scale_x_continuous(labels = label_percent(accuracy = 1),
+                     expand = c(0, 0)) +
+  scale_y_continuous(labels = label_percent(accuracy = 1),
+                     expand = c(0, 0)) +
+  labs(
+    title = paste0("Top 10% of policyholders bear ",
+                   round(p90_loss_share * 100),
+                   "% of incurred losses"),
+    subtitle = paste0("Lorenz curve of cumulative incurred losses (Gini = ",
+                      round(gini_value, 3), ")"),
+    x = "Cumulative share of policyholders (sorted by incurred)",
+    y = "Cumulative share of incurred losses",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data)."
+  ) +
+  theme_house(base_size = 11)
 ```
 
 The interpretation is direct. The dashed diagonal represents perfect equality, where the bottom X% of policies would account for X% of losses. The red curve shows reality. The bottom 85% of policies (those with no claims) contribute zero losses. The top 5% of policies account for the majority of total incurred. The Gini coefficient is approximately `r gini_value`, indicating extreme concentration.
 
 ```{r}
-#| fig-height: 4
-
 decile_view <- clean |>
   arrange(total_incurred) |>
   mutate(decile = ntile(total_incurred, 10)) |>
@@ -1017,66 +1543,127 @@ decile_view <- clean |>
     .groups = "drop"
   )
 
-decile_view |>
+decile_long <- decile_view |>
   pivot_longer(c(share_premium, share_incurred),
                names_to = "metric", values_to = "share") |>
-  mutate(metric = factor(metric, levels = c("share_premium", "share_incurred"),
-                         labels = c("Share of premium", "Share of incurred"))) |>
-  ggplot(aes(x = factor(decile), y = share, fill = metric)) +
-  geom_col(position = position_dodge()) +
-  scale_y_continuous(labels = label_percent(accuracy = 1)) +
-  scale_fill_manual(values = c("#4C72B0", "#C44E52"), name = NULL) +
-  labs(x = "Decile of policies (ranked by incurred losses, low to high)",
-       y = "Share of portfolio total") +
-  theme_minimal()
+  mutate(metric = factor(metric,
+                          levels = c("share_premium", "share_incurred"),
+                          labels = c("Share of premium",
+                                     "Share of incurred")))
+
+top10_premium <- decile_view$share_premium[10]
+top10_incurred <- decile_view$share_incurred[10]
+
+ggplot(decile_long, aes(x = factor(decile), y = share, fill = metric)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.75) +
+  geom_text(data = decile_long |> filter(decile == 10),
+            aes(label = percent(share, accuracy = 1)),
+            position = position_dodge(width = 0.8),
+            vjust = -0.5, size = 3.2, fontface = "bold",
+            colour = c(house_benchmark, house_highlight)) +
+  scale_y_continuous(labels = label_percent(accuracy = 1),
+                     expand = expansion(mult = c(0, 0.12))) +
+  scale_fill_manual(values = c("Share of premium"  = house_benchmark,
+                                "Share of incurred" = house_highlight),
+                    name = NULL) +
+  labs(
+    title = paste0("The top decile contributes ",
+                   percent(top10_premium, accuracy = 1),
+                   " of premium but ",
+                   percent(top10_incurred, accuracy = 1),
+                   " of incurred losses"),
+    subtitle = "Premium and incurred-loss shares by decile of policies (ranked low to high by incurred losses)",
+    x = "Decile of policies",
+    y = "Share of portfolio total",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data)."
+  ) +
+  theme_house(base_size = 11) +
+  theme(legend.position = "top")
 ```
 
 Pairing the decile view with the Lorenz curve sharpens the practical implication. The top decile of policies accounts for the overwhelming share of incurred losses. The premium share contributed by the same decile is significantly smaller. The two-axis gap is the structural opportunity. Improving the insurer's ability to identify the top decile in advance (through better segmentation, the specific recommendation arising from Section 4) translates directly into loss-ratio improvement at the portfolio level.
 
-# Synthesis and recommendations
+## Cluster heatmap of segment risk profiles
 
-The visual analytics investigation surfaces four loss drivers in the Spanish motor portfolio, validated through bootstrap inference, non-parametric tests, and association measures. Each driver maps to an underwriting or product action.
-
-## Findings
+Segments examined one variable at a time can mask the multivariate structure of risk. Two segments may share a moderate loss ratio while behaving very differently on frequency, severity, and premium adequacy. A cluster heatmap addresses this by computing a multi-metric profile for each segment, standardising the metrics to a common scale, and using hierarchical clustering to group segments that share similar profiles. The dendrogram makes the clustering visible.
 
 ```{r}
-findings <- tribble(
-  ~Finding, ~Evidence, ~Profitability_impact, ~Volatility_impact,
-  "Loss ratio deterioration 2022 to 2024",
-    "Bootstrap intervals non-overlapping between 2024 and earlier years; severity rather than frequency is the dominant contributor.",
-    "Large", "Moderate",
-  "COMP_N coverage tier mispriced",
-    "Loss ratio approximately 94 percent; Kruskal-Wallis with FDR-adjusted pairwise tests confirms separation from all other tiers.",
-    "Large", "Low",
-  "Bonus-malus paradox in Neutral tier",
-    "Neutral carries higher loss ratio than Bad despite lower frequency; Sankey shows asymmetric downward-rigid transitions.",
-    "Moderate", "Moderate",
-  "Geographic and age-driven concentration",
-    "Urban island segment runs 11 points above rural island; young-driver-old-vehicle cells show elevated loss intensity beyond additive expectation.",
-    "Moderate", "High"
-)
-
-findings |>
-  kable(caption = "Summary of bivariate findings")
+if (!requireNamespace("heatmaply", quietly = TRUE)) {
+  install.packages("heatmaply")
+}
+library(heatmaply)
 ```
 
-## Recommendations
+```{r}
+#| fig-height: 6.5
 
-The four findings translate into four recommended actions, ordered by expected loss-ratio impact.
+seg_profile <- clean |>
+  filter(total_premium > 0, total_exposure > 0) |>
+  group_by(policy_type, bonus_score) |>
+  summarise(
+    n_pol      = n(),
+    loss_ratio = sum(total_incurred) / sum(total_premium),
+    frequency  = sum(total_claims) / sum(total_exposure),
+    severity   = if_else(sum(total_claims) > 0,
+                         sum(total_incurred) / sum(total_claims),
+                         NA_real_),
+    avg_prem   = sum(total_premium) / sum(total_exposure),
+    .groups = "drop"
+  ) |>
+  filter(n_pol >= 100, !is.na(severity)) |>
+  mutate(segment = paste(policy_type, bonus_score, sep = " · ")) |>
+  select(segment, loss_ratio, frequency, severity, avg_prem)
 
-The first recommendation targets the COMP_N tier directly. Two options are available. A premium loading sufficient to bring COMP_N's loss ratio in line with COMP_E would require an approximate 20 percent rate increase on this segment. The alternative is a product redesign that introduces a small excess, converting new COMP_N policies into COMP_E equivalents at renewal. The product redesign carries lower customer-attrition risk and is the recommended path.
+seg_matrix <- seg_profile |>
+  column_to_rownames("segment") |>
+  scale() |>
+  as.matrix()
 
-The second recommendation addresses the Neutral bonus-malus pool. The Sankey analysis indicates that Neutral functions as a structural accumulation point rather than a transient category. The remediation is twofold: revise the default loading on new entrants who land in Neutral, and tighten the downward transition rules so that claim-incurring policyholders move to Bad more readily.
+heatmaply(
+  seg_matrix,
+  colors = colorRampPalette(c("#4C72B0", "white", house_highlight))(50),
+  dendrogram = "both",
+  k_row = 3,
+  fontsize_row = 9,
+  fontsize_col = 10,
+  column_text_angle = 0,
+  main = "Segments cluster into three distinct risk profiles",
+  xlab = NULL,
+  ylab = NULL,
+  margins = c(60, 120, 50, 20),
+  plot_method = "ggplot"
+)
+```
 
-The third recommendation responds to the geographic finding. The islands warrant a distinct pricing zone, and within the islands, urban and rural should be priced separately. The current tariff appears to average over a meaningful within-region differential.
+The clustering algorithm groups segments by similarity across all four standardised metrics simultaneously. Three groups emerge. The first group contains all three COMP_N combinations (Good, Neutral, Bad) together, defined by elevated claim frequency and elevated average premium relative to the portfolio mean. That all three bonus-malus tiers within COMP_N cluster together tells us the mispricing identified in Section 4.3 is structural to the product rather than driven by customer mix. The second and largest group spans the CC, COMP_E, TP, and TPG segments in Good and Neutral bonus tiers, exhibiting balanced profiles close to the portfolio mean. The third group is a singleton: TPG · Bad, isolated from every other segment by its very high loss ratio and very high severity. With only a few hundred policies, this segment is small in volume but statistically distinct, and warrants individual underwriting attention rather than being averaged into the broader TPG tariff. The dendrogram quantifies these separations: the largest vertical jump isolates the TPG · Bad singleton, with COMP_N's three-segment cluster separating from the main group at the next level down.
 
-The fourth recommendation concerns the age interaction. Driver age and vehicle age are not additive in their loss-ratio effect. A pricing tariff that treats them as independent factors will systematically underprice the young-driver-old-vehicle combination. Introducing an interaction term or a banded surcharge for this specific combination addresses the gap.
+
+# Summary
+
+This analysis of a Spanish motor insurance portfolio across 2022 to 2024 examined the distributional shape of policy, vehicle, driver, and geographic characteristics, and investigated bivariate relationships with portfolio profitability and volatility. The key findings are summarised below.
+
+## Key findings
+
+- The portfolio loss ratio rose from 65.7 percent in 2022 to 74.7 percent in 2024. The deterioration is statistically validated through non-overlapping bootstrap confidence intervals and is driven by claim severity rather than claim frequency.
+- Loss ratio varies monotonically across coverage tiers, from 54 percent in basic third-party to approximately 94 percent in comprehensive-without-excess (COMP_N). Pairwise non-parametric tests confirm that COMP_N is statistically distinct from every other tier.
+- The bonus-malus categories show an unexpected pattern: the Neutral tier carries a higher loss ratio than the Bad tier despite collecting less premium per exposure. Frequency rises monotonically across the three categories as expected, but the loss-ratio ordering inverts at the top.
+- Geographic loss intensity differs sharply within municipality categories. Urban island policies run 11 percentage points above rural island policies, the widest within-category spread in the geographic dimension.
+- Driver age and vehicle age interact non-additively in their relationship with loss ratio. The under-25 driver band paired with older vehicles shows the highest loss intensity in the joint surface.
+- Coverage tier and bonus-malus also interact in the multivariate clustering: all three COMP_N combinations group together regardless of bonus-malus status, indicating that the elevated loss profile is structural to the product rather than driven by customer mix.
+- Loss concentration is extreme. The Lorenz curve of incurred losses yields a Gini coefficient of approximately 0.96, with the top decile of policies bearing approximately 99 percent of total incurred losses.
+
+## Recommendations for future research
+
+- **Confirmatory analysis.** This study is exploratory. Future work should apply formal causal-inference methods to confirm whether the segment-level loss-ratio differences reflect underlying risk heterogeneity or unobserved confounding.
+- **Additional variables.** The Mendeley dataset is rich on policy and vehicle characteristics but contains no driving-behaviour telematics, no claim-type detail beyond seven coverage categories, and no geographic granularity below the municipality type. Incorporating these would refine the segment-level diagnostics.
+- **Longitudinal modelling.** The panel structure used in the Sankey analysis could be extended to a full longitudinal model of policyholder transitions, including survival analysis of policy cancellation and Markov chain modelling of bonus-malus dynamics.
+- **External benchmarking.** Comparing the observed loss ratios and segment patterns against published Spanish motor market benchmarks would clarify whether the findings are portfolio-specific or generalisable.
 
 ## Methodological reflection
 
-The exercise demonstrates that visual analytics serves three distinct functions in a portfolio review. The first is descriptive, characterising the shape and concentration of the variables that constitute the book. The second is diagnostic, surfacing the segments where premium and exposure are out of balance. The third is communicative, presenting findings in a form that translates directly to underwriting action.
+The exercise demonstrates that visual analytics serves three distinct functions in a portfolio review. The first is descriptive, characterising the shape and concentration of the variables that constitute the book. The second is diagnostic, surfacing the segments where premium and exposure are out of balance. The third is communicative, presenting findings in a form that supports further investigation. The bonus methods applied in Section 5 illustrate that the most informative approaches sometimes exploit data-structural features (panel observation, concentration of loss, multivariate clustering) rather than summarising marginal distributions.
 
-The Sankey and Lorenz visualisations, beyond the techniques covered in the curriculum, illustrate that the most informative methods for portfolio analysis are sometimes those that exploit data-structural features (panel observation, concentration of loss) rather than those that summarise marginal distributions. The Swiss Re framing that motivated this exercise asks the analyst to identify premium and exposure mismatch through data analytics. The four findings above are concrete instances of that mismatch.
+
 
 # References
 
