@@ -59,7 +59,7 @@ The granularity of premium and incurred figures permits coverage-specific loss-r
 
 ## Report structure
 
-Section 2 documents the analytical sandbox preparation: import, cleaning, type encoding, and derivation of the profitability and volatility variables. Section 3 presents the univariate distributional analysis. Section 4 examines bivariate relationships with statistical validation of the observed effects. Section 5 introduces two visual analytics methods that extend beyond the techniques covered in class. Section 6 synthesises the findings into recommended actions.
+Section 2 documents the analytical sandbox preparation: import, cleaning, type encoding, and derivation of the profitability and volatility variables. Section 3 presents the univariate distributional analysis. Section 4 examines bivariate relationships with statistical validation of the observed effects. Section 5 introduces two visual analytics methods that extend beyond the techniques covered in class. Section 6 summarises the key findings and identifies directions for future research.
 
 # Analytical sandbox preparation
 
@@ -605,7 +605,7 @@ Among policies with at least one claim, the loss-ratio distribution spans nearly
 The univariate view raises three structural features the bivariate analysis must contend with:
 
 1.  **Strong distributional skew** in vehicle value and the derived KPIs. Linear-scale plots will mislead. Log scales and percentile bands are appropriate.
-2.  **Heavy class imbalance** in `bonus_score` (concentrated in Good) and `policy_type` (concentrated in CC and TPG). Statistical tests must account for unequal group sizes.
+2.  **Heavy class imbalance** in `bonus_score` (concentrated in Good) and `policy_type` (concentrated in CC and COMP_E). Statistical tests must account for unequal group sizes.
 3.  **The zero-claim majority**. Roughly 85% of policy-years have no claims, making policy-level loss ratio a noisy individual measure but a clean segment-level one when aggregated by exposure-weighted sums.
 
 ## Pairwise relationships among continuous variables
@@ -969,7 +969,8 @@ clean |>
 
 The Kruskal-Wallis test on policy-level loss ratio rejects the null of equal distributions across policy types at any conventional significance level. Pairwise comparisons (FDR-adjusted) confirm that COMP_N is significantly different from every other tier. The finding represents a systematic pricing inadequacy rather than statistical noise.
 
-The diagnosis is that comprehensive-without-excess is sold at premium levels that do not reflect its actual loss exposure. Swiss Re's framework describes this pattern as a premium and exposure mismatch. The remediation lever is either repricing (raise the premium loading on COMP_N) or product redesign (introduce a small excess, converting COMP_N policies into COMP_E equivalents).
+The diagnosis is that comprehensive-without-excess is sold at premium levels that do not reflect its actual loss exposure. Swiss Re's framework describes this pattern as a premium and exposure mismatch.
+
 
 ## The bonus-malus paradox
 
@@ -1199,13 +1200,14 @@ clean |>
   ) +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
   labs(x = "Geographic segment (municipality × circulation)",
-       y = "Share of policies")
+       y = "Share of policies") +
   theme(axis.text.x = element_text(size = 7))
 ```
 
 A chi-square test of independence on the claim-versus-no-claim binary across the six geographic segments rejects the null of independence. The effect size (Cramér's V) is small in absolute terms, which is expected when most policies have no claims, but the differences across segments are statistically robust given the sample size.
 
-The remediation question for an underwriter looking at this result is whether the islands warrant their own pricing zone rather than sharing a tariff with the mainland. The data argues that they do, and that urban and rural should be priced separately within the islands.
+The 11-point spread within the islands category indicates that aggregate municipality-level summaries mask underlying within-region heterogeneity.
+
 
 ## Driver age and vehicle age: a risk surface
 
@@ -1357,18 +1359,17 @@ ggplot(vol, aes(x = segment_lr, y = cv_lr)) +
 
 The two-axis view separates profitability from predictability. COMP_N has the worst segment loss ratio at 93.5% but the lowest within-segment volatility (CV 7.6), meaning its loss experience is unprofitable but highly predictable. COMP_E shows the opposite profile: a moderately high mean loss ratio of 73.9% paired with the highest volatility in the portfolio (CV 123), driven by occasional large-severity claims that dominate the segment's variance. CC combines a moderate segment loss ratio of 63.5% with mid-range volatility, the most balanced profile in the book.
 
-The underwriting implication is that the remedies for these two segments differ. COMP_N requires a structural pricing or product change because its expected losses are systematically too high. COMP_E requires reserve adequacy and large-loss management because its mean is acceptable but its tail risk is not.
-
+These two segments illustrate that profitability and predictability operate on independent dimensions. COMP_N is unprofitable but predictable, while COMP_E is closer to break-even on average and its tail risk dominates the within-segment variance.
 
 
 ## Section summary
 
-The bivariate analysis identifies four loss drivers worth acting on:
+The bivariate analysis identifies four loss drivers:
 
 1.  **Temporal deterioration**. The 2022 to 2024 loss-ratio trajectory shows a statistically validated worsening, with severity contributing more than frequency.
-2.  **Coverage tier mispricing**. COMP_N runs a loss ratio near 94%, materially worse than every other tier and statistically distinct in pairwise testing. Repricing or a product redesign that adds an excess is the indicated remediation.
+2.  **Coverage tier mispricing**. COMP_N runs a loss ratio near 94%, materially worse than every other tier and statistically distinct in pairwise testing.
 3.  **Bonus-malus paradox**. The Neutral category carries the highest loss ratio in the portfolio despite middle-of-the-road claim frequency, suggesting either default-tier under-loading or downward-rigid bonus-malus transitions. Section 5 examines the transition dynamics directly.
-4.  **Geographic and age-driven concentration**. Urban island policies and young-driver-old-vehicle combinations both show elevated loss intensity, with the latter constituting a clear failure mode for additive pricing tariffs.
+4.  **Geographic and age-driven concentration**. Urban island policies and young-driver-old-vehicle combinations both show elevated loss intensity, with the latter representing a joint pattern that additive treatment of the two age dimensions would miss.
 
 # Beyond standard techniques
 
@@ -1449,7 +1450,8 @@ trans_summary |>
   )
 ```
 
-The transition table quantifies the pattern. The majority of policyholders in every starting category remain in that category two years later. Movement from Good to a worse category outpaces movement from Neutral or Bad back toward Good. The bonus-malus mechanism is operating asymmetrically, and the Neutral pool grows over time as a result. This finding strengthens the recommendation in Section 4 to reprice the Neutral tier or to revise the transition rules.
+The transition table clarifies the pattern. Good policyholders are highly persistent, with 99.6% remaining Good between 2022 and 2024. Neutral and Bad policyholders mostly improve over the same period: 86.0% of Neutral policyholders improve, while 78.8% of Bad policyholders improve. The bonus-malus mechanism therefore appears to allow recovery from worse categories, rather than trapping policyholders there. The pricing concern surfaced in Section 4.4 is the short-term loss-ratio behaviour of policyholders while they sit in the Neutral and Bad pools, rather than any structural transition rigidity.
+
 
 ## Lorenz curve of loss concentration
 
@@ -1529,7 +1531,7 @@ ggplot(lor, aes(x = cum_pol, y = cum_incurred)) +
   theme_house(base_size = 11)
 ```
 
-The interpretation is direct. The dashed diagonal represents perfect equality, where the bottom X% of policies would account for X% of losses. The red curve shows reality. The bottom 85% of policies (those with no claims) contribute zero losses. The top 5% of policies account for the majority of total incurred. The Gini coefficient is approximately `r gini_value`, indicating extreme concentration.
+The interpretation is direct. The dashed diagonal represents perfect equality, where the bottom X% of policies would account for X% of losses. The red curve shows reality. The bottom 85% of policies (those with no claims) contribute zero losses. The top 5% of policies account for the majority of total incurred. The Gini coefficient is approximately 0.956, indicating extreme concentration.
 
 ```{r}
 decile_view <- clean |>
@@ -1581,7 +1583,8 @@ ggplot(decile_long, aes(x = factor(decile), y = share, fill = metric)) +
   theme(legend.position = "top")
 ```
 
-Pairing the decile view with the Lorenz curve sharpens the practical implication. The top decile of policies accounts for the overwhelming share of incurred losses. The premium share contributed by the same decile is significantly smaller. The two-axis gap is the structural opportunity. Improving the insurer's ability to identify the top decile in advance (through better segmentation, the specific recommendation arising from Section 4) translates directly into loss-ratio improvement at the portfolio level.
+The decile view sharpens the Lorenz finding. The top decile of policies accounts for the overwhelming share of incurred losses. The premium share contributed by the same decile is significantly smaller. The two-axis gap shows that premium charged does not currently scale with incurred losses, which is the empirical manifestation of the segment-level mismatches diagnosed in Section 4.
+
 
 ## Cluster heatmap of segment risk profiles
 
