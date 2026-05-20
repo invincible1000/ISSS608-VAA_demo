@@ -957,6 +957,18 @@ clean |>
     bf.message = FALSE,
     ggtheme = theme_minimal()
   ) +
+  scale_colour_manual(values = c("TP" = "grey60",
+                                  "TPG" = "grey60",
+                                  "CC" = "grey60",
+                                  "COMP_E" = "grey60",
+                                  "COMP_N" = house_highlight),
+                      guide = "none") +
+  scale_fill_manual(values = c("TP" = "grey60",
+                                "TPG" = "grey60",
+                                "CC" = "grey60",
+                                "COMP_E" = "grey60",
+                                "COMP_N" = house_highlight),
+                    guide = "none") +
   scale_y_continuous(
     trans  = "log10",
     breaks = c(0.1, 0.5, 1, 5, 20),
@@ -1093,6 +1105,14 @@ clean |>
     bf.message = FALSE,
     ggtheme = theme_minimal()
   ) +
+  scale_colour_manual(values = c("Good" = "grey60",
+                                  "Neutral" = house_highlight,
+                                  "Bad" = "grey60"),
+                      guide = "none") +
+  scale_fill_manual(values = c("Good" = "grey60",
+                                "Neutral" = house_highlight,
+                                "Bad" = "grey60"),
+                    guide = "none") +
   scale_y_continuous(
     trans  = "log10",
     breaks = c(0.1, 0.5, 1, 5, 20),
@@ -1281,6 +1301,18 @@ clean |>
     bf.message = FALSE,
     ggtheme = theme_minimal()
   ) +
+  scale_colour_manual(values = c("<25" = house_highlight,
+                                  "25-34" = "grey60",
+                                  "35-49" = "grey60",
+                                  "50-64" = "grey60",
+                                  "65+" = "grey60"),
+                      guide = "none") +
+  scale_fill_manual(values = c("<25" = house_highlight,
+                                "25-34" = "grey60",
+                                "35-49" = "grey60",
+                                "50-64" = "grey60",
+                                "65+" = "grey60"),
+                    guide = "none") +
   scale_y_continuous(
     trans  = "log10",
     breaks = c(0.1, 0.5, 1, 5, 20),
