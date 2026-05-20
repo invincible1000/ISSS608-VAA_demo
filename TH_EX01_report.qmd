@@ -1184,24 +1184,35 @@ ggplot(geo_segment,
 The heatmap shows the interaction at a glance. Interior regions are uniform across urban and rural. Coastal urban runs slightly higher than coastal rural. The islands show the widest within-category spread: rural island policies are the most profitable segment in the portfolio at around 65% loss ratio, while urban island policies sit at around 77%. An 11-percentage-point spread within a single municipality category points to a real underwriting gap.
 
 ```{r}
+#| fig-width: 10
+#| fig-height: 5
+
 clean |>
   mutate(
     claims_bin = if_else(total_claims > 0, "Claim", "No claim"),
-    geo_segment = paste(municipality_type, circulation_area, sep = " · ")
+    geo_segment = case_when(
+      municipality_type == "Interior" & circulation_area == "Rural" ~ "Int·Rur",
+      municipality_type == "Interior" & circulation_area == "Urban" ~ "Int·Urb",
+      municipality_type == "Coastal"  & circulation_area == "Rural" ~ "Coa·Rur",
+      municipality_type == "Coastal"  & circulation_area == "Urban" ~ "Coa·Urb",
+      municipality_type == "Islands"  & circulation_area == "Rural" ~ "Isl·Rur",
+      municipality_type == "Islands"  & circulation_area == "Urban" ~ "Isl·Urb"
+    ),
+    geo_segment = factor(geo_segment,
+                         levels = c("Coa·Rur","Coa·Urb","Int·Rur",
+                                    "Int·Urb","Isl·Rur","Isl·Urb"))
   ) |>
   ggbarstats(
     x = claims_bin,
     y = geo_segment,
     label = "percentage",
     bf.message = FALSE,
-    package = "ggsci",
-    palette = "default_jama",
     ggtheme = theme_minimal()
   ) +
-  scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-  labs(x = "Geographic segment (municipality × circulation)",
-       y = "Share of policies") +
-  theme(axis.text.x = element_text(size = 7))
+  scale_fill_manual(values = c("Claim" = house_highlight,
+                                "No claim" = house_muted)) +
+  labs(x = "Geographic segment  (Int = Interior, Coa = Coastal, Isl = Islands)",
+       y = "Share of policies")
 ```
 
 A chi-square test of independence on the claim-versus-no-claim binary across the six geographic segments rejects the null of independence. The effect size (Cramér's V) is small in absolute terms, which is expected when most policies have no claims, but the differences across segments are statistically robust given the sample size.
