@@ -960,7 +960,7 @@ ggplot(yr_per_pol, aes(x = year, y = value, colour = metric, group = metric)) +
     x = "Year",
     y = "Euros per policy",
     colour = NULL,
-    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nThe deterioration arises from segment-level mix shift, documented from Section 4.3."
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data).\nThe deterioration is decomposed in the following table."
   ) +
   theme_house(base_size = 11) +
   theme(legend.position = "top")
@@ -1625,7 +1625,7 @@ The bivariate analysis identifies four loss drivers:
 
 # Beyond standard techniques
 
-The methods applied so far are drawn from the visual analytics curriculum covered in Lessons 1 through 5. This section adds two methods that sit outside that curriculum, selected because they leverage structural features of the data the standard techniques cannot reach. The first method visualises how policyholders move between bonus-malus categories over time, using the dataset's panel structure. The second method shows how unevenly losses are distributed across the policy population, using a concentration metric borrowed from actuarial practice.
+The methods applied so far are drawn from the visual analytics curriculum covered in Lessons 1 through 5. This section adds three methods that sit outside that curriculum, selected because they leverage structural features of the data the standard techniques cannot reach. The first method visualises how policyholders move between bonus-malus categories over time, using the dataset's panel structure. The second method shows how unevenly losses are distributed across the policy population, using a concentration metric borrowed from actuarial practice. The third method groups segments by their multi-metric risk profile using hierarchical clustering, surfacing structural similarities that single-variable views cannot reveal.
 
 ## Bonus-malus transitions over time
 
@@ -1664,7 +1664,7 @@ ggplot(trans_22_24,
                     name = "2022 starting category") +
   scale_y_continuous(labels = comma) +
   labs(
-    title = "Among policyholders who moved at all, most started in Neutral or Bad",
+    title = "Recovery dominates: most non-Good policyholders improved by 2024",
     subtitle = "Bonus-malus transitions 2022 to 2024 (stable-Good policyholders excluded)",
     x = NULL,
     y = "Policyholders",
