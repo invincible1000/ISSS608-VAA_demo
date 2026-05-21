@@ -87,8 +87,23 @@ pacman::p_load(tidyverse, readxl, janitor, skimr, naniar,
                patchwork, scales, knitr)
 ```
 
+
+### Design principles for chart styling
+
+A consistent visual language across the report's charts makes the analytical content easier to follow. Four design principles are encoded into a custom theme function (`theme_house()`) and a four-colour palette, applied to charts built directly in ggplot2. Charts produced by `ggstatsplot` and `heatmaply` inherit their package-default styling, since these wrappers expose limited theming hooks; the focal colour is overridden where the package permits.
+
+The four principles are:
+
+1. **One focal colour for the data point under discussion.** A single red (`#C44E52`) marks the segment, year, or category being discussed in the surrounding prose. All other elements use grey to recede visually, so the reader's eye is directed without ambiguity.
+2. **Reference values in muted grey.** Benchmarks (the 70% loss-ratio line, the portfolio mean CV, the break-even threshold) use a mid-grey so they sit behind the data without competing for attention.
+3. **Diverging palette only where direction matters.** Loss-ratio heatmaps use the RdYlBu diverging palette, which encodes the analyst's break-even threshold visually. Univariate distributions use a single blue fill, since no direction is being encoded.
+4. **Finding-led titles, descriptive subtitles.** Chart titles state the headline finding ("COMP_N runs at 94% loss ratio") rather than describing the chart type. The subtitle below names the underlying variables and population.
+
+The four colour constants are factored out of the theme so they can be referenced by name in any chart, which keeps the palette consistent and reduces a palette change to a one-line edit.
+
+
 ```{r}
-# House style for all charts 
+ 
 theme_house <- function(base_size = 11) {
   theme_minimal(base_size = base_size) +
     theme(
@@ -112,11 +127,11 @@ theme_house <- function(base_size = 11) {
     )
 }
 
-# House colour palette
-house_highlight <- "#C44E52"      # red — for the one important data point
-house_muted     <- "grey75"       # for everything else
-house_benchmark <- "grey40"       # for reference lines and benchmarks
-house_sequential <- "RdYlBu"      # for diverging palettes (loss ratio gradients)
+
+house_highlight <- "#C44E52"      
+house_muted     <- "grey75"       
+house_benchmark <- "grey40"       
+house_sequential <- "RdYlBu"     
 ```
 
 
@@ -163,11 +178,41 @@ gg_miss_var(raw, show_pct = TRUE)
 
 Four variables contain missing values. `fuel_type` (1,287 missing, 0.36%) and `vehicle_value` (513 missing, 0.14%) account for nearly all of it. The remaining columns have two or fewer NAs each. Because missingness is concentrated in non-target descriptive variables and represents under half a percent of records, listwise deletion is acceptable without introducing meaningful selection bias.
 
+Before applying listwise deletion, the records flagged for removal are profiled against the records to be retained, to verify that deletion does not introduce systematic bias.
+
+```{r}
+raw_check <- read_delim("Data/Dataset of motor insurance portfolio.csv",
+                        delim = ";", show_col_types = FALSE) |>
+  janitor::clean_names()
+
+raw_check |>
+  mutate(dropped = is.na(fuel_type) | is.na(vehicle_value)) |>
+  group_by(dropped) |>
+  summarise(
+    n              = n(),
+    mean_premium   = mean(total_premium, na.rm = TRUE),
+    mean_incurred  = mean(total_incurred, na.rm = TRUE),
+    mean_exposure  = mean(total_exposure, na.rm = TRUE),
+    claim_rate     = mean(total_claims > 0),
+    .groups = "drop"
+  ) |>
+  mutate(dropped = if_else(dropped, "Dropped", "Retained")) |>
+  kable(
+    caption = "Profile comparison: records flagged for deletion versus records retained",
+    digits = c(0, 0, 2, 2, 4, 4),
+    format.args = list(big.mark = ",")
+  )
+```
+
+
+The dropped and retained groups differ modestly on three of the four metrics. The 1,800 records flagged for deletion show 31% higher mean premium, 21% higher mean incurred losses, and a 4-percentage-point higher claim rate than the retained records. Mean exposure is essentially identical. This indicates that the missingness in `fuel_type` and `vehicle_value` is not completely at random; the affected records skew toward higher-premium, claim-bearing policies. Listwise deletion is retained as the simplest defensible treatment given the small proportion involved (0.51%), but the resulting analysis applies to the 352,340-record retained population. Findings should not be extrapolated to the dropped sub-population, which may behave somewhat differently.
+
+
 ```{r}
 raw <- raw |> drop_na(fuel_type, vehicle_value)
 ```
 
-The two patterns of missingness are non-overlapping. No row has both `fuel_type` and `vehicle_value` missing, so listwise deletion removes exactly 1,800 records (0.51% of the portfolio) without any compounding effect.
+The two patterns of missingness are non-overlapping. No row has both `fuel_type` and `vehicle_value` missing, so listwise deletion removes exactly 1,800 records without any compounding effect.
 
 ## Variable encoding
 
@@ -197,6 +242,90 @@ clean <- raw |>
                               labels = c("Urban","Rural"))
   )
 ```
+
+## Sanity checks
+
+Before deriving the analytical variables, the cleaned dataset is checked for out-of-range values, logical inconsistencies, and internal consistency between totals and their components.
+
+```{r}
+clean |>
+  summarise(
+    driver_age_oob   = sum(driver_age < 18 | driver_age > 100, na.rm = TRUE),
+    vehicle_age_neg  = sum(vehicle_age < 0, na.rm = TRUE),
+    premium_neg      = sum(total_premium < 0, na.rm = TRUE),
+    incurred_neg     = sum(total_incurred < 0, na.rm = TRUE),
+    claims_neg       = sum(total_claims < 0, na.rm = TRUE),
+    exposure_oob     = sum(total_exposure < 0 | total_exposure > 1, na.rm = TRUE),
+    exposure_zero    = sum(total_exposure == 0, na.rm = TRUE),
+    incurred_no_claim = sum(total_claims == 0 & total_incurred > 0),
+    claim_no_incurred = sum(total_claims > 0 & total_incurred == 0)
+  ) |>
+  kable(caption = "Sanity checks on potentially impossible values")
+```
+
+Most checks return zero, indicating no out-of-range or logically inconsistent values across age, premium, and claim-count variables. Two findings warrant comment:
+
+- **49 policy-years (0.01%) have zero exposure**, representing policies that did not go on risk during their observation year, most likely from same-day cancellations or administrative records with immediately-closed exposure windows. The derived `claim_frequency` variable is computed conditionally on `total_exposure > 0`, returning `NA` for these records, so they do not distort downstream frequency calculations.
+
+- **8,498 policy-years (2.4%) have a recorded claim count but zero incurred losses.** This is a known pattern in motor insurance data, arising from claims that are opened and later closed at zero cost (denial, withdrawal, or below-deductible settlement) or claims still open at the year-end extraction. These records are retained: they contribute to claim frequency but not to incurred losses, which is the appropriate treatment.
+
+`total_exposure` is bounded above by 1 in all 352,340 records, confirming the variable's intended semantics as the fraction of the policy-year on risk.
+A second consistency check verifies that the seven coverage-specific premium and claim columns sum exactly to `total_premium` and `total_claims`. Any mismatch would indicate a data assembly error in the source file.
+
+
+```{r}
+clean |>
+  summarise(
+    claims_sum_mismatch = sum(
+      abs(total_claims - (liability_claims + property_claims + theft_claims +
+                          fire_claims + glass_claims + legal_protection_claims +
+                          occupants_claims)) > 0
+    ),
+    premium_sum_mismatch = sum(
+      abs(total_premium - (liability_premium + property_damage_premium +
+                            theft_premium + fire_premium + glass_premium +
+                            legal_protection_premium + occupants_premium)) > 0.01
+    )
+  ) |>
+  kable(caption = "Cross-checks between totals and component sums")
+```
+
+Both checks return zero. The seven coverage-specific columns sum exactly to the totals across all 352,340 records, confirming internal consistency. The coverage decomposition used in downstream analysis is therefore reliable.
+
+A third check examines whether cancelled policies are evenly distributed across coverage tiers. Cancellation truncates the exposure window: a cancelled policy may have accumulated claims and incurred losses against only a partial premium. If cancellations were concentrated in one segment, that segment's loss ratio could be biased.
+
+```{r}
+clean |>
+  group_by(policy_type, policy_status) |>
+  summarise(n = n(), .groups = "drop") |>
+  pivot_wider(names_from = policy_status, values_from = n, values_fill = 0) |>
+  mutate(
+    total = Active + Cancelled,
+    cancel_rate = Cancelled / total
+  ) |>
+  kable(
+    caption = "Cancellation rate by coverage tier",
+    digits = c(0, 0, 0, 0, 4),
+    format.args = list(big.mark = ",")
+  )
+```
+
+The cancellation rate ranges from 7.8% in COMP_N to 15.1% in TPG. The two most comprehensive tiers (COMP_E and COMP_N) show the lowest cancellation rates in the portfolio. This is important for the bivariate analysis: COMP_N's elevated loss ratio (94%, reported in Section 4.3) cannot be explained by partial-premium bias from cancellation truncation, since COMP_N policies are the most stable in the book. The finding that COMP_N is structurally mispriced therefore holds independently of cancellation effects. TPG carries the highest cancellation rate at 15.1%, which is worth noting but does not affect the headline findings, since TPG sits in the middle of the loss-ratio distribution rather than at the extremes.
+
+A final check verifies the integrity of `insured_id`, since the Sankey transition analysis in Section 5.1 treats it as a stable policyholder key over time.
+
+```{r}
+clean |>
+  summarise(
+    id_missing      = sum(is.na(insured_id) | insured_id == 0),
+    id_year_dupes   = sum(duplicated(paste(insured_id, year))),
+    max_records_per_id = max(table(insured_id)),
+    distinct_ids    = n_distinct(insured_id)
+  ) |>
+  kable(caption = "Policyholder identifier integrity")
+```
+
+All checks return clean values. No insured_id is missing or zero. No insured_id appears more than once in the same year, confirming the panel is uniquely keyed by (insured_id, year). The maximum number of records per insured_id is three, consistent with the 2022 to 2024 observation window. The 352,340 records correspond to 184,725 distinct policyholders, with an average of 1.9 policy-year observations each. The Sankey analysis in Section 5.1 can therefore treat insured_id as a reliable policyholder identifier.
 
 ## Derived analytical variables
 
@@ -240,7 +369,31 @@ clean <- clean |>
   )
 ```
 
-`driver_age_band` follows actuarial convention: the under-25 band is consistently the highest-risk group in motor insurance, and 65+ is the standard senior threshold. `vehicle_age_band` uses breaks aligned with depreciation milestones. `vehicle_value_band` uses quartiles rather than fixed cuts because vehicle values span several orders of magnitude.
+The band cutoffs are reported below for transparency. Driver-age and vehicle-age bands use hardcoded breaks aligned with actuarial convention and depreciation milestones respectively; vehicle-value bands are computed as quartiles of the observed distribution.
+
+```{r}
+bind_rows(
+  tibble(
+    variable = "driver_age_band",
+    breaks = "0 / 25 / 35 / 50 / 65 / Inf",
+    rationale = "Actuarial convention: <25 is the conventional high-risk band; 65+ is the standard senior threshold"
+  ),
+  tibble(
+    variable = "vehicle_age_band",
+    breaks = "0 / 3 / 6 / 11 / 16 / Inf",
+    rationale = "Aligned with depreciation and warranty milestones"
+  ),
+  tibble(
+    variable = "vehicle_value_band",
+    breaks = paste(round(quantile(clean$vehicle_value,
+                                   probs = c(0, .25, .5, .75, 1),
+                                   na.rm = TRUE)), collapse = " / "),
+    rationale = "Quartiles of the observed distribution; vehicle value spans several orders of magnitude"
+  )
+) |>
+  kable(caption = "Band definitions used for downstream segmentation")
+```
+
 
 ## Volatility metric
 
@@ -809,7 +962,55 @@ ggplot(yr_per_pol, aes(x = year, y = value, colour = metric, group = metric)) +
   theme(legend.position = "top")
 ```
 
-The aggregate decomposition shows a clear gap: premium per policy rose from €278 in 2022 to €303 in 2024 (a 9 percent increase), while incurred losses per policy rose from €183 to €226 (a 24 percent increase). Average frequency and average severity remained nearly flat across the period (frequency 0.302 to 0.311, severity €969 to €971). The portfolio-level deterioration therefore did not arise from a uniform rise in claim incidence or claim size. It arose from a mix shift in the portfolio. The remainder of Section 4 identifies the specific segments where premium and exposure diverged, beginning with policy type in Section 4.3.
+The aggregate decomposition shows a clear gap: premium per policy rose from €278 in 2022 to €303 in 2024 (a 9 percent increase), while incurred losses per policy rose from €183 to €226 (a 24 percent increase). Average frequency and average severity remained nearly flat across the period (frequency 0.302 to 0.311, severity €969 to €971). The portfolio-level deterioration therefore did not arise from a uniform rise in claim incidence or claim size. Where the deterioration originates is not yet clear from the aggregate view. A decomposition follows.
+
+A standard within-versus-between decomposition isolates the source of the 8.9-percentage-point loss-ratio swing. The 2022 portfolio loss ratio is recomputed three ways: (i) with 2022 segment loss ratios and 2022 segment weights (the actual 2022 value), (ii) with 2024 segment loss ratios but 2022 segment weights (the within-segment effect: how much the deterioration would have been if mix had stayed constant), and (iii) with 2022 segment loss ratios but 2024 segment weights (the between-segment effect: how much the deterioration would have been if segments themselves hadn't moved). The residual is the interaction. Segments are defined by policy type, the dimension that dominated the bivariate findings.
+
+```{r}
+seg_year <- clean |>
+  filter(total_premium > 0) |>
+  group_by(year, policy_type) |>
+  summarise(
+    premium = sum(total_premium),
+    incurred = sum(total_incurred),
+    lr = incurred / premium,
+    .groups = "drop"
+  ) |>
+  group_by(year) |>
+  mutate(weight = premium / sum(premium)) |>
+  ungroup()
+
+lr_2022 <- seg_year |> filter(year == 2022) |> select(policy_type, lr_2022 = lr, w_2022 = weight)
+lr_2024 <- seg_year |> filter(year == 2024) |> select(policy_type, lr_2024 = lr, w_2024 = weight)
+
+decomp <- lr_2022 |>
+  full_join(lr_2024, by = "policy_type") |>
+  mutate(
+    contrib_within  = w_2022 * (lr_2024 - lr_2022),
+    contrib_between = lr_2022 * (w_2024 - w_2022),
+    contrib_interaction = (lr_2024 - lr_2022) * (w_2024 - w_2022)
+  )
+
+decomp_summary <- tibble(
+  component = c("Actual 2022 → 2024 swing",
+                "Within-segment effect (segments worsened)",
+                "Between-segment effect (mix shifted)",
+                "Interaction"),
+  value = c(
+    sum(decomp$lr_2024 * decomp$w_2024) - sum(decomp$lr_2022 * decomp$w_2022),
+    sum(decomp$contrib_within),
+    sum(decomp$contrib_between),
+    sum(decomp$contrib_interaction)
+  )
+)
+
+decomp_summary |>
+  mutate(value = scales::percent(value, accuracy = 0.1)) |>
+  kable(caption = "Decomposition of 2022 → 2024 portfolio loss-ratio swing")
+```
+
+The decomposition is unambiguous. The within-segment effect accounts for 8.5 of the 8.9-percentage-point swing, while the between-segment effect contributes only 0.1pp and the interaction 0.4pp. The portfolio's deterioration is therefore driven by segments themselves becoming less profitable over the period, not by a shift in business volume toward worse-performing segments. The book's policy-type composition was stable; what changed was the loss ratio within each existing segment. The bivariate analysis in the remainder of Section 4 identifies which specific segments deteriorated and where premium adequacy is most strained, beginning with the policy-type gradient in Section 4.3.
+
 
 ## Coverage tier: the COMP_N premium-exposure mismatch
 
@@ -1495,6 +1696,9 @@ trans_summary |>
 
 The transition table clarifies the pattern. Good policyholders are highly persistent, with 99.6% remaining Good between 2022 and 2024. Neutral and Bad policyholders mostly improve over the same period: 86.0% of Neutral policyholders improve, while 78.8% of Bad policyholders improve. The bonus-malus mechanism therefore appears to allow recovery from worse categories, rather than trapping policyholders there. The pricing concern surfaced in Section 4.4 is the short-term loss-ratio behaviour of policyholders while they sit in the Neutral and Bad pools, rather than any structural transition rigidity.
 
+This result partially adjudicates the two hypotheses raised in Section 4.4. The downward-rigid transitions hypothesis is not supported by the data: policyholders in worse categories overwhelmingly improve rather than remain stuck. The default-tier under-loading hypothesis remains plausible and is consistent with the elevated short-term loss ratio observed in the Neutral pool, though confirming it would require examining the entry composition of the Neutral category over time, which sits beyond the scope of the present exercise. Future research applying a formal longitudinal model of bonus-malus dynamics could discriminate between these explanations more rigorously.
+
+
 
 ## Lorenz curve of loss concentration
 
@@ -1690,7 +1894,7 @@ This analysis of a Spanish motor insurance portfolio across 2022 to 2024 examine
 
 ## Key findings
 
-- The portfolio loss ratio rose from 65.7 percent in 2022 to 74.7 percent in 2024. The deterioration is statistically validated through non-overlapping bootstrap confidence intervals and is driven by claim severity rather than claim frequency.
+- The portfolio loss ratio rose from 65.7 percent in 2022 to 74.7 percent in 2024. The deterioration is statistically validated through non-overlapping bootstrap confidence intervals, and a within-versus-between decomposition shows that 8.5 of the 8.9-percentage-point swing arises from within-segment deterioration rather than from a mix shift toward worse-performing segments. Claim severity rather than claim frequency dominates the aggregate trend.
 - Loss ratio varies monotonically across coverage tiers, from 54 percent in basic third-party to approximately 94 percent in comprehensive-without-excess (COMP_N). Pairwise non-parametric tests confirm that COMP_N is statistically distinct from every other tier.
 - The bonus-malus categories show an unexpected pattern: the Neutral tier carries a higher loss ratio than the Bad tier despite collecting less premium per exposure. Frequency rises monotonically across the three categories as expected, but the loss-ratio ordering inverts at the top.
 - Geographic loss intensity differs sharply within municipality categories. Urban island policies run 11 percentage points above rural island policies, the widest within-category spread in the geographic dimension.
@@ -1702,8 +1906,10 @@ This analysis of a Spanish motor insurance portfolio across 2022 to 2024 examine
 
 - **Confirmatory analysis.** This study is exploratory. Future work should apply formal causal-inference methods to confirm whether the segment-level loss-ratio differences reflect underlying risk heterogeneity or unobserved confounding.
 - **Additional variables.** The Mendeley dataset is rich on policy and vehicle characteristics but contains no driving-behaviour telematics, no claim-type detail beyond seven coverage categories, and no geographic granularity below the municipality type. Incorporating these would refine the segment-level diagnostics.
-- **Longitudinal modelling.** The panel structure used in the Sankey analysis could be extended to a full longitudinal model of policyholder transitions, including survival analysis of policy cancellation and Markov chain modelling of bonus-malus dynamics.
+- **Longitudinal modelling.** The panel structure used in the Sankey analysis could be extended to a full longitudinal model of policyholder transitions, including survival analysis of policy cancellation and Markov chain modelling of bonus-malus dynamics. Such a model would discriminate between the two hypotheses raised in Section 4.4 (default-tier under-loading versus claims-history dynamics) more rigorously than the present cross-sectional decomposition permits.
 - **External benchmarking.** Comparing the observed loss ratios and segment patterns against published Spanish motor market benchmarks would clarify whether the findings are portfolio-specific or generalisable.
+- **Missingness mechanism**. The 1,800 records dropped via listwise deletion show slightly higher premium and claim rate than the retained population. Future work could apply multiple imputation or model the missingness explicitly to test whether the findings are robust to alternative treatments.
+
 
 ## Methodological reflection
 
@@ -1713,9 +1919,12 @@ The exercise demonstrates that visual analytics serves three distinct functions 
 
 # References
 
+-   Kam, T. S. (2024). *R for Visual Analytics*. <https://r4va.netlify.app/>
 -   Swiss Re Institute (2019). *sigma 4/2019: Advanced analytics: unlocking new frontiers in P&C insurance.* Zurich: Swiss Re Management Ltd.
 -   Mendeley Data. *Spanish motor vehicle insurance portfolio dataset.*
 -   Wickham, H. et al. (2019). Welcome to the Tidyverse. *Journal of Open Source Software*, 4(43), 1686.
 -   Patil, I. (2021). Visualizations with statistical details: The ggstatsplot approach. *Journal of Open Source Software*, 6(61), 3167.
 -   Kay, M. (2024). ggdist: Visualizations of Distributions and Uncertainty. *R package version 3.3.2*.
 -   Brunson, J. C. (2020). ggalluvial: Layered Grammar for Alluvial Plots. *Journal of Open Source Software*, 5(49), 2017.
+-   Kassambara, A. (2023). ggcorrplot: Visualization of a Correlation Matrix using ggplot2. *R package version 0.1.4.1*.
+-   Galili, T., O'Callaghan, A., Sidi, J., & Sievert, C. (2018). heatmaply: an R package for creating interactive cluster heatmaps for online publishing. *Bioinformatics*, 34(9), 1600–1602.

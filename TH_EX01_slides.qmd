@@ -1,0 +1,311 @@
+---
+title: "Diagnosing Loss Drivers in a Spanish Motor Portfolio"
+subtitle: "Executive Summary"
+author: "Yap Jit Wei"
+date: "May 24, 2026"
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    transition: fade
+    footer: "ISSS608 Visual Analytics — Take-Home Exercise 1"
+    smaller: true
+    scrollable: true
+---
+
+#  {.title-slide background-color="#1a3a5c"}
+
+::: {style="color: white; text-align: center; padding-top: 80px;"}
+## Diagnosing Loss Drivers in a Spanish Motor Portfolio {style="color: white;"}
+
+### Executive Summary
+
+Yap Jit Wei\
+ISSS608 Visual Analytics, AY2025-26 April\
+May 24, 2026
+:::
+
+::: notes
+Good afternoon. This presentation summarises a visual analytics study of a Spanish motor insurance portfolio covering 2022 to 2024. The work investigates loss-ratio deterioration across 352,340 policy-year records using exploratory visual methods paired with statistical validation. The full technical report is published alongside this deck. In the next twelve minutes I will walk through four major findings about where the portfolio's losses concentrate and three diagnostic methods that go beyond standard univariate and bivariate techniques. The framing throughout follows Swiss Re's 2019 sigma report on underperforming portfolios.
+:::
+
+------------------------------------------------------------------------
+
+## Contents
+
+::: incremental
+1.  **Context** — what underperforming portfolios look like
+2.  **Data** — the Spanish motor portfolio at a glance
+3.  **Findings** — four loss drivers identified
+    -   Temporal deterioration
+    -   Coverage tier mispricing (COMP_N)
+    -   The bonus-malus paradox
+    -   Geographic and age-driven concentration
+4.  **Beyond standard techniques** — three diagnostic methods
+    -   Bonus-malus transitions over time
+    -   Lorenz curve of loss concentration
+    -   Cluster heatmap of segment risk profiles
+5.  **Summary** — key findings and directions for future research
+:::
+
+::: notes
+The presentation is structured in five parts. After framing the problem and the data, I will move through the four loss drivers identified in the bivariate analysis. Each finding is supported by statistical validation. The fourth part introduces three diagnostic methods that exploit features of the data the standard techniques cannot reach: panel structure, loss concentration, and multivariate similarity. The summary closes with the principal findings and directions for future research.
+:::
+
+------------------------------------------------------------------------
+
+## The problem
+
+::: callout-note
+"Insurers often carry underperforming portfolios where the root causes of poor profitability and high volatility are unknown."
+
+— Swiss Re Institute (2019), *sigma 4/2019*
+:::
+
+**Three structural features of motor portfolios:**
+
+-   Premiums are exposure-weighted
+-   Claims arrive frequently enough to support segment-level inference
+-   A two-to-five-point loss-ratio improvement separates profit from loss
+
+**Analytical objectives:**
+
+1.  Characterise the distributional shape of the portfolio
+2.  Identify the segments where premium and exposure are out of balance
+
+::: notes
+The starting point for the analysis is Swiss Re's observation that insurers routinely carry portfolios whose loss drivers are not well understood. Motor insurance is a particularly fertile setting for visual analytics: claim volumes are high enough that segment-level patterns emerge clearly, and the margin between profit and loss is narrow enough that even small loss-ratio movements matter. The two objectives set by this exercise are descriptive and diagnostic. The descriptive objective profiles the variables' distributions. The diagnostic objective identifies where premium charged and losses incurred have drifted out of alignment.
+:::
+
+------------------------------------------------------------------------
+
+## The data
+
+::::: columns
+::: {.column width="60%"}
+**Spanish motor portfolio (Mendeley Data)**
+
+-   352,340 policy-year records (after cleaning)
+-   184,725 unique policyholders
+-   2022 to 2024 panel
+-   47 variables across four groups:
+    -   Policy and insured characteristics
+    -   Driver and vehicle characteristics
+    -   Premiums (total + 7 coverages)
+    -   Exposure, claims, and incurred costs
+
+**Portfolio aggregates**
+
+-   Total premium: €104.4M
+-   Total incurred: €73.4M
+-   Portfolio loss ratio: 70.3%
+:::
+
+::: {.column width="40%"}
+![](TH_EX01_report_files/figure-html/unnamed-chunk-19-1.png){fig-align="center" width="100%"}
+
+*Distribution of policies across five coverage tiers*
+:::
+:::::
+
+::: notes
+The dataset is a real-world Spanish motor insurance portfolio published through Mendeley Data. It has the granularity needed for coverage-specific decomposition: premium, claim counts, and incurred losses are broken out for seven coverage categories within each policy-year record. The portfolio is dominated by mid-tier comprehensive policies, with CC and COMP_E together accounting for roughly 84 percent of records. The smallest tier, COMP_N at 5 percent of policies, turns out to be the most consequential segment for the loss-ratio analysis. The portfolio aggregate loss ratio of 70 percent is close to the standard motor break-even benchmark before expense loading.
+:::
+
+------------------------------------------------------------------------
+
+## Finding 1: Loss ratio rose 9 points in two years
+
+![](TH_EX01_report_files/figure-html/unnamed-chunk-26-1.png){fig-align="center" width="75%"}
+
+**Statistical validation:** 95% bootstrap intervals for 2022 and 2023 overlap; 2024 sits entirely above both. Severity, not frequency, is the principal driver.
+
+::: notes
+The first headline is the temporal trajectory. Portfolio loss ratio rose from 65.7 percent in 2022 to 74.7 percent in 2024, a nine-point swing in two years. To rule out that this is a small-sample artefact, the bootstrap distribution of loss ratio was computed for each year using five hundred resamples. The 2022 and 2023 distributions overlap substantially. The 2024 distribution sits entirely above both, with non-overlapping ninety-five percent intervals. Decomposing the deterioration into frequency and severity shows that average claim cost rose by twenty-four percent over the period while frequency was nearly flat. The deterioration is driven by what claims cost when they happen, not by how often they happen.
+:::
+
+------------------------------------------------------------------------
+
+## Finding 2: COMP_N runs at 94% loss ratio
+
+::::: columns
+::: {.column width="55%"}
+![](TH_EX01_report_files/figure-html/unnamed-chunk-29-1.png){fig-align="center" width="100%"}
+:::
+
+::: {.column width="45%"}
+**Comprehensive-without-excess:**
+
+-   5% of policies
+-   Loss ratio 93.5%
+-   Statistically distinct from every other tier (FDR-adjusted pairwise tests)
+-   The structural mispricing is concentrated here
+
+**Tier gradient:**\
+TP 54% → TPG 70% → CC 63% → COMP_E 74% → **COMP_N 94%**
+:::
+:::::
+
+::: notes
+The second headline is the coverage-tier mispricing. The five policy types show a clear monotonic gradient in loss ratio, from fifty-four percent on basic third-party to ninety-four percent on comprehensive without excess. COMP_N sits twenty-four percentage points above the seventy percent break-even benchmark before any expense loading is applied. A Kruskal-Wallis test followed by FDR-adjusted pairwise comparisons confirms that COMP_N is statistically distinct from every other tier. Importantly, the cluster heatmap shown later groups all three bonus-malus tiers within COMP_N together, which indicates that the elevated loss profile is structural to the product rather than driven by customer mix.
+:::
+
+------------------------------------------------------------------------
+
+## Finding 3: The bonus-malus paradox
+
+![](TH_EX01_report_files/figure-html/unnamed-chunk-33-1.png){fig-align="center" width="55%"}
+
+**Neutral pays less but loses more.** Frequency and premium rise monotonically Good → Neutral → Bad, but loss ratio does not: Neutral 81.9% \> Bad 79.6%.
+
+::: notes
+The third finding inverts the expected ordering. Claim frequency rises monotonically from Good to Neutral to Bad, as it should. Average premium per exposure does the same, indicating that the bonus-malus surcharges are being applied. But loss ratio does not follow that pattern. Neutral runs at eighty-two percent, materially above Bad at eighty percent, despite Neutral collecting twenty-six percent less premium per exposure. Two non-exclusive explanations are plausible. New entrants land in Neutral by default before claim history accumulates, and the default premium may not load adequately for the embedded risk. Alternatively, bonus-malus transitions may be downward-rigid, with claimants staying in Neutral rather than moving to Bad. The panel-data analysis in the next section examines this directly.
+:::
+
+------------------------------------------------------------------------
+
+## Finding 4: Geography and age interactions
+
+::::: columns
+::: {.column width="50%"}
+![](TH_EX01_report_files/figure-html/unnamed-chunk-36-1.png){fig-align="center" width="100%"}
+
+**Islands carry the widest spread:**\
+Rural islands 65.8% vs urban islands 77.2% — an 11-point gap.
+:::
+
+::: {.column width="50%"}
+![](TH_EX01_report_files/figure-html/unnamed-chunk-38-1.png){fig-align="center" width="100%"}
+
+**Young drivers × old vehicles:**\
+The worst cell is under-25 drivers in 16+ year vehicles.
+:::
+:::::
+
+::: notes
+The fourth finding identifies two non-additive interactions. On the geographic dimension, the islands category shows an eleven-percentage-point loss-ratio spread between rural island policies at sixty-six percent and urban island policies at seventy-seven percent. Within-category heterogeneity of that magnitude indicates that aggregate municipality-level summaries mask the underlying pattern. On the driver and vehicle age dimension, the worst cell in the joint surface is under-twenty-five drivers in vehicles aged sixteen years or older. Both extremes carry elevated within-segment loss variance. The interaction is concentrated in the youngest driver segment, which is consistent with the actuarial expectation that age extremes carry wider risk distributions.
+:::
+
+------------------------------------------------------------------------
+
+## Volatility view: profitability ≠ predictability
+
+![](TH_EX01_report_files/figure-html/unnamed-chunk-41-1.png){fig-align="center" width="65%"}
+
+**Two distinct underwriting profiles:**
+
+-   **COMP_N**: worst loss ratio (94%) but lowest CV (7.6) — unprofitable but predictable
+-   **COMP_E**: moderate loss ratio (74%) but highest CV (123) — moderate mean, heavy tail
+
+::: notes
+Profitability and predictability are conceptually distinct dimensions, and the scatter view separates them clearly. COMP_N has the worst segment loss ratio in the portfolio but the lowest within-segment coefficient of variation, meaning its loss experience is consistent and easy to forecast. COMP_E shows the opposite profile: a moderately high mean loss ratio paired with the highest within-segment volatility in the book, driven by occasional large-severity claims that dominate its variance. These two segments illustrate that profitability and predictability operate on independent dimensions. CC, the largest segment, combines a moderate loss ratio with mid-range volatility, the most balanced profile in the portfolio.
+:::
+
+------------------------------------------------------------------------
+
+## Beyond standard: bonus-malus transitions
+
+::::: columns
+::: {.column width="55%"}
+![](TH_EX01_report_files/figure-html/unnamed-chunk-43-1.png){fig-align="center" width="100%"}
+:::
+
+::: {.column width="45%"}
+**Panel structure exploited via Sankey:**
+
+-   Good: 99.6% stay Good
+-   Neutral: 86.0% improve
+-   Bad: 78.8% improve
+
+The mechanism allows recovery rather than entrapment. The Neutral paradox in Finding 3 is about short-term loss-ratio behaviour, not transition rigidity.
+:::
+:::::
+
+::: notes
+The first method beyond the standard curriculum exploits the panel structure of the dataset. The same policyholder appears in multiple years, which permits direct visualisation of transitions between bonus-malus categories. The Sankey diagram excludes the ninety-nine percent of policyholders who remained Good throughout the period, since their flow dominates and obscures the dynamics of interest. Among the remaining policyholders, upward movement dominates: most who started Neutral improved to Good, and most who started Bad improved to Neutral or Good. The mechanism is not downward-rigid as initially hypothesised. The Neutral pricing paradox in Section 4.4 therefore relates to the short-term loss-ratio behaviour of policyholders sitting in the Neutral pool, not to any structural rigidity in the transition rules.
+:::
+
+------------------------------------------------------------------------
+
+## Beyond standard: loss concentration
+
+::::: columns
+::: {.column width="55%"}
+![](TH_EX01_report_files/figure-html/unnamed-chunk-48-1.png){fig-align="center" width="100%"}
+:::
+
+::: {.column width="45%"}
+**Lorenz / Gini view:**
+
+-   Gini coefficient ≈ 0.956
+-   Top 10% of policies bear 99% of incurred losses
+-   The bottom 85% (zero-claim) contribute nothing
+
+The two-axis gap between premium and incurred losses is the empirical manifestation of segment-level mismatch.
+:::
+:::::
+
+::: notes
+The second beyond-standard method borrows the Lorenz curve and Gini coefficient from actuarial and economic practice to quantify how unevenly losses are distributed across the policy population. The Gini coefficient of zero point nine five six is extreme. The bottom eighty-five percent of policies, those with no claims, contribute nothing to total losses. The top ten percent account for approximately ninety-nine percent of total incurred. The same top decile contributes a much smaller share of total premium. This two-axis gap between premium charged and losses incurred is the portfolio-level manifestation of the segment-level mismatches diagnosed in Section 4. Better identification of the top decile in advance is where the loss-ratio improvement lever sits.
+:::
+
+------------------------------------------------------------------------
+
+## Beyond standard: segment clustering
+
+![](TH_EX01_report_files/figure-html/unnamed-chunk-51-1.png){fig-align="center" width="55%"}
+
+**Three risk clusters emerge from four standardised metrics:**
+
+1.  **All three COMP_N tiers cluster together** — structural mispricing, not customer mix
+2.  **Large mid-cluster** of CC, COMP_E, TP, TPG (Good and Neutral) — balanced profiles
+3.  **TPG · Bad as singleton outlier** — high loss ratio and high severity
+
+::: notes
+The third beyond-standard method is hierarchical clustering on a multi-metric segment profile. Each segment is characterised by loss ratio, frequency, severity, and average premium, standardised to a common scale. The dendrogram identifies three groups. The first group contains all three COMP_N bonus tiers together. That all three cluster together is diagnostic: it tells us the COMP_N mispricing is structural to the product rather than driven by customer characteristics. The second and largest group contains the bulk of mid-tier segments with balanced profiles close to the portfolio mean. The third group is a singleton, TPG with Bad bonus-malus, isolated by very high loss ratio and very high severity. With only a few hundred policies, it is small but statistically distinct and warrants individual attention rather than being averaged into the broader TPG tariff.
+:::
+
+------------------------------------------------------------------------
+
+## Summary
+
+**Four loss drivers identified:**
+
+1.  Temporal deterioration (severity-driven, statistically validated)
+2.  COMP_N coverage-tier mispricing (structural, 24pp above benchmark)
+3.  Bonus-malus paradox (Neutral worse than Bad despite lower frequency)
+4.  Geographic and age-driven concentration (within-category heterogeneity)
+
+**Three beyond-standard diagnostics:**
+
+-   Sankey of bonus-malus transitions reveals recovery dominates
+-   Lorenz / Gini quantifies extreme loss concentration (G = 0.956)
+-   Cluster heatmap separates structural mispricing from customer-mix effects
+
+**Directions for future research:**
+
+-   Confirmatory causal-inference methods
+-   Telematics, claim-type detail, finer geographic granularity
+-   Longitudinal modelling of bonus-malus dynamics
+-   External benchmarking against Spanish motor market
+
+::: notes
+To summarise, the bivariate analysis identifies four loss drivers in this portfolio, each statistically validated. The temporal deterioration is driven by severity. The COMP_N coverage tier is structurally mispriced. The bonus-malus mechanism produces an unexpected paradox at the Neutral tier. Geographic and age interactions are non-additive. The three beyond-standard methods complement these findings by exploiting features the standard techniques cannot reach: panel structure, loss concentration, and multivariate similarity. The findings are exploratory rather than confirmatory. Future research should apply causal-inference methods, incorporate telematics and finer geographic granularity, extend the panel analysis to formal longitudinal modelling, and benchmark the results against the broader Spanish motor market. The full technical report and reproducible code are available at the linked repository. Thank you.
+:::
+
+------------------------------------------------------------------------
+
+## Thank you {.center}
+
+**Full technical report:**\
+`isss-608-vaa-demo-t85z.vercel.app/TH_EX01_report.html`
+
+**Source repository:**\
+`github.com/invincible1000/ISSS608-VAA_demo`
+
+**Data source:**\
+Spanish motor insurance portfolio, Mendeley Data
+
+::: notes
+The technical report containing all code, statistical detail, and methodological reflection is published at the URL on screen. The source repository contains the rendered HTML, the Quarto source, and the analytical sandbox preparation pipeline. The raw data is downloadable from Mendeley Data; instructions for re-acquisition are in Section 1.3 of the report. I am happy to take questions on any of the findings, the methods, or the underlying data preparation choices.
+:::
