@@ -244,9 +244,9 @@ Two more diagnostic methods. First, the Lorenz curve and Gini coefficient show h
 
 **Three beyond-standard diagnostics:**
 
--   Sankey: recovery dominates, ruling out transition rigidity.
--   Lorenz / Gini = 0.956: extreme loss concentration.
--   Cluster heatmap: COMP_N risk concentrates in worse bonus tiers.
+-   **Sankey:** recovery dominates, ruling out transition rigidity.
+-   **Lorenz / Gini = 0.956**: extreme loss concentration.
+-   **Cluster heatmap**: COMP_N risk concentrates in worse bonus tiers.
 
 **Future research:** causal inference, telematics, longitudinal modelling, external benchmarking, missingness mechanism.
 
