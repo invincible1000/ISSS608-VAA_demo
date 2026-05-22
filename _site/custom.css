@@ -1,0 +1,63 @@
+.reveal .slides section img {
+  max-width: 95% !important;
+  max-height: 65vh !important;
+}
+
+.reveal .slides section ul {
+  font-size: 0.65em !important;
+}
+
+.reveal .slides section ul li {
+  margin-bottom: 0.2em !important;
+}
+
+.reveal h1 {
+  font-size: 1.5em !important;
+  margin-bottom: 0.3em !important;
+}
+
+.reveal h2 {
+  font-size: 1.1em !important;
+  margin-top: 0.2em !important;
+  margin-bottom: 0.3em !important;
+}
+
+.reveal .slides section ul li {
+  font-weight: 400 !important;
+}
+
+.reveal .slides section ul li strong {
+  font-weight: 700 !important;
+  color: #000;
+}
+
+.reveal .slides section .columns p {
+  font-size: 0.65em !important;
+}
+
+.reveal .slides section .columns p strong {
+  font-weight: 700 !important;
+  color: #000;
+}
+
+.reveal .slides section > p {
+  font-size: 0.65em !important;
+}
+
+.reveal .slides section > p strong {
+  font-weight: 700 !important;
+  color: #000;
+}
+
+.reveal .slides section ol {
+  font-size: 0.65em !important;
+}
+
+.reveal .slides section ol li {
+  margin-bottom: 0.2em !important;
+}
+
+.reveal .slides section ol li strong {
+  font-weight: 700 !important;
+  color: #000;
+}

@@ -77,13 +77,18 @@ The analytical pipeline relies on the tidyverse for data wrangling, several ggpl
 | `ggstatsplot` | Statistical test annotations on plots                  |
 | `ggdist`      | Uncertainty and distribution geoms                     |
 | `ggridges`    | Ridgeline density plots                                |
+| `ggcorrplot`  | Correlation matrix visualisation                       |
+| `ggalluvial`  | Sankey and alluvial flow diagrams                      |
+| `ggdendro`    | Dendrogram extraction for ggplot2-based cluster heatmap|
+| `ggrepel`     | Non-overlapping text labels                            |
 | `patchwork`   | Composite plot layouts                                 |
 | `scales`      | Axis formatting (percent, comma, currency)             |
-| `knitr`       | Table rendering                                        |
+| `knitr`       | Table rendering                                        ||
 
 ```{r}
 pacman::p_load(tidyverse, readxl, janitor, skimr, naniar,
                ggstatsplot, ggdist, ggridges,
+               ggcorrplot, ggalluvial, ggdendro, ggrepel,
                patchwork, scales, knitr)
 ```
 
@@ -92,7 +97,8 @@ pacman::p_load(tidyverse, readxl, janitor, skimr, naniar,
 
 A consistent visual language across the report's charts makes the analytical content easier to follow. Four design principles are encoded into a custom theme function (`theme_house()`) and a four-colour palette, applied to charts built directly in ggplot2.
 
-Two exceptions apply. Charts produced by `ggstatsplot` and `heatmaply` inherit their package-default styling, since these wrappers expose limited theming hooks; the focal colour is overridden where the package permits. Categorical flow visualisations (the Sankey in Section 5.1) map distinct colours to each category by necessity, where blue indicates positive bonus-malus standing rather than functioning as a default fill.
+Two exceptions apply. Charts produced by ggstatsplot inherit the package's default styling, since the wrapper exposes limited theming hooks; the focal colour is overridden where the package permits. Categorical flow visualisations (the Sankey in Section 5.1) map distinct colours to each category by necessity, where blue indicates positive bonus-malus standing rather than functioning as a default fill.
+
 
 The four principles are:
 
@@ -822,7 +828,7 @@ Three patterns are visible. The strongest correlation in the matrix is between d
 
 The bivariate analysis investigates how the portfolio's policy, vehicle, driver, and geographic characteristics relate to its profitability (loss ratio) and volatility (coefficient of variation of loss ratio across policies within a segment).
 
-Three analytical principles guide the work:
+Four analytical principles guide the work:
 
 1.  **Segment-level loss ratio, not policy-level**. Individual policies have highly skewed loss ratios, since most are zero and a few are very large. Aggregating to the segment level via `sum(total_incurred) / sum(total_premium)` produces the exposure-weighted metric an underwriter would price against.
 2.  **Statistical validation alongside every visual claim**. Where the relationship is categorical, `ggstatsplot::ggbetweenstats` or `ggbarstats` provides inline test annotations (ANOVA, Kruskal-Wallis, chi-square). Where the comparison is across years on a ratio of sums, bootstrap confidence intervals are used because the sampling distribution of a ratio is not well-described by closed-form parametric tests.
@@ -1843,18 +1849,19 @@ The decile view sharpens the Lorenz finding. The top decile of policies accounts
 
 ## Cluster heatmap of segment risk profiles
 
-Segments examined one variable at a time can mask the multivariate structure of risk. Two segments may share a moderate loss ratio while behaving very differently on frequency, severity, and premium adequacy. A cluster heatmap addresses this by computing a multi-metric profile for each segment, standardising the metrics to a common scale, and using hierarchical clustering to group segments that share similar profiles. The dendrogram makes the clustering visible.
+Segments examined one variable at a time can mask the multivariate structure of risk. Two segments may share a moderate loss ratio while behaving very differently on frequency, severity, and premium adequacy. A cluster heatmap addresses this by computing a multi-metric profile for each segment, standardising the metrics to a common scale, and using hierarchical clustering to group segments that share similar profiles. The dendrogram makes the clustering visible. The dendrogram is cut at k = 3 because a two-cluster cut would collapse the analytically distinct singleton into the main book, while a four-cluster cut would over-fragment the largest group without surfacing additional structure; k = 3 is the smallest cut that exposes both the high-loss singleton and the elevated-COMP_N pair.
+
+
+
 
 ```{r}
-if (!requireNamespace("heatmaply", quietly = TRUE)) {
-  install.packages("heatmaply")
+if (!requireNamespace("ggdendro", quietly = TRUE)) {
+  install.packages("ggdendro")
 }
-library(heatmaply)
+library(ggdendro)
 ```
 
 ```{r}
-#| fig-height: 6.5
-
 seg_profile <- clean |>
   filter(total_premium > 0, total_exposure > 0) |>
   group_by(policy_type, bonus_score) |>
@@ -1876,25 +1883,126 @@ seg_matrix <- seg_profile |>
   column_to_rownames("segment") |>
   scale() |>
   as.matrix()
-
-heatmaply(
-  seg_matrix,
-  colors = colorRampPalette(c("#4C72B0", "white", house_highlight))(50),
-  dendrogram = "both",
-  k_row = 3,
-  fontsize_row = 9,
-  fontsize_col = 10,
-  column_text_angle = 0,
-  main = "Segments cluster into three distinct risk profiles",
-  xlab = NULL,
-  ylab = NULL,
-  margins = c(60, 120, 50, 20),
-  plot_method = "ggplot"
-)
 ```
 
-The clustering algorithm groups segments by similarity across all four standardised metrics simultaneously. Three groups emerge. The first group contains all three COMP_N combinations (Good, Neutral, Bad) together, defined by elevated claim frequency and elevated average premium relative to the portfolio mean. That all three bonus-malus tiers within COMP_N cluster together tells us the mispricing identified in Section 4.3 is structural to the product rather than driven by customer mix. The second and largest group spans the CC, COMP_E, TP, and TPG segments in Good and Neutral bonus tiers, exhibiting balanced profiles close to the portfolio mean. The third group is a singleton: TPG · Bad, isolated from every other segment by its very high loss ratio and very high severity. With only a few hundred policies, this segment is small in volume but statistically distinct, and warrants individual underwriting attention rather than being averaged into the broader TPG tariff. The dendrogram quantifies these separations: the largest vertical jump isolates the TPG · Bad singleton, with COMP_N's three-segment cluster separating from the main group at the next level down.
 
+
+```{r}
+#| fig-height: 7
+#| fig-width: 10
+
+row_hclust <- hclust(dist(seg_matrix),     method = "complete")
+col_hclust <- hclust(dist(t(seg_matrix)),  method = "complete")
+
+k_row        <- 3
+row_clusters <- cutree(row_hclust, k = k_row)
+N            <- length(row_hclust$order)
+M            <- length(col_hclust$order)
+
+cut_height <- mean(row_hclust$height[c(N - k_row, N - k_row + 1)])
+
+row_order <- row_hclust$labels[row_hclust$order]
+col_order <- col_hclust$labels[col_hclust$order]
+
+classify_segment <- function(x, xend, y, yend) {
+  if (max(y, yend) >= cut_height) return(NA_character_)
+  mid_pos <- round((x + xend) / 2)
+  mid_pos <- max(1, min(N, mid_pos))
+  label   <- row_hclust$labels[row_hclust$order[mid_pos]]
+  as.character(row_clusters[label])
+}
+
+row_ddata <- dendro_data(as.dendrogram(row_hclust), type = "rectangle")
+row_segs  <- segment(row_ddata) |>
+  rowwise() |>
+  mutate(cluster = classify_segment(x, xend, y, yend)) |>
+  ungroup() |>
+  mutate(cluster = factor(cluster, levels = as.character(seq_len(k_row))))
+
+col_ddata <- dendro_data(as.dendrogram(col_hclust), type = "rectangle")
+col_segs  <- segment(col_ddata)
+
+heat_long <- seg_matrix |>
+  as.data.frame() |>
+  rownames_to_column("segment") |>
+  pivot_longer(-segment, names_to = "metric", values_to = "z") |>
+  mutate(
+    segment = factor(segment, levels = row_order),
+    metric  = factor(metric,  levels = col_order)
+  )
+
+cluster_palette <- c("1" = house_highlight,
+                     "2" = "#4C72B0",
+                     "3" = "grey50")
+
+p_row <- ggplot(row_segs) +
+  geom_segment(aes(x = y, y = x, xend = yend, yend = xend,
+                   colour = cluster),
+               linewidth = 0.6) +
+  scale_x_reverse(expand = expansion(mult = c(0.02, 0))) +
+  scale_y_continuous(limits = c(0.5, N + 0.5),
+                     expand = c(0, 0),
+                     breaks = NULL) +
+  scale_colour_manual(values   = cluster_palette,
+                      na.value = "grey60",
+                      guide    = "none") +
+  theme_void() +
+  theme(plot.margin = margin(t = 5, r = 0, b = 30, l = 5))
+
+p_col <- ggplot(col_segs) +
+  geom_segment(aes(x = x, y = y, xend = xend, yend = yend),
+               linewidth = 0.5, colour = "grey40") +
+  scale_x_continuous(limits = c(0.5, M + 0.5),
+                     expand = c(0, 0),
+                     breaks = NULL) +
+  scale_y_continuous(expand = expansion(mult = c(0.02, 0)),
+                     breaks = NULL) +
+  theme_void() +
+  theme(plot.margin = margin(t = 5, r = 5, b = 0, l = 0))
+
+p_heat <- ggplot(heat_long, aes(x = metric, y = segment, fill = z)) +
+  geom_tile(colour = "white", linewidth = 0.8) +
+  geom_text(aes(label = sprintf("%.2f", z)),
+            size = 2.8, colour = "grey15") +
+  scale_fill_gradient2(low      = "#4C72B0",
+                       mid      = "white",
+                       high     = house_highlight,
+                       midpoint = 0,
+                       name     = "Z-score") +
+  scale_x_discrete(expand = c(0, 0), position = "bottom") +
+  scale_y_discrete(expand = c(0, 0)) +
+  labs(x = NULL, y = NULL) +
+  theme_minimal(base_size = 10) +
+  theme(panel.grid        = element_blank(),
+        axis.text.x       = element_text(size = 9),
+        axis.text.y       = element_text(size = 8.5),
+        legend.position   = "right",
+        legend.key.height = unit(1.2, "cm"),
+        plot.margin       = margin(t = 5, r = 5, b = 5, l = 0))
+
+(patchwork::plot_spacer() + p_col +
+   p_row + p_heat) +
+  plot_layout(ncol = 2, widths = c(1, 4), heights = c(1, 4)) +
+  plot_annotation(
+    title    = "Segments cluster into three distinct risk profiles",
+    subtitle = paste0("Hierarchical clustering of segments and metrics ",
+                      "(Euclidean distance, complete linkage); ",
+                      "rows coloured by k = 3 cut"),
+    caption  = paste0("Source: Spanish motor insurance portfolio (Mendeley Data).\n",
+                      "Metrics scaled to z-scores prior to clustering. ",
+                      "Branch colours indicate the three row clusters; ",
+                      "shared trunk segments shown in grey."),
+    theme = theme(
+      plot.title    = element_text(face = "bold", size = 13),
+      plot.subtitle = element_text(colour = "grey40", size = 10,
+                                   margin = margin(b = 10)),
+      plot.caption  = element_text(colour = "grey50", size = 8, hjust = 0)
+    )
+  )
+```
+
+The clustering algorithm groups segments by similarity across all four standardised metrics simultaneously. Three groups emerge. The largest spans eleven segments, covering TP, TPG, CC, and COMP_E across all bonus tiers, together with COMP_N · Good, all sharing balanced profiles close to the portfolio mean. The second cluster is a tight pair, COMP_N · Neutral and COMP_N · Bad, defined by elevated frequency and average premium. The third is a singleton, TPG · Bad, isolated by its very high loss ratio and severity.
+The result sharpens the COMP_N diagnosis from Section 4.3. The elevated loss intensity is not uniform across the COMP_N product; it sits in the two bonus-malus tiers (Neutral and Bad) where Section 4.4 already identified premium inadequacy. The clustering and the bonus-malus paradox therefore point to the same pattern from two angles. The dendrogram quantifies the separations: the largest vertical jump isolates TPG · Bad, with the COMP_N · Neutral and COMP_N · Bad pair separating from the main group at the next level down.
 
 # Summary
 
@@ -1907,7 +2015,7 @@ This analysis of a Spanish motor insurance portfolio across 2022 to 2024 examine
 - The bonus-malus categories show an unexpected pattern: the Neutral tier carries a higher loss ratio than the Bad tier despite collecting less premium per exposure. Frequency rises monotonically across the three categories as expected, but the loss-ratio ordering inverts at the top.
 - Geographic loss intensity differs sharply within municipality categories. Urban island policies run 11 percentage points above rural island policies, the widest within-category spread in the geographic dimension.
 - Driver age and vehicle age interact non-additively in their relationship with loss ratio. The under-25 driver band paired with older vehicles shows the highest loss intensity in the joint surface.
-- Coverage tier and bonus-malus also interact in the multivariate clustering: all three COMP_N combinations group together regardless of bonus-malus status, indicating that the elevated loss profile is structural to the product rather than driven by customer mix.
+- Coverage tier and bonus-malus interact in the multivariate clustering. The elevated loss profile is not uniform across COMP_N: it concentrates in the Neutral and Bad bonus tiers, which cluster as a tight pair, while COMP_N · Good sits with the main book. The clustering corroborates the bonus-malus paradox identified in Section 4.4 from a different methodological angle.
 - Loss concentration is extreme. The Lorenz curve of incurred losses yields a Gini coefficient of approximately 0.96, with the top decile of policies bearing approximately 99 percent of total incurred losses.
 
 ## Recommendations for future research
@@ -1943,4 +2051,4 @@ sessionInfo()
 -   Kay, M. (2024). ggdist: Visualizations of Distributions and Uncertainty. *R package version 3.3.2*.
 -   Brunson, J. C. (2020). ggalluvial: Layered Grammar for Alluvial Plots. *Journal of Open Source Software*, 5(49), 2017.
 -   Kassambara, A. (2023). ggcorrplot: Visualization of a Correlation Matrix using ggplot2. *R package version 0.1.4.1*.
--   Galili, T., O'Callaghan, A., Sidi, J., & Sievert, C. (2018). heatmaply: an R package for creating interactive cluster heatmaps for online publishing. *Bioinformatics*, 34(9), 1600–1602.
+
