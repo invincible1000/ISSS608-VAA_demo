@@ -197,7 +197,7 @@ The fourth finding identifies two non-additive interactions. On the geographic d
 Profitability and predictability are conceptually distinct dimensions, and the scatter view separates them clearly. COMP_N has the worst segment loss ratio in the portfolio but the lowest within-segment coefficient of variation, meaning its loss experience is consistent and easy to forecast. COMP_E shows the opposite profile: a moderately high mean loss ratio paired with the highest within-segment volatility in the book, driven by occasional large-severity claims that dominate its variance. These two segments illustrate that profitability and predictability operate on independent dimensions. CC, the largest segment, combines a moderate loss ratio with mid-range volatility, the most balanced profile in the portfolio.
 :::
 
-## Beyond standard: Bonus-malus transitions
+## Beyond standard techniques: Bonus-malus transitions
 
 ![](Images/TH EX01 Charts/unnamed-chunk-50-1.png){fig-align="center"}
 
@@ -209,7 +209,7 @@ Profitability and predictability are conceptually distinct dimensions, and the s
 The first method beyond the standard curriculum exploits the panel structure of the dataset. The same policyholder appears in multiple years, which permits direct visualisation of transitions between bonus-malus categories. The Sankey diagram excludes the ninety-nine percent of policyholders who remained Good throughout the period to surface the transition dynamics. Among the remaining policyholders, upward movement dominates: 86% of Neutrals and 78.8% of Bads improved by 2024. This rules out the downward-rigid transitions hypothesis raised in Section 4.4. The Neutral pricing paradox is therefore about the short-term loss-ratio behaviour of policyholders sitting in the Neutral pool, not about any structural rigidity in the transition rules. The default-tier under-loading hypothesis remains plausible and would need longitudinal modelling to confirm.
 :::
 
-## Beyond standard: Concentration and Clustering
+## Beyond standard techniques: Concentration and Clustering
 
 ::::: columns
 ::: {.column width="50%"}
@@ -237,18 +237,24 @@ Two more diagnostic methods. First, the Lorenz curve and Gini coefficient show h
 
 **Four loss drivers identified:**
 
-1.  **Temporal deterioration:** 9-point swing, 95% within-segment.
-2.  **COMP_N mispricing:** 24 points above benchmark, structurally distinct.
-3.  **Bonus-malus paradox:** Neutral runs worse than Bad; rigidity ruled out.
-4.  **Geography and age interactions:** wide within-category heterogeneity.
+-   **Temporal deterioration:** 9-point swing, 95% within-segment.
+-   **COMP_N mispricing:** 24 points above benchmark, structurally distinct.
+-   **Bonus-malus paradox:** Neutral runs worse than Bad; rigidity ruled out.
+-   **Geography and age interactions:** Wide within-category heterogeneity.
 
 **Three beyond-standard diagnostics:**
 
--   **Sankey:** recovery dominates, ruling out transition rigidity.
--   **Lorenz / Gini = 0.956**: extreme loss concentration.
+-   **Sankey:** Recovery dominates, ruling out transition rigidity.
+-   **Lorenz / Gini = 0.956**: Extreme loss concentration.
 -   **Cluster heatmap**: COMP_N risk concentrates in worse bonus tiers.
 
-**Future research:** causal inference, telematics, longitudinal modelling, external benchmarking, missingness mechanism.
+**Future research:**
+
+- **Causal inference** to confirm whether loss-ratio gaps reflect risk or confounding.
+- **Telematics and finer geography** to refine segment-level diagnostics.
+- **Longitudinal modelling** of bonus-malus dynamics to test the default-tier hypothesis.
+- **External benchmarking** to clarify portfolio-specific vs generalisable findings.
+- **Missingness mechanism** modelling to test whether dropped records bias findings.
 
 ::: notes
 To summarise, the bivariate analysis identifies four loss drivers, each statistically validated. The temporal deterioration is driven by within-segment changes, not by a mix shift toward worse segments. The COMP_N coverage tier is structurally mispriced. The bonus-malus mechanism produces an unexpected paradox at Neutral, with transition rigidity ruled out by the panel analysis. Geographic and age interactions are non-additive. The three beyond-standard methods exploit features the standard techniques cannot reach: panel structure, loss concentration, and multivariate similarity. The findings are exploratory rather than confirmatory. Future research should apply causal-inference methods, incorporate telematics and finer geographic granularity, extend the panel analysis to formal longitudinal modelling, and benchmark against the broader Spanish motor market.

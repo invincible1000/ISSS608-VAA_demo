@@ -415,8 +415,8 @@ Yap Jit Wei
           display:block!important;
       }</style></aside>
 </section>
-<section id="beyond-standard-bonus-malus-transitions" class="slide level2">
-<h2>Beyond standard: Bonus-malus transitions</h2>
+<section id="beyond-standard-techniques-bonus-malus-transitions" class="slide level2">
+<h2>Beyond standard techniques: Bonus-malus transitions</h2>
 
 <img data-src="Images/TH EX01 Charts/unnamed-chunk-50-1.png" class="quarto-figure quarto-figure-center r-stretch"><ul>
 <li>99.6% of Good policyholders stay Good.</li>
@@ -437,8 +437,8 @@ Yap Jit Wei
           display:block!important;
       }</style></aside>
 </section>
-<section id="beyond-standard-concentration-and-clustering" class="slide level2">
-<h2>Beyond standard: Concentration and Clustering</h2>
+<section id="beyond-standard-techniques-concentration-and-clustering" class="slide level2">
+<h2>Beyond standard techniques: Concentration and Clustering</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><strong>Lorenz curve, Gini = 0.956</strong></p>
@@ -471,22 +471,29 @@ Yap Jit Wei
           display:block!important;
       }</style></aside>
 </section>
-<section id="summary" class="slide level2 scrollable">
+<section id="summary" class="slide level2">
 <h2>Summary</h2>
 <p><strong>Four loss drivers identified:</strong></p>
-<ol type="1">
+<ul>
 <li><strong>Temporal deterioration:</strong> 9-point swing, 95% within-segment.</li>
 <li><strong>COMP_N mispricing:</strong> 24 points above benchmark, structurally distinct.</li>
 <li><strong>Bonus-malus paradox:</strong> Neutral runs worse than Bad; rigidity ruled out.</li>
-<li><strong>Geography and age interactions:</strong> wide within-category heterogeneity.</li>
-</ol>
+<li><strong>Geography and age interactions:</strong> Wide within-category heterogeneity.</li>
+</ul>
 <p><strong>Three beyond-standard diagnostics:</strong></p>
 <ul>
-<li><strong>Sankey:</strong> recovery dominates, ruling out transition rigidity.</li>
-<li><strong>Lorenz / Gini = 0.956</strong>: extreme loss concentration.</li>
+<li><strong>Sankey:</strong> Recovery dominates, ruling out transition rigidity.</li>
+<li><strong>Lorenz / Gini = 0.956</strong>: Extreme loss concentration.</li>
 <li><strong>Cluster heatmap</strong>: COMP_N risk concentrates in worse bonus tiers.</li>
 </ul>
-<p><strong>Future research:</strong> causal inference, telematics, longitudinal modelling, external benchmarking, missingness mechanism.</p>
+<p><strong>Future research:</strong></p>
+<ul>
+<li><strong>Causal inference</strong> to confirm whether loss-ratio gaps reflect risk or confounding.</li>
+<li><strong>Telematics and finer geography</strong> to refine segment-level diagnostics.</li>
+<li><strong>Longitudinal modelling</strong> of bonus-malus dynamics to test the default-tier hypothesis.</li>
+<li><strong>External benchmarking</strong> to clarify portfolio-specific vs generalisable findings.</li>
+<li><strong>Missingness mechanism</strong> modelling to test whether dropped records bias findings.</li>
+</ul>
 <aside class="notes">
 <p>To summarise, the bivariate analysis identifies four loss drivers, each statistically validated. The temporal deterioration is driven by within-segment changes, not by a mix shift toward worse segments. The COMP_N coverage tier is structurally mispriced. The bonus-malus mechanism produces an unexpected paradox at Neutral, with transition rigidity ruled out by the panel analysis. Geographic and age interactions are non-additive. The three beyond-standard methods exploit features the standard techniques cannot reach: panel structure, loss concentration, and multivariate similarity. The findings are exploratory rather than confirmatory. Future research should apply causal-inference methods, incorporate telematics and finer geographic granularity, extend the panel analysis to formal longitudinal modelling, and benchmark against the broader Spanish motor market.</p>
 <style type="text/css">
