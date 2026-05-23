@@ -17,7 +17,7 @@ format:
 
 ::: incremental
 1.  **The Problem** — What underperforming portfolios look like
-2.  **The Data** — The Spanish motor portfolio at a glance
+2.  **The Data** — The Spanish Motor Portfolio at a glance
 3.  **Univariate snapshot** — Three structural features shape the analysis
 4.  **Data Quality and Analytical Robustness** — Three defensive checks
 5.  **Findings** — Four loss drivers
@@ -59,7 +59,7 @@ Good afternoon. This presentation summarises a visual analytics study of a Spani
 The starting point is Swiss Re's observation that insurers routinely carry portfolios whose loss drivers are not well understood. Motor insurance is a particularly fertile setting for visual analytics: claim volumes are high enough that segment-level patterns emerge clearly, and the margin between profit and loss is narrow enough that even small loss-ratio movements matter. The two objectives set by this exercise are descriptive and diagnostic. The descriptive objective profiles the variables' distributions. The diagnostic objective identifies where premium charged and losses incurred have drifted out of alignment.
 :::
 
-## The Data — Spanish Motor Portfolio at a Glance
+## The Data: Spanish Motor Portfolio at a Glance
 
 ![](Images/TH%20EX01%20Charts/unnamed-chunk-25-1.png){fig-align="center"}
 
@@ -263,10 +263,10 @@ To summarise, the bivariate analysis identifies four loss drivers, each statisti
 ## Thank you {.center}
 
 **Full technical report:**\
-`isss-608-vaa-demo-t85z.vercel.app/TH_EX01_report.html`
+[isss-608-vaa-demo-t85z.vercel.app/TH_EX01_report.html](https://isss-608-vaa-demo-t85z.vercel.app/TH_EX01_report.html)
 
 **Source repository:**\
-`github.com/invincible1000/ISSS608-VAA_demo`
+[github.com/invincible1000/ISSS608-VAA_demo](https://github.com/invincible1000/ISSS608-VAA_demo)
 
 **Data source:**\
 Spanish motor insurance portfolio, Mendeley Data
