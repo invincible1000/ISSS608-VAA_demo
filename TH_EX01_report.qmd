@@ -10,6 +10,8 @@ format:
     toc: true
     toc-depth: 4
     number-sections: true
+    code-fold: true
+    code-summary: "Show the code"
     
 execute:
   warning: false 
@@ -105,7 +107,7 @@ The four principles are:
 1. **One focal colour for the data point under discussion.** A single red (`#C44E52`) marks the segment, year, or category being discussed in the surrounding prose. All other elements use grey to recede visually, so the reader's eye is directed without ambiguity.
 2. **Reference values in muted grey.** Benchmarks (the 70% loss-ratio line, the portfolio mean CV, the break-even threshold) use a mid-grey so they sit behind the data without competing for attention.
 3. **Diverging palette only where direction matters.** Loss-ratio heatmaps use the RdYlBu diverging palette, which encodes the analyst's break-even threshold visually. Univariate distributions use a single blue fill, since no direction is being encoded.
-4. **Finding-led titles, descriptive subtitles.** Chart titles state the headline finding ("COMP_N runs at 94% loss ratio") rather than describing the chart type. The subtitle below names the underlying variables and population.
+4. **Finding-led titles, descriptive subtitles.** Chart titles state the headline finding ("COMP_N runs at 93.5% loss ratio") rather than describing the chart type. The subtitle below names the underlying variables and population.
 
 The four colour constants are factored out of the theme so they can be referenced by name in any chart, which keeps the palette consistent and reduces a palette change to a one-line edit.
 
@@ -318,7 +320,7 @@ clean |>
   )
 ```
 
-The cancellation rate ranges from 7.8% in COMP_N to 15.1% in TPG. The two most comprehensive tiers (COMP_E and COMP_N) show the lowest cancellation rates in the portfolio. This is important for the bivariate analysis: COMP_N's elevated loss ratio (94%, reported in Section 4.3) cannot be explained by partial-premium bias from cancellation truncation, since COMP_N policies are the most stable in the book. The finding that COMP_N is structurally mispriced therefore holds independently of cancellation effects. TPG carries the highest cancellation rate at 15.1%, which is worth noting but does not affect the headline findings, since TPG sits in the middle of the loss-ratio distribution rather than at the extremes.
+The cancellation rate ranges from 7.8% in COMP_N to 15.1% in TPG. The two most comprehensive tiers (COMP_E and COMP_N) show the lowest cancellation rates in the portfolio. This is important for the bivariate analysis: COMP_N's elevated loss ratio (93.5%, reported in Section 4.3) cannot be explained by partial-premium bias from cancellation truncation, since COMP_N policies are the most stable in the book. The finding that COMP_N is structurally mispriced therefore holds independently of cancellation effects. TPG carries the highest cancellation rate at 15.1%, which is worth noting but does not affect the headline findings, since TPG sits in the middle of the loss-ratio distribution rather than at the extremes.
 
 A final check verifies the integrity of `insured_id`, since the Sankey transition analysis in Section 5.1 treats it as a stable policyholder key over time.
 
@@ -773,12 +775,6 @@ The univariate view raises three structural features the bivariate analysis must
 
 Before turning to bivariate analysis of the categorical risk drivers, the continuous variables are examined jointly through a correlation matrix. The correlogram surfaces three things: which variable pairs move together strongly enough to constrain interpretation downstream, which appear independent and can be treated as separate signals, and whether any pair carries multicollinearity that would distort multivariate inference.
 
-```{r}
-if (!requireNamespace("ggcorrplot", quietly = TRUE)) {
-  install.packages("ggcorrplot")
-}
-library(ggcorrplot)
-```
 
 ```{r}
 #| fig-width: 8
@@ -1049,7 +1045,7 @@ pt |>
   )
 ```
 
-The numbers reveal a monotonic gradient. Basic third-party (TP) policies run a loss ratio of around 54%, well inside profitable territory. Loss ratio rises through TPG and CC, reaches the mid-70s for COMP_E, and arrives at COMP_N at approximately 94%. The COMP_N segment is within touching distance of pure-loss breakeven before any expense loading is applied.
+The numbers reveal a monotonic gradient. Basic third-party (TP) policies run a loss ratio of around 54%, well inside profitable territory. Loss ratio rises through TPG and CC, reaches the mid-70s for COMP_E, and arrives at COMP_N at approximately 93.5%. The COMP_N segment is within touching distance of pure-loss breakeven before any expense loading is applied.
 
 ```{r}
 #| fig-height: 5
@@ -1073,13 +1069,13 @@ ggplot(pt_plot_data, aes(x = policy_type, y = loss_ratio, fill = highlight)) +
            label = "70% benchmark",
            hjust = 0, size = 3, colour = "grey40", fontface = "italic") +
   annotate("curve",
-           x = 4.4, xend = 4.95,
-           y = 0.85, yend = 0.93,
-           arrow = arrow(length = unit(2, "mm"), type = "closed"),
-           curvature = -0.3, colour = "#C44E52", linewidth = 0.4) +
+          x = 4.3, xend = 4.85,
+          y = 0.82, yend = 0.92,
+          arrow = arrow(length = unit(2.5, "mm"), type = "closed"),
+          curvature = -0.3, colour = "#C44E52", linewidth = 0.6) +
   annotate("text",
            x = 4.2, y = 0.84,
-           label = "COMP_N runs 24 points\nabove the benchmark",
+           label = "COMP_N runs 23.5 points\nabove the benchmark",
            hjust = 1, size = 3.2, colour = "#C44E52", lineheight = 0.95) +
   scale_y_continuous(labels = label_percent(accuracy = 1),
                      limits = c(0, 1.05),
@@ -1091,7 +1087,7 @@ ggplot(pt_plot_data, aes(x = policy_type, y = loss_ratio, fill = highlight)) +
                                   "Other tiers" = "grey40"),
                       guide = "none") +
   labs(
-    title = "Comprehensive-without-excess runs at 94% loss ratio",
+    title = "Comprehensive-without-excess runs at 93.5% loss ratio",
     subtitle = "Loss ratio across five coverage tiers, 2022–2024 portfolio",
     x = "Policy type (ordered from least to most comprehensive)",
     y = "Loss ratio",
@@ -1290,7 +1286,7 @@ p_prem <- ggplot(bs_se, aes(x = bonus_score, y = avg_prem, colour = highlight)) 
   plot_annotation(
     title = "Neutral pays less but loses more: the bonus-malus paradox",
     subtitle = "Loss ratio, frequency, and premium per exposure by bonus-malus category, 2022–2024",
-    caption = "Source: Spanish motor insurance portfolio (Mendeley Data). 95% confidence intervals from binomial (loss ratio) and Poisson (frequency) approximations.",
+    caption = "Source: Spanish motor insurance portfolio (Mendeley Data). \n95% confidence intervals from binomial (loss ratio) and Poisson (frequency) approximations.",
     theme = theme(
       plot.title = element_text(face = "bold", size = 13),
       plot.subtitle = element_text(colour = "grey40", size = 10, margin = margin(b = 12)),
@@ -1625,7 +1621,7 @@ These two segments illustrate that profitability and predictability operate on i
 The bivariate analysis identifies four loss drivers:
 
 1.  **Temporal deterioration**. The 2022 to 2024 loss-ratio trajectory shows a statistically validated worsening, with severity contributing more than frequency.
-2.  **Coverage tier mispricing**. COMP_N runs a loss ratio near 94%, materially worse than every other tier and statistically distinct in pairwise testing.
+2.  **Coverage tier mispricing**. COMP_N runs a loss ratio of 93.5%, materially worse than every other tier and statistically distinct in pairwise testing.
 3.  **Bonus-malus paradox**. The Neutral category carries the highest loss ratio in the portfolio despite middle-of-the-road claim frequency, suggesting either default-tier under-loading or downward-rigid bonus-malus transitions. Section 5 examines the transition dynamics directly.
 4.  **Geographic and age-driven concentration**. Urban island policies and young-driver-old-vehicle combinations both show elevated loss intensity, with the latter representing a joint pattern that additive treatment of the two age dimensions would miss.
 
@@ -1637,12 +1633,6 @@ The methods applied so far are drawn from the visual analytics curriculum covere
 
 The same policyholder can appear in 2022, 2023, and 2024 records. This creates a panel structure that single-year cross-sectional analysis discards. The bonus-malus paradox identified in Section 4 (Neutral carrying higher loss ratio than Bad) raised the question of whether bonus-score transitions are downward-rigid. A Sankey diagram of category transitions answers this directly.
 
-```{r}
-if (!requireNamespace("ggalluvial", quietly = TRUE)) {
-  install.packages("ggalluvial")
-}
-library(ggalluvial)
-```
 
 ```{r}
 #| fig-height: 4.5
@@ -1853,13 +1843,6 @@ Segments examined one variable at a time can mask the multivariate structure of 
 
 
 
-
-```{r}
-if (!requireNamespace("ggdendro", quietly = TRUE)) {
-  install.packages("ggdendro")
-}
-library(ggdendro)
-```
 
 ```{r}
 seg_profile <- clean |>

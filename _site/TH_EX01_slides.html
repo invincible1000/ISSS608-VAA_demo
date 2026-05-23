@@ -155,7 +155,7 @@ Yap Jit Wei
 <li class="fragment"><strong>Findings</strong> — Four loss drivers
 <ul>
 <li class="fragment">Finding 1: Loss ratio rose 9 points in two years</li>
-<li class="fragment">Finding 2: COMP_N runs at 94% loss ratio</li>
+<li class="fragment">Finding 2: COMP_N runs at 93.5% loss ratio</li>
 <li class="fragment">Finding 3: The bonus-malus paradox</li>
 <li class="fragment">Finding 4: Geography and age interactions</li>
 </ul></li>
@@ -282,14 +282,14 @@ Yap Jit Wei
 <p>The 1,800 dropped records carry higher premiums and more claims than retained ones. The missingness is not random and is flagged as a limitation.</p>
 </div><div class="column" style="width:33%;">
 <p><strong>Cancellation analysis</strong></p>
-<p>COMP_N has the lowest cancellation rate in the portfolio (7.8%). Its 94% loss ratio reflects real pricing inadequacy, not partial-premium truncation.</p>
+<p>COMP_N has the lowest cancellation rate in the portfolio (7.8%). Its 93.5% loss ratio reflects real pricing inadequacy, not partial-premium truncation.</p>
 </div><div class="column" style="width:33%;">
 <p><strong>Within-vs-between decomposition</strong></p>
 <p>Of the 8.9-point loss-ratio swing between 2022 and 2024, 8.5 points come from within-segment deterioration. The book’s policy-type mix barely shifted; existing segments themselves got worse.</p>
 </div></div>
 <p>Sanity checks also confirmed valid value ranges, internal consistency between coverage components and totals, and a uniquely-keyed panel on <strong>insured_id</strong>.</p>
 <aside class="notes">
-<p>Before the substantive findings, three defensive checks support the analysis. First, missingness profiling: the 1,800 records dropped via listwise deletion are not missing at random — they skew higher-premium and higher-claim than the retained population, flagged as a limitation. Second, the cancellation analysis rules out partial-premium bias for COMP_N’s 94% loss ratio: COMP_N has the lowest cancellation rate in the portfolio at 7.8%, so its loss ratio reflects genuine pricing inadequacy. Third, the within-versus-between decomposition splits the 9-point loss-ratio swing into 8.5 points from within-segment deterioration and only 0.1 from mix shift, ruling out the mix-shift narrative and motivating the segment-level drill-down. Beyond these, sanity checks confirm no out-of-range values, internal consistency between coverage-specific columns and totals, and panel uniqueness on insured_id.</p>
+<p>Before the substantive findings, three defensive checks support the analysis. First, missingness profiling: the 1,800 records dropped via listwise deletion are not missing at random — they skew higher-premium and higher-claim than the retained population, flagged as a limitation. Second, the cancellation analysis rules out partial-premium bias for COMP_N’s 93.5% loss ratio: COMP_N has the lowest cancellation rate in the portfolio at 7.8%, so its loss ratio reflects genuine pricing inadequacy. Third, the within-versus-between decomposition splits the 9-point loss-ratio swing into 8.5 points from within-segment deterioration and only 0.1 from mix shift, ruling out the mix-shift narrative and motivating the segment-level drill-down. Beyond these, sanity checks confirm no out-of-range values, internal consistency between coverage-specific columns and totals, and panel uniqueness on insured_id.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -321,13 +321,13 @@ Yap Jit Wei
           display:block!important;
       }</style></aside>
 </section>
-<section id="finding-2-comp_n-runs-at-94-loss-ratio" class="slide level2">
-<h2>Finding 2: COMP_N runs at 94% loss ratio</h2>
+<section id="finding-2-comp_n-runs-at-93.5-loss-ratio" class="slide level2">
+<h2>Finding 2: COMP_N runs at 93.5% loss ratio</h2>
 
-<img data-src="Images/TH EX01 Charts/unnamed-chunk-36-1.png" class="quarto-figure quarto-figure-center r-stretch"><ul>
+<img data-src="Images/TH EX01 Charts/loss ratio.png" class="quarto-figure quarto-figure-center r-stretch"><ul>
 <li>COMP_N covers 5% of the portfolio but runs at a <strong>93.5% loss ratio</strong>, distinct from every other tier in pairwise testing.</li>
-<li>Loss ratio rises across tiers: TP 54%, TPG 70%, CC 63%, COMP_E 74%, <strong>COMP_N 94%</strong>.</li>
-<li>The 94% isn’t a cancellation artefact — COMP_N has the portfolio’s lowest cancellation rate at 7.8%.</li>
+<li>Loss ratio rises across tiers: TP 54%, TPG 70%, CC 63%, COMP_E 74%, <strong>COMP_N 93.5%</strong>.</li>
+<li>COMP_N has the portfolio’s lowest cancellation rate at 7.8%, so the 93.5% isn’t a cancellation artefact.</li>
 </ul>
 <aside class="notes">
 <p>The second headline is the coverage-tier mispricing. The five policy types show a clear monotonic gradient in loss ratio, from fifty-four percent on basic third-party to ninety-four percent on comprehensive without excess. COMP_N sits twenty-four percentage points above the seventy percent break-even benchmark before any expense loading is applied. A Kruskal-Wallis test followed by FDR-adjusted pairwise comparisons confirms that COMP_N is statistically distinct from every other tier. Importantly, the cluster heatmap shown later groups all three bonus-malus tiers within COMP_N together, indicating that the elevated loss profile is structural to the product rather than driven by customer mix. The cancellation analysis in the report also confirms COMP_N is not biased by partial-premium truncation.</p>
@@ -346,7 +346,7 @@ Yap Jit Wei
 <section id="finding-3-the-bonus-malus-paradox" class="slide level2">
 <h2>Finding 3: The bonus-malus paradox</h2>
 
-<img data-src="Images/TH EX01 Charts/unnamed-chunk-35-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:55.0%"><p><strong>Neutral pays less but loses more.</strong> Claim frequency and average premium both rise monotonically from Good to Neutral to Bad. Loss ratio does not: Neutral runs at 81.9%, materially above Bad at 79.6%.</p>
+<img data-src="Images/TH EX01 Charts/bonus malus paradox.png" class="quarto-figure quarto-figure-center r-stretch"><p><strong>Neutral pays less but loses more.</strong> Claim frequency and average premium both rise monotonically from Good to Neutral to Bad. Loss ratio does not: Neutral runs at 81.9%, materially above Bad at 79.6%.</p>
 <aside class="notes">
 <p>The third finding inverts the expected ordering. Claim frequency rises monotonically from Good to Neutral to Bad, as it should. Average premium per exposure does the same, indicating that the bonus-malus surcharges are being applied. But loss ratio does not follow that pattern. Neutral runs at eighty-two percent, materially above Bad at eighty percent, despite Neutral collecting twenty-six percent less premium per exposure. Two non-exclusive explanations are plausible: new entrants land in Neutral by default before claim history accumulates, or bonus-malus transitions are downward-rigid with claimants staying in Neutral. The panel-data analysis in the next section examines the rigidity hypothesis directly and rules it out, leaving the default-tier explanation as the more plausible one.</p>
 <style type="text/css">
@@ -398,7 +398,7 @@ Yap Jit Wei
 
 <img data-src="Images/TH EX01 Charts/unnamed-chunk-48-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:65.0%"><p><strong>Two distinct underwriting profiles emerge:</strong></p>
 <ul>
-<li>COMP_N is the worst-performing tier (94% loss ratio) but the most predictable (CV 7.6).</li>
+<li>COMP_N is the worst-performing tier (93.5% loss ratio) but the most predictable (CV 7.6).</li>
 <li>COMP_E sits closer to break-even on average (74%) but carries the highest within-segment volatility (CV 123), driven by a heavy claim-severity tail.</li>
 </ul>
 <aside class="notes">
