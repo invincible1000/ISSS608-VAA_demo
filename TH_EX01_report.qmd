@@ -1111,6 +1111,7 @@ Before the formal test, a ridgeline view of the policy-level loss-ratio distribu
 
 ```{r}
 #| fig-height: 4.5
+#| fig-width: 10
 
 clean |>
   filter(total_claims > 0, is.finite(loss_ratio),
