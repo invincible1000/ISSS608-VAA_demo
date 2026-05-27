@@ -993,7 +993,7 @@ ggplot(leak_day, aes(x = round_num, y = n, fill = channel_group)) +
 
 - Through most of the afternoon, public posting holds at one to four posts per hour while private agent-to-agent messaging sits in the 40 to 55 range.
 - Public posting rises above its afternoon baseline at 5 PM when **SaltWind** publishes the exclusive, then roughly doubles again at 6 PM when the embargo formally lifts.
-- The post-publish timing of the spike rules out **TenantThread** agents as the original source. If agents had leaked the merger themselves, the public-post spike would precede **SaltWind**'s exclusive. It follows it. The information escape happened upstream of this dataset's recorded message flow.
+- The post-publish timing of the spike makes it unlikely, based on the observed message logs, that **TenantThread** agents were the original source. If agents had leaked the merger themselves, the public-post spike would precede **SaltWind**'s exclusive in the public-channel data. It follows it. The information escape appears to have happened upstream of this dataset's recorded message flow.
 
 :::
 
