@@ -2,7 +2,7 @@
 title: "Take Home Exercise 2 - VAST Challenge MC 1"
 subtitle: "Reconstructing the TenantThread Embargo Breach"
 author: "Yap Jit Wei"
-date: "June 1, 2026"
+date: "May 26, 2026"
 date-modified: "last-modified"
 format:
   html:
