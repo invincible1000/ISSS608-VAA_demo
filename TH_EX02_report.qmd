@@ -783,7 +783,7 @@ ggraph(g, layout = "linear", circular = TRUE) +
 - The **Judge** has the thinnest network footprint of any agent. Just 15 broadcasts to the ALL node, one directed message to **Legal**, and one received from **Legal**.
 - For a compliance role designed to flag issues quickly with specific people, that is a structurally thin connection. The behavioural consequence shows up in Section 5.3.
 
-:::.
+:::
 
 ## What This Tells Us About the Baseline
 
