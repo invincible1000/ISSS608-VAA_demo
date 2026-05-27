@@ -132,31 +132,45 @@ leak-leading behavior? And if so, why did nothing happen?
 
 ## Analytical Approach
 
-The investigation works through four stages.
+The investigation decomposes the brief's three tasks into three
+analytical questions, each tied to a specific method and section
+of the report.
 
-The first stage establishes a baseline. By looking at roughly the
-first 13 rounds, we describe what normal agent activity looks like
-in this team: who talks to whom, on which channels, and at what
-pace. This is Section 4 of the report.
+```{mermaid}
+%%| label: fig-investigation-framework
+%%| fig-cap: "Investigation framework: each task is decomposed into a question, a method, and a target section."
 
-The second stage locates the anomaly. We compare the final round
-to that baseline and surface the points where behaviour diverges
-most sharply. This work feeds into Task 2.
+flowchart LR
+    Q1["<b>Question 1</b><br/>What happened<br/>during the breach?"]
+    Q2["<b>Question 2</b><br/>How does breach behaviour<br/>differ from normal?"]
+    Q3["<b>Question 3</b><br/>What earlier signals<br/>could have warned us?"]
 
-The third stage reconstructs the chain of events. Using the
-specific messages, internal deliberations, and Judge interventions
-in the final round, we work out the sequence that led to the leak.
-This is Task 1.
+    M1["<b>Method</b><br/>Hour-by-hour timeline<br/>+ post-sequence analysis<br/>+ Judge presence check"]
+    M2["<b>Method</b><br/>Baseline (rounds 1–13)<br/>vs crisis day (rounds 14–23)<br/>per-agent rate comparison"]
+    M3["<b>Method</b><br/>Near-miss audit<br/>+ anonymous-channel scan<br/>+ Judge scope vs breach"]
 
-The fourth stage separates intent from failure. By searching
-earlier rounds for prior near-misses and looking for mismatches
-between what agents said they would do and what they actually did,
-we can argue whether the leak looks deliberate or whether it looks
-like a cascading breakdown. This is Task 3, and it feeds the
-conclusion in Section 8.
+    S1["<b>Section 5</b><br/>Task 1 answer"]
+    S2["<b>Section 6</b><br/>Task 2 answer"]
+    S3["<b>Section 7</b><br/>Task 3 answer"]
 
-This way of working follows the patterns-of-life framing rewarded
-in past VAST Challenge submissions (Guan, 2017).
+    Q1 --> M1 --> S1
+    Q2 --> M2 --> S2
+    Q3 --> M3 --> S3
+
+    classDef question fill:#FDECEC,stroke:#C44E52,stroke-width:2px,color:#000
+    classDef method fill:#F5F5F5,stroke:#666,stroke-width:1.5px,color:#000
+    classDef section fill:#FFF4E6,stroke:#C44E52,stroke-width:1.5px,color:#000
+
+    class Q1,Q2,Q3 question
+    class M1,M2,M3 method
+    class S1,S2,S3 section
+```
+
+Section 4 (Exploratory Analysis) precedes the three task answers
+and establishes the communication landscape used as context
+throughout. Section 8 reconciles the three answers into a single
+verdict. This way of working follows the patterns-of-life framing
+rewarded in past VAST Challenge submissions (Guan, 2017).
 
 # Setup
 
@@ -570,6 +584,37 @@ range(messages$hour_dt) %>%
 ```
 
 The expected range is 17 May 2046 09:00 to 5 June 2046 18:00.
+
+## Assumptions and Interpretive Decisions
+
+::: callout-note
+## Three decisions affecting downstream analysis
+
+1. **Broadcasts modelled as edges to a synthetic ALL node.**
+The recipients field uses the literal value `"ALL"` for comms
+huddle broadcasts. The network in Section 4.3 treats `ALL` as
+a single synthetic node rather than expanding each broadcast
+into edges to every other agent. This keeps the network legible
+but slightly understates the **Judge**'s structural isolation,
+since fully expanded broadcasts would emphasise even more that
+the **Judge** has no targeted connections.
+
+2. **Empty recipient lists left unjoined.** The `one_on_one_chat`
+and `side_huddle` channels contain messages with empty
+`recipients` arrays — the recipient is implied by conversational
+context rather than listed. These messages are excluded from the
+edge list and therefore do not appear in the network plot.
+Volume-based charts (Sections 4.1, 5.1, 6) include these messages
+in their counts.
+
+3. **Internal-state coverage treated as missing-not-random.**
+Only 86 of 912 messages carry populated `internal_state` text.
+Where these deliberations are quoted (Section 7.1 **@ElenaMarquez**
+incident, Section 7.3 **Judge** COMPLIANCE_WARNING), the report
+treats them as illustrative rather than representative. No chart
+aggregates over the internal-state field.
+
+:::
 
 # Exploratory Analysis
 
@@ -1167,6 +1212,18 @@ operates the communications channels, layered on top of an
 amplification of volume across the active agents. Both axes
 had visible precursors in the baseline window, which Task 3
 will examine.
+:::
+
+::: callout-warning
+## Comparison caveat: daily vs hourly sampling
+
+The 13 baseline rounds are daily snapshots. The 10 crisis-day
+rounds are hourly snapshots. Every comparison in this section
+normalises to a per-round mean, but the underlying time windows
+are not equivalent. The analytical claim ("an average crisis
+hour exceeds an average baseline day") holds even under this
+handicap, but exact ratios should be read as indicative rather
+than precise.
 :::
 
 ## Establishing the Baseline

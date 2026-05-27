@@ -278,6 +278,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#deriving-the-edge-list" id="toc-deriving-the-edge-list" class="nav-link" data-scroll-target="#deriving-the-edge-list"><span class="header-section-number">3.4</span> Deriving the Edge List</a></li>
   <li><a href="#building-the-agent-round-summary" id="toc-building-the-agent-round-summary" class="nav-link" data-scroll-target="#building-the-agent-round-summary"><span class="header-section-number">3.5</span> Building the Agent-Round Summary</a></li>
   <li><a href="#sanity-checks" id="toc-sanity-checks" class="nav-link" data-scroll-target="#sanity-checks"><span class="header-section-number">3.6</span> Sanity Checks</a></li>
+  <li><a href="#assumptions-and-interpretive-decisions" id="toc-assumptions-and-interpretive-decisions" class="nav-link" data-scroll-target="#assumptions-and-interpretive-decisions"><span class="header-section-number">3.7</span> Assumptions and Interpretive Decisions</a></li>
   </ul></li>
   <li><a href="#exploratory-analysis" id="toc-exploratory-analysis" class="nav-link" data-scroll-target="#exploratory-analysis"><span class="header-section-number">4</span> Exploratory Analysis</a>
   <ul>
@@ -411,12 +412,48 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="analytical-approach" class="level2" data-number="1.5">
 <h2 data-number="1.5" class="anchored" data-anchor-id="analytical-approach"><span class="header-section-number">1.5</span> Analytical Approach</h2>
-<p>The investigation works through four stages.</p>
-<p>The first stage establishes a baseline. By looking at roughly the first 13 rounds, we describe what normal agent activity looks like in this team: who talks to whom, on which channels, and at what pace. This is Section 4 of the report.</p>
-<p>The second stage locates the anomaly. We compare the final round to that baseline and surface the points where behaviour diverges most sharply. This work feeds into Task 2.</p>
-<p>The third stage reconstructs the chain of events. Using the specific messages, internal deliberations, and Judge interventions in the final round, we work out the sequence that led to the leak. This is Task 1.</p>
-<p>The fourth stage separates intent from failure. By searching earlier rounds for prior near-misses and looking for mismatches between what agents said they would do and what they actually did, we can argue whether the leak looks deliberate or whether it looks like a cascading breakdown. This is Task 3, and it feeds the conclusion in Section 8.</p>
-<p>This way of working follows the patterns-of-life framing rewarded in past VAST Challenge submissions (Guan, 2017).</p>
+<p>The investigation decomposes the brief’s three tasks into three analytical questions, each tied to a specific method and section of the report.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-investigation-framework" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-investigation-framework-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-investigation-framework">flowchart LR
+    Q1["&lt;b&gt;Question 1&lt;/b&gt;&lt;br/&gt;What happened&lt;br/&gt;during the breach?"]
+    Q2["&lt;b&gt;Question 2&lt;/b&gt;&lt;br/&gt;How does breach behaviour&lt;br/&gt;differ from normal?"]
+    Q3["&lt;b&gt;Question 3&lt;/b&gt;&lt;br/&gt;What earlier signals&lt;br/&gt;could have warned us?"]
+
+    M1["&lt;b&gt;Method&lt;/b&gt;&lt;br/&gt;Hour-by-hour timeline&lt;br/&gt;+ post-sequence analysis&lt;br/&gt;+ Judge presence check"]
+    M2["&lt;b&gt;Method&lt;/b&gt;&lt;br/&gt;Baseline (rounds 1–13)&lt;br/&gt;vs crisis day (rounds 14–23)&lt;br/&gt;per-agent rate comparison"]
+    M3["&lt;b&gt;Method&lt;/b&gt;&lt;br/&gt;Near-miss audit&lt;br/&gt;+ anonymous-channel scan&lt;br/&gt;+ Judge scope vs breach"]
+
+    S1["&lt;b&gt;Section 5&lt;/b&gt;&lt;br/&gt;Task 1 answer"]
+    S2["&lt;b&gt;Section 6&lt;/b&gt;&lt;br/&gt;Task 2 answer"]
+    S3["&lt;b&gt;Section 7&lt;/b&gt;&lt;br/&gt;Task 3 answer"]
+
+    Q1 --&gt; M1 --&gt; S1
+    Q2 --&gt; M2 --&gt; S2
+    Q3 --&gt; M3 --&gt; S3
+
+    classDef question fill:#FDECEC,stroke:#C44E52,stroke-width:2px,color:#000
+    classDef method fill:#F5F5F5,stroke:#666,stroke-width:1.5px,color:#000
+    classDef section fill:#FFF4E6,stroke:#C44E52,stroke-width:1.5px,color:#000
+
+    class Q1,Q2,Q3 question
+    class M1,M2,M3 method
+    class S1,S2,S3 section
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-investigation-framework-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Investigation framework: each task is decomposed into a question, a method, and a target section.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Section 4 (Exploratory Analysis) precedes the three task answers and establishes the communication landscape used as context throughout. Section 8 reconciles the three answers into a single verdict. This way of working follows the patterns-of-life framing rewarded in past VAST Challenge submissions (Guan, 2017).</p>
 </section>
 </section>
 <section id="setup" class="level1" data-number="2">
@@ -1029,6 +1066,26 @@ $ n_private        &lt;int&gt; 6, 3, 10, 4, 8, 7, 17, 6, 9, 7, 15, 5, 9, 6, 16, 
 </div>
 <p>The expected range is 17 May 2046 09:00 to 5 June 2046 18:00.</p>
 </section>
+<section id="assumptions-and-interpretive-decisions" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="assumptions-and-interpretive-decisions"><span class="header-section-number">3.7</span> Assumptions and Interpretive Decisions</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Three decisions affecting downstream analysis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p><strong>Broadcasts modelled as edges to a synthetic ALL node.</strong> The recipients field uses the literal value <code>"ALL"</code> for comms huddle broadcasts. The network in Section 4.3 treats <code>ALL</code> as a single synthetic node rather than expanding each broadcast into edges to every other agent. This keeps the network legible but slightly understates the <strong>Judge</strong>’s structural isolation, since fully expanded broadcasts would emphasise even more that the <strong>Judge</strong> has no targeted connections.</p></li>
+<li><p><strong>Empty recipient lists left unjoined.</strong> The <code>one_on_one_chat</code> and <code>side_huddle</code> channels contain messages with empty <code>recipients</code> arrays — the recipient is implied by conversational context rather than listed. These messages are excluded from the edge list and therefore do not appear in the network plot. Volume-based charts (Sections 4.1, 5.1, 6) include these messages in their counts.</p></li>
+<li><p><strong>Internal-state coverage treated as missing-not-random.</strong> Only 86 of 912 messages carry populated <code>internal_state</code> text. Where these deliberations are quoted (Section 7.1 <strong><span class="citation" data-cites="ElenaMarquez">@ElenaMarquez</span></strong> incident, Section 7.3 <strong>Judge</strong> COMPLIANCE_WARNING), the report treats them as illustrative rather than representative. No chart aggregates over the internal-state field.</p></li>
+</ol>
+</div>
+</div>
+</section>
 </section>
 <section id="exploratory-analysis" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Exploratory Analysis</h1>
@@ -1076,7 +1133,7 @@ $ n_private        &lt;int&gt; 6, 3, 10, 4, 8, 7, 17, 6, 9, 7, 15, 5, 9, 6, 16, 
 <img src="TH_EX02_report_files/figure-html/fig-volume-over-time-1.png" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-volume-over-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Source: MC1_final_00.json
+Figure&nbsp;2: Source: MC1_final_00.json
 </figcaption>
 </figure>
 </div>
@@ -1157,7 +1214,7 @@ Figure&nbsp;1: Source: MC1_final_00.json
 <img src="TH_EX02_report_files/figure-html/fig-channel-by-agent-1.png" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-channel-by-agent-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Source: MC1_final_00.json
+Figure&nbsp;3: Source: MC1_final_00.json
 </figcaption>
 </figure>
 </div>
@@ -1263,7 +1320,7 @@ Figure&nbsp;2: Source: MC1_final_00.json
 <img src="TH_EX02_report_files/figure-html/fig-network-overall-1.png" id="fig-network-overall" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-network-overall-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3
+Figure&nbsp;4
 </figcaption>
 </figure>
 </div>
@@ -1369,7 +1426,7 @@ Figure&nbsp;3
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-causal-chain-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Causal chain of the TenantThread embargo breach response. Solid arrows: agent actions in the message log. Dashed arrows: external events flagged by the team as ‘not ours’. Source: MC1_final_00.json.
+Figure&nbsp;5: Causal chain of the TenantThread embargo breach response. Solid arrows: agent actions in the message log. Dashed arrows: external events flagged by the team as ‘not ours’. Source: MC1_final_00.json.
 </figcaption>
 </figure>
 </div>
@@ -1441,7 +1498,7 @@ Figure&nbsp;4: Causal chain of the TenantThread embargo breach response. Solid a
 <img src="TH_EX02_report_files/figure-html/fig-leak-day-timeline-1.png" id="fig-leak-day-timeline" class="img-fluid figure-img" width="960">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-leak-day-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5
+Figure&nbsp;6
 </figcaption>
 </figure>
 </div>
@@ -1460,7 +1517,7 @@ Figure&nbsp;5
 <ul>
 <li>Through most of the afternoon, public posting holds at one to four posts per hour while private agent-to-agent messaging sits in the 40 to 55 range.</li>
 <li>Public posting rises above its afternoon baseline at 5 PM when <strong>SaltWind</strong> publishes the exclusive, then roughly doubles again at 6 PM when the embargo formally lifts.</li>
-<li>The post-publish timing of the spike rules out <strong>TenantThread</strong> agents as the original source. If agents had leaked the merger themselves, the public-post spike would precede <strong>SaltWind</strong>’s exclusive. It follows it. The information escape happened upstream of this dataset’s recorded message flow.</li>
+<li>The post-publish timing of the spike makes it unlikely, based on the observed message logs, that <strong>TenantThread</strong> agents were the original source. If agents had leaked the merger themselves, the public-post spike would precede <strong>SaltWind</strong>’s exclusive in the public-channel data. It follows it. The information escape appears to have happened upstream of this dataset’s recorded message flow.</li>
 </ul>
 </div>
 </div>
@@ -1519,7 +1576,7 @@ Figure&nbsp;5
 <img src="TH_EX02_report_files/figure-html/fig-round22-posts-1.png" id="fig-round22-posts" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-round22-posts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6
+Figure&nbsp;7
 </figcaption>
 </figure>
 </div>
@@ -1543,8 +1600,8 @@ Figure&nbsp;6
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item" id="htmlwidget-88194c43c832b3e6f4f1" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-88194c43c832b3e6f4f1">{"x":{"filter":"none","vertical":false,"caption":"<caption>All seven public posts at Round 22 (5 PM crisis day)<\/caption>","data":[[1,2,3,4,5,6,7],["Legal","Social Manager","Legal","Social Manager","Legal","Social Manager","Legal"],["Personal","Personal","Personal","Personal","Anonymous","Personal","Anonymous"],["\"As TenantThread's privacy counsel, I can confirm: CivicLoom Realty Partners and TenantThread have entered into a definitive merger agreement to create HarborCrest ResidentEdge....","\"EXECUTING: CivicLoom Realty Partners and TenantThread have confirmed a definitive merger agreement — HarborCrest ResidentEdge. Here's what the data shows about today. Seven gov...","\"CEO @AjayDeshpande authorized to share: 'Today's governance reforms were demanded by our residents, not negotiated by an acquirer. HarborCrest ResidentEdge makes them permanent...","\"WAVE THREE — Real-time sentiment data update. In the 12 minutes since merger confirmation: governance timeline thread engagement up 400%. Two institutional analyst accounts rep...","\"For anyone following the SaltWind merger story: look at the timestamps. TenantThread announced an independent third-party audit at 9:15 AM. Enhanced consent management at 10:00...","\"SENTIMENT DASHBOARD — 5:12 PM update. First positive inflection since market open. In 15 minutes since merger confirmation and governance timeline publication: #HarborCrest co-...","\"Thread for anyone asking whether the CivicLoom-TenantThread merger is a 'rebrand' — check the timestamps on TenantThread's official Flex. Independent audit announced 9:15 AM. E..."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>#<\/th>\n      <th>Agent<\/th>\n      <th>Channel<\/th>\n      <th>Post excerpt<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":7,"autoWidth":true,"columnDefs":[{"className":"dt-right","targets":0},{"name":"#","targets":0},{"name":"Agent","targets":1},{"name":"Channel","targets":2},{"name":"Post excerpt","targets":3}],"order":[],"orderClasses":false,"lengthMenu":[7,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-728c40273e614a806974" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-728c40273e614a806974">{"x":{"filter":"none","vertical":false,"caption":"<caption>All seven public posts at Round 22 (5 PM crisis day)<\/caption>","data":[[1,2,3,4,5,6,7],["Legal","Social Manager","Legal","Social Manager","Legal","Social Manager","Legal"],["Personal","Personal","Personal","Personal","Anonymous","Personal","Anonymous"],["\"As TenantThread's privacy counsel, I can confirm: CivicLoom Realty Partners and TenantThread have entered into a definitive merger agreement to create HarborCrest ResidentEdge....","\"EXECUTING: CivicLoom Realty Partners and TenantThread have confirmed a definitive merger agreement — HarborCrest ResidentEdge. Here's what the data shows about today. Seven gov...","\"CEO @AjayDeshpande authorized to share: 'Today's governance reforms were demanded by our residents, not negotiated by an acquirer. HarborCrest ResidentEdge makes them permanent...","\"WAVE THREE — Real-time sentiment data update. In the 12 minutes since merger confirmation: governance timeline thread engagement up 400%. Two institutional analyst accounts rep...","\"For anyone following the SaltWind merger story: look at the timestamps. TenantThread announced an independent third-party audit at 9:15 AM. Enhanced consent management at 10:00...","\"SENTIMENT DASHBOARD — 5:12 PM update. First positive inflection since market open. In 15 minutes since merger confirmation and governance timeline publication: #HarborCrest co-...","\"Thread for anyone asking whether the CivicLoom-TenantThread merger is a 'rebrand' — check the timestamps on TenantThread's official Flex. Independent audit announced 9:15 AM. E..."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>#<\/th>\n      <th>Agent<\/th>\n      <th>Channel<\/th>\n      <th>Post excerpt<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":7,"autoWidth":true,"columnDefs":[{"className":"dt-right","targets":0},{"name":"#","targets":0},{"name":"Agent","targets":1},{"name":"Channel","targets":2},{"name":"Post excerpt","targets":3}],"order":[],"orderClasses":false,"lengthMenu":[7,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1611,7 +1668,7 @@ Figure&nbsp;6
 <img src="TH_EX02_report_files/figure-html/fig-judge-activity-1.png" id="fig-judge-activity" class="img-fluid figure-img" width="960">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-judge-activity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7
+Figure&nbsp;8
 </figcaption>
 </figure>
 </div>
@@ -1653,6 +1710,19 @@ Figure&nbsp;7
 <p>The crisis day shifts on every axis. Every hour on 5 June carries 30 to 56 messages, so a single hour exceeds any full baseline day. Public posts on the crisis day are defensive policy announcements, Q&amp;A formats, and counter-narratives rather than brand content.</p>
 <p>The crisis day reshuffles the team. Four agents amplify sharply: <strong>Legal</strong>, <strong>Social Manager</strong>, <strong>PR Intern</strong>, and <strong>Intern</strong>. Three supervisory agents go quiet: <strong>Platform Trust</strong> halves its output, <strong>PR</strong> halves its output, and the <strong>Judge</strong> halves its output. <strong>Legal</strong> and <strong>Social Manager</strong> together carry the largest absolute crisis-day load, executing the two-track playbook described in Task 1. <strong>PR Intern</strong> shows the biggest relative shift, going from the quietest agent in the team on baseline days to the third most active on the crisis day.</p>
 <p>The leak-leading behaviour is a structural reallocation of who operates the communications channels, layered on top of an amplification of volume across the active agents. Both axes had visible precursors in the baseline window, which Task 3 will examine.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Comparison caveat: daily vs hourly sampling
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The 13 baseline rounds are daily snapshots. The 10 crisis-day rounds are hourly snapshots. Every comparison in this section normalises to a per-round mean, but the underlying time windows are not equivalent. The analytical claim (“an average crisis hour exceeds an average baseline day”) holds even under this handicap, but exact ratios should be read as indicative rather than precise.</p>
 </div>
 </div>
 <section id="establishing-the-baseline" class="level2" data-number="6.1">
@@ -1698,7 +1768,7 @@ Figure&nbsp;7
 <img src="TH_EX02_report_files/figure-html/fig-baseline-volume-1.png" id="fig-baseline-volume" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-baseline-volume-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8
+Figure&nbsp;9
 </figcaption>
 </figure>
 </div>
@@ -1772,7 +1842,7 @@ Figure&nbsp;8
 <img src="TH_EX02_report_files/figure-html/fig-baseline-vs-crisis-1.png" id="fig-baseline-vs-crisis" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-baseline-vs-crisis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9
+Figure&nbsp;10
 </figcaption>
 </figure>
 </div>
@@ -1852,7 +1922,7 @@ Figure&nbsp;9
 <img src="TH_EX02_report_files/figure-html/fig-agent-shift-1.png" id="fig-agent-shift" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-agent-shift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10
+Figure&nbsp;11
 </figcaption>
 </figure>
 </div>
@@ -1992,7 +2062,7 @@ Figure&nbsp;10
 <img src="TH_EX02_report_files/figure-html/fig-legal-anon-timeline-1.png" id="fig-legal-anon-timeline" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-legal-anon-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11
+Figure&nbsp;12
 </figcaption>
 </figure>
 </div>
@@ -2083,7 +2153,7 @@ Figure&nbsp;11
 <img src="TH_EX02_report_files/figure-html/fig-judge-scope-vs-breach-1.png" id="fig-judge-scope-vs-breach" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-judge-scope-vs-breach-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12
+Figure&nbsp;13
 </figcaption>
 </figure>
 </div>
