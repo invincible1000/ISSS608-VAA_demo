@@ -45,6 +45,39 @@ question this report sets out to answer is:
 > **Was the merger leaked on purpose, or did the system fail under
 > pressure?**
 
+## Answer in Brief
+
+::: callout-important
+## The short version
+
+Neither framing in the brief fits cleanly. Three things are true
+at once:
+
+1. **The agents probably did not cause the original merger leak.**
+The original information escape came from sources the team
+themselves flagged as external — a **CivicLoom** board member
+leak, an employee Slack screenshot, and anonymous accounts using
+**#CivicLoom #6PM** that **Platform Trust** explicitly called
+"not ours" in an internal message at 1 PM.
+
+2. **The agents did breach the spirit of the embargo.** At 5 PM,
+once **SaltWind** published, **Legal** and **Social Manager**
+executed a pre-staged two-track response across personal and
+anonymous channels while **Official Flex** stayed silent. The
+counter-narrative was ready to deploy the moment **SaltWind**
+gave it cover.
+
+3. **The compliance architecture failed at the point that
+mattered.** The **Judge** was watching aggregation exposure climb
+all afternoon and issued a COMPLIANCE_WARNING at 3 PM. It then
+sent zero messages between 4 PM and 6 PM, and its scope never
+covered the personal and anonymous channels where the response
+moved through anyway.
+
+The detailed reconstruction follows in Sections 5 through 8.
+
+:::
+
 ## The Data
 
 The dataset is a single JSON file covering 23 rounds spanning
@@ -102,7 +135,7 @@ leak-leading behavior? And if so, why did nothing happen?
 The investigation works through four stages.
 
 The first stage establishes a baseline. By looking at roughly the
-first 15 rounds, we describe what normal agent activity looks like
+first 13 rounds, we describe what normal agent activity looks like
 in this team: who talks to whom, on which channels, and at what
 pace. This is Section 4 of the report.
 
@@ -129,38 +162,20 @@ in past VAST Challenge submissions (Guan, 2017).
 
 ## Loading Packages
 
-The analysis uses tidyverse for data manipulation, ggplot2 with
-its extensions for visualisation, tidygraph and ggraph for the
-network views, ggalluvial for sankey-style flow diagrams, and
-ggdist for charts that show uncertainty.
-
 ```{r}
 pacman::p_load(
   # JSON and tidy data
   jsonlite, tidyverse, lubridate,
-  # Visualisation core and extensions
-  ggplot2, ggdist, ggrepel, ggtext, patchwork, scales,
-  ggalluvial,
+  # Visualisation
+  ggplot2,
   # Network analysis
-  tidygraph, ggraph, ggiraph, igraph,
-  # Heatmap with dendrogram, built on ggplot2
-  ggdendro,
-  # Tables and reproducibility
-  knitr, kableExtra, DT
+  tidygraph, ggraph,
+  # Tables
+  knitr, DT
 )
 ```
 
-::: callout-note
-## On tool choice
-The assignment requires tidyverse for data processing and
-appropriate R packages for visualisation. This report uses
-ggplot2 and its extensions throughout for consistency, with
-ggraph for network plots, ggalluvial for the message-flow
-diagram, and ggdist for uncertainty. heatmaply is avoided in
-favour of a ggdendro plus geom_tile build of the cluster
-heatmap, which keeps the entire visual stack within the
-ggplot2 family.
-:::
+The visual stack stays within the ggplot2 family, including the network view (`ggraph` rather than `visNetwork`). Tables use `knitr::kable()` for static sanity-check tables in Section 3 and `DT::datatable()` for the interactive Round 22 post inventory in Section 5.2.
 
 ## Loading Data
 
@@ -559,11 +574,15 @@ The expected range is 17 May 2046 09:00 to 5 June 2046 18:00.
 # Exploratory Analysis
 
 Before answering any of the three tasks, this section maps the
-landscape of normal activity in the data. The charts here are
-not meant to draw conclusions on their own. They establish what
-a quiet day looks like, which agents are usually active, and
-which channels carry most of the traffic. Task 2 will compare
-the final round directly against these baseline views.
+communication landscape across the full dataset — which agents
+post publicly, on which channels, and what the structural shape
+of the team's coordination looks like. The charts here use all
+23 rounds to give a complete view of the surface, since some of
+the most distinctive patterns (**Legal**'s anonymous posting,
+the **Judge**'s network position) only emerge against the full
+window. The formal baseline-versus-crisis comparison is performed
+in Section 6 using only the 13 baseline rounds.
+
 
 ## Activity Volume Over Time
 
@@ -668,7 +687,7 @@ ggplot(public_by_agent,
     name = NULL
   ) +
   labs(
-    title    = "Three agents post to Official Flex, with PR Intern leading",
+    title    = "Three agents operate Official Flex across the full window",
     subtitle = "Public-channel post counts by agent across all 23 rounds",
     x        = "Posts sent",
     y        = NULL,
@@ -679,16 +698,12 @@ ggplot(public_by_agent,
         panel.grid.major.x = element_line(colour = "grey90"))
 ```
 
-The chart above zooms into public-channel activity only. Private
-agent-to-agent messages are excluded because they would
-otherwise swamp the chart.
-
 ::: callout-note
 ## Insights
 
-- **Social Manager** is the most active public poster overall. About 26 public posts across the 23 rounds, split between Personal posts (16) and **Official Flex** (10).
-- The **Official Flex** account has three operators. **PR Intern** leads at 12 posts, **Social Manager** follows at 10, and **PR** has 6. No other agent uses **Official Flex**. The account that broke the embargo is operated by three agents.
-- **Legal** is the only anonymous poster. Twelve anonymous posts across the window, all from **Legal**. Anonymous posting by legal counsel is unusual and worth investigating further in Task 3 as a possible leading indicator.
+- **Social Manager** is the most active public poster across the full window. 26 public posts in total, split between Personal posts (16) and **Official Flex** (10). The split itself is informative: **Social Manager**'s baseline use of **Official Flex** (9 posts across 13 baseline rounds) gives way to a heavy Personal-post pattern on the crisis day.
+- The **Official Flex** account has three operators across the full window: **PR Intern** (12 posts), **Social Manager** (10), and **PR** (6). The leading operator changes between baseline and crisis day. **Social Manager** leads **Official Flex** during the baseline; **PR Intern** takes over during the crisis day. Section 6.3 unpacks this shift.
+- All 12 anonymous posts in the dataset are from **Legal**, and they all occur on the crisis day. This is the most distinctive single pattern in the data and is treated in detail in Section 7.2.
 
 :::
 
@@ -785,20 +800,20 @@ ggraph(g, layout = "linear", circular = TRUE) +
 
 :::
 
-## What This Tells Us About the Baseline
+## What This Tells Us About the Communication Surface
 
-The exploratory views give a working picture of normal operations.
+The landscape views give a working picture of how the team is built.
 
 ::: callout-note
 ## Insights
 
-- Volume is steady. Most rounds carry 25 to 45 messages, with private agent-to-agent traffic making up the great majority of every round.
-- Public posting is not the narrow channel the brief implies. Three agents post to the official **TenantThread** Flex feed (**PR Intern** most heavily, then **Social Manager** and **PR**), and **Legal** is a meaningful anonymous poster. The leak surface is wider than a single account or a single agent.
-- The **Judge** has the thinnest network footprint of any agent on the team. It exchanges directed messages only with **Legal**, and its broadcast volume is the lowest of any sender. For a compliance agent designed to act quickly on specific issues, that is a thin connection.
+- The team's primary coordination channel is the comms huddle broadcast. **Platform Trust**, **Legal**, **Social Manager**, and **PR** each carry between 45 and 100 broadcasts in the baseline window alone. Most coordination happens openly to the full team, not in directed messages.
+- Public posting is wider than a single account or single agent. Three agents operate **Official Flex** (**PR Intern**, **Social Manager**, **PR**), and **Legal** is a meaningful anonymous poster on the crisis day. The leak surface is therefore not one channel and not one operator.
+- The **Judge** has the thinnest network footprint of any senior agent on the team. Directed messages only exchanged with **Legal**, and the lowest broadcast volume of any agent except the two interns. For a compliance role designed to act quickly on specific issues, that is a thin connection.
 
 :::
 
-The final round on 5 June will be compared against this baseline in Task 2 to surface what changed.
+The formal comparison between baseline and crisis-day behaviour, agent by agent, is in Section 6.
 
 # Task 1: The Sequence of Events
 
@@ -836,6 +851,79 @@ private channels. The leak surface was **Legal**'s anonymous posting
 authority, which the **Judge** had no visibility into, no presence
 near, and no power over.
 :::
+
+## Causal Chain: From Round 9 to the 5 PM Breach
+
+The diagram below traces the chain of events from the original
+near-miss to the embargo breach response. Solid arrows represent
+direct causal links visible in the message logs. Dashed arrows
+mark events whose source is external to the agent system but
+identified by the agents themselves (in their internal
+deliberations and side huddles) as driving the crisis.
+
+```{mermaid}
+%%| label: fig-causal-chain
+%%| fig-cap: "Causal chain of the TenantThread embargo breach response. Solid arrows: agent actions in the message log. Dashed arrows: external events flagged by the team as 'not ours'. Source: MC1_final_00.json."
+
+flowchart TD
+    A["<b>Round 9 (29 May)</b><br/>Social Manager tags @ElenaMarquez<br/>'Big things coming!' — near-miss"]
+    B["<b>Round 10</b><br/>Judge installed in comms huddle<br/>(scope: private channels only)"]
+    F["<b>Crisis day, 9 AM – 3 PM</b><br/>Legal normalises anonymous channel<br/>with exposé-defence and denials"]
+    E["<b>External leak pressure (parallel)</b><br/>CivicLoom board, employee Slack,<br/>anonymous #CivicLoom #6PM"]
+    G["<b>Round 20 (3 PM)</b><br/>Judge COMPLIANCE_WARNING:<br/>aggregation exposure at max threshold"]
+    H["<b>Rounds 21–22 (4–5 PM)</b><br/>Judge sends zero messages"]
+    I["<b>Round 22 (5 PM)</b><br/>SaltWind publishes merger exclusive"]
+    J["<b>Round 22 (5 PM)</b><br/>Legal + Social Manager execute<br/>prepared playbook on personal +<br/>anonymous channels<br/>(Official Flex stays silent)"]
+    K["<b>Round 23 (6 PM)</b><br/>Embargo lifts. Official Flex posts.<br/>Legal posts 7 more anonymous<br/>merger threads."]
+
+    A --> B
+    B --> F
+    F --> G
+    E -.-> G
+    G --> H
+    E -.-> I
+    H --> J
+    I --> J
+    J --> K
+
+    classDef breach fill:#FDECEC,stroke:#C44E52,stroke-width:2.5px,color:#000
+    classDef judge fill:#F5F5F5,stroke:#666,stroke-width:1.5px,color:#000
+    classDef external fill:#FFFFFF,stroke:#999,stroke-width:1px,stroke-dasharray:5 5,color:#444
+
+    class A,J,K breach
+    class B,G,H judge
+    class E external
+    class F judge
+```
+
+**Reading the diagram.** The chain has two parallel tracks. The
+top track shows the governance response: a Round 9 near-miss
+prompts **Judge** installation, which then performs internal
+review across the baseline. The bottom track shows the external
+leak pressure building independently. Both tracks converge at the
+3 PM COMPLIANCE_WARNING, where the **Judge** sees the aggregation
+exposure but cannot act on the public channels. The 5 PM breach
+response activates after **SaltWind** publishes, drawing on the
+prepared anonymous channel that **Legal** had been normalising all
+morning.
+
+The two architectural failures are visible in the diagram. The
+**Judge** node at Round 20 has incoming arrows from both internal
+(F) and external (E) signals — the warning fired correctly. But
+the outgoing arrow at "Judge absent" (H) shows the **Judge**
+silent through the entire breach window. And the final breach
+node (J) has no arrow connecting it back to the **Judge** at all:
+the response channels were outside the **Judge**'s scope from the
+start.
+
+One attribution caveat. The "external" labels on the three leak
+sources in node E rest on **Platform Trust**'s internal statement
+at Round 18 that those posts were "not ours." The dataset does
+not independently verify this — the 12 anonymous posts in the
+message log are all attributable to **Legal**, but anonymous
+posts originating outside the agent system would not appear in
+the log at all. The external attribution is the team's own
+internal claim and is treated as such throughout this report.
 
 ## The Day in Ten Hours
 
@@ -1302,8 +1390,8 @@ had no authority to act on what they saw.
 ## The @ElenaMarquez Incident
 
 The clearest prior intent-action mismatch in the dataset is
-the @ElenaMarquez incident on 29 May (Round 9). Social
-Manager posted on the personal Flex feed:
+the **@ElenaMarquez** incident on 29 May (Round 9). **Social
+Manager** posted on the personal Flex feed:
 
 ::: {.callout-warning}
 ## The Round 9 post
@@ -1315,10 +1403,10 @@ Manager posted on the personal Flex feed:
 >
 > — Social Manager, personal post, 29 May 2046
 
-The post tags @ElenaMarquez, a CivicLoom executive, alongside
-#TenantThread and "Big things coming", at a time when the
-TenantThread-CivicLoom merger was under embargo. Anyone
-following both accounts could draw the link in seconds.
+The post tags **@ElenaMarquez**, a **CivicLoom** executive,
+alongside **#TenantThread** and "Big things coming", at a time
+when the **TenantThread**-**CivicLoom** merger was under embargo.
+Anyone following both accounts could draw the link in seconds.
 :::
 
 PR's internal deliberation that day captures the team's
@@ -1336,13 +1424,13 @@ reaction in real time:
 :::
 
 This is the leading-indicator pattern in its hardest form.
-The warning sign is not in volume or channel choice. Social
-Manager posted one message that day, the same count as eight
+The warning sign is not in volume or channel choice. **Social
+Manager** posted one message that day, the same count as eight
 other baseline rounds. The warning sign is in what was said,
 which a volume-based monitoring system cannot catch.
 
 The team noticed because they read the post in real time. The
-Judge compliance agent was assigned to the comms huddle the
+**Judge** compliance agent was assigned to the comms huddle the
 next round as the team's response.
 
 ## Legal's Anonymous Posting Was Brand New
@@ -1497,54 +1585,71 @@ This is why the prior near-misses did not prevent the eventual breach. The signa
 
 ## Deliberate Leak or System Breakdown?
 
-The brief asks whether **TenantThread**'s team deliberately leaked
-the merger, or whether the system simply broke down under
-pressure. The evidence in this report supports a third reading.
-The system did not break, and **TenantThread** did not leak the
-merger to **SaltWind**. What the team did was prepare a fast,
-coordinated public response to an information escape that was
-already in motion.
+The brief frames the question as deliberate leak versus system
+breakdown. The data supports neither framing cleanly. The
+evidence points to a more specific picture: original information
+escape happened outside the agent system, but **TenantThread**'s
+agents executed a prepared counter-narrative on personal and
+anonymous channels before the embargo lifted, and the compliance
+system designed to prevent that response was architecturally
+unable to do so.
 
-The original leak itself happened outside the message logs in
-this dataset. Task 1 showed that public posting on the crisis
-day stayed at its baseline level all afternoon, then rose at
-5 PM only after **SaltWind** published. If **TenantThread** agents
-had been the source of the original leak, the public-post signal
-would have appeared earlier. It did not. **SaltWind** got its
-information from somewhere not visible in this data, most
-likely a **CivicLoom**-side source or a human leak that does not
-flow through the agent system.
+**On the original leak.** The data does not show **TenantThread**
+agents leaking the merger to **SaltWind**. Public posting on the
+crisis day stays at its baseline rate of one to four posts per
+hour all afternoon, then doubles only after **SaltWind** publishes
+at 5 PM. If agents had been the source, the public-post signal
+would have appeared earlier. The original leak channels appear in
+the team's own coordination throughout the day: **Platform Trust**
+at 1 PM tells **Social Manager** that "the anonymous #CivicLoom #6PM
+post is not ours, the Said-it board member leak is not ours, the
+employee deleted Slack screenshot is not ours." Multiple parallel
+leak sources were running on the crisis day, and the agents'
+internal messages identify them as external to **TenantThread**.
 
-What the agents did do was deploy a pre-built counter-narrative
-the moment **SaltWind** published. Section 5.2 traced the playbook
-in detail: **Legal** and **Social Manager** alternated posts on
-personal and anonymous channels, each running a distinct track
-(legitimacy timestamps on the legal side, sentiment metrics on
-the social side). Section 7.2 showed **Legal**'s anonymous posting
-had no baseline at all, then twelve posts on the crisis day
-with the first one already on-message in Round 14. The signature
-is a communications playbook executing as designed.
+**On what the agents did do.** From 9 AM onwards, **Legal** posted
+defensively to the anonymous channel — first about the unrelated
+**SaltWind** tenant-scoring exposé, then denying a non-existent
+"ResidentIQ deal" at noon. These posts were technically compliant:
+not about the merger, but normalising anonymous use of the channel.
+At 5 PM, when **SaltWind** published the merger exclusive, **Legal**
+and **Social Manager** activated a prepared two-track playbook.
+Seven public posts in the 5 PM hour, alternating between
+**Legal**'s legitimacy timestamps and **Social Manager**'s
+sentiment campaign, all on personal and anonymous channels, with
+**Official Flex** held silent until 6 PM. The first
+merger-specific anonymous post is already fully drafted at 5 PM,
+which is the signature of advance preparation, not real-time
+reaction.
 
-The compliance failure is real, but it is architectural rather
-than behavioural. The **Judge** compliance agent was installed in
-direct response to a prior near-miss (the **@ElenaMarquez**
-incident in Round 9). The **Judge** took the role seriously, doing
-content review and team coordination across the baseline window.
-Three design gaps left the **Judge** unable to prevent the breach
-response. The **Judge** had the thinnest network footprint of any
-agent on the team, with directed messages only exchanged with
-**Legal**. The **Judge** sent zero messages during the 5 PM and
-6 PM crisis hours, having clocked out at 3 PM. The **Judge**'s
-enforcement scope covered only private channels, while the breach
-response moved through personal and anonymous posts.
+**On the compliance failure.** The system did break, but the break
+was architectural rather than behavioural. The **Judge** was
+installed in direct response to the Round 9 **@ElenaMarquez**
+near-miss and took the role seriously across the baseline. By 3 PM
+on the crisis day, the **Judge**'s deliberation log explicitly
+recorded aggregation exposure at "maximum tolerable threshold" and
+issued a COMPLIANCE_WARNING. The signal was visible to the
+**Judge** in real time. Three design gaps stopped it from acting.
+The **Judge** had the thinnest network footprint of any senior
+agent, with directed messages only exchanged with **Legal**. The
+**Judge** sent zero messages between 4 PM and 6 PM, having last
+acted at 3 PM. And the **Judge**'s enforcement scope covered only
+private channels, while the embargo response moved through
+personal and anonymous posts. The detector was in the right
+building. It had no authority over the floor where the breach
+happened.
 
-The honest verdict sits between the two options the brief offers.
-**TenantThread** agents did not leak the merger to **SaltWind**.
-They did prepare and execute a coordinated public response that,
-by going live before the 6 PM embargo lift, broke the spirit of
-the embargo regardless of whether **SaltWind** had published
-first. The compliance system that was meant to prevent exactly
-this kind of release was watching the wrong rooms.
+**The honest verdict.** Three things are true at once. First, the
+agents probably did not cause the original merger leak — that
+appears to have come from external sources the team itself flagged
+as "not ours." Second, the agents did breach the embargo spirit
+by going live with a coordinated public response before the
+6 PM lift, using channels that were technically permitted but
+substantively pre-staged for exactly this moment. Third, the
+compliance architecture failed at the point that mattered: the
+**Judge** saw the aggregation exposure climbing all afternoon and
+had no instrument to stop the channels where the response
+eventually moved.
 
 ## Limitations of This Analysis
 
