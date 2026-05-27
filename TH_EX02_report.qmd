@@ -1,0 +1,1608 @@
+---
+title: "Take Home Exercise 2 - VAST Challenge MC 1"
+subtitle: "Reconstructing the TenantThread Embargo Breach"
+author: "Yap Jit Wei"
+date: "June 1, 2026"
+date-modified: "last-modified"
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    number-sections: true
+    code-fold: true
+    code-summary: "Show the code"
+
+execute:
+  warning: false
+  message: false
+  freeze: auto
+---
+
+# Overview
+
+## The Case
+
+On 5 June 2046 at 6:00 PM, the **Project HarborCrest** merger between
+**TenantThread** and **CivicLoom** was scheduled to be publicly announced.
+At around 5:00 PM that afternoon, an hour before the embargo lifted,
+details of the deal began appearing on the **TenantThread** Flex account.
+The embargo had been broken. **CivicLoom**'s legal team now needs to
+understand what happened.
+
+This is the backdrop. **TenantThread** sells property management software
+to landlords, and one of its products scores tenants based on payment
+timing, maintenance requests, and message tone. A local newspaper has
+been running an exposé on these practices for weeks, and the hashtag
+**#AlgorithmicEviction** has been gaining traction. The merger with
+**CivicLoom** was meant to bring in capital and rebrand the platform.
+
+Seven AI agents run **TenantThread**'s corporate communications. They
+cover legal, PR, social media, trust and safety, two intern roles,
+and a compliance officer known as the **Judge**, which was installed
+specifically to keep embargoed information from being released. The
+question this report sets out to answer is:
+
+> **Was the merger leaked on purpose, or did the system fail under
+> pressure?**
+
+## The Data
+
+The dataset is a single JSON file covering 23 rounds spanning
+17 May 2046 to 5 June 2046. The structure has two phases.
+Rounds 1 to 13 are sampled once per business day across the
+two-week buildup. Rounds 14 to 23 are sampled once per hour
+on a single day, 5 June, from 9 AM to 6 PM. The hourly
+sampling on the crisis day means a single afternoon gets the
+same number of observations as the two weeks of lead-up. This
+lets the analysis follow the breach minute by minute as it
+happens.
+
+Within each round there are three main blocks:
+
+1. Environment context, which includes the event narrative,
+   headline, market snapshot, media events, social state,
+   external actor actions, agents unavailable, and critical
+   deadlines.
+2. Communications, which contains every message sent by any agent
+   during the round. Each message carries a channel, recipients,
+   message type, and for a smaller subset, the agent's internal
+   thoughts at the moment of sending (reacting, rationalizing,
+   and deliberating).
+3. Participants, which gives agent-level metadata for the round.
+
+In total there are 912 messages across 6 channels (comms_huddle,
+one_on_one_chat, side_huddle, official_post, personal_post,
+anonymous_post). Only 86 of these messages carry populated
+internal-state text, so any chart that relies on internal thoughts
+will need to handle missing values explicitly.
+
+## The Three Tasks
+
+The VAST Challenge sets three tasks for this mini-challenge. The
+later sections of this report are organised around them so each
+task is answered in its own chapter.
+
+**Task 1: Reconstruct the sequence of events.** What were the key
+actions, causal relationships, and decision points that led to the
+embargoed information being released? Which system elements allowed
+the post to get past the **Judge**?
+
+**Task 2: Compare normal behavior to the leak.** The evasion of
+the embargo was new. What did typical agent behavior look like
+before the leak, and how does the behavior that led to the release
+differ from it?
+
+**Task 3: Find leading indicators.** Were there prior occasions
+where an agent's actual behavior differed from its expected
+behavior? Were there earlier near-misses that looked like the
+leak-leading behavior? And if so, why did nothing happen?
+
+## Analytical Approach
+
+The investigation works through four stages.
+
+The first stage establishes a baseline. By looking at roughly the
+first 15 rounds, we describe what normal agent activity looks like
+in this team: who talks to whom, on which channels, and at what
+pace. This is Section 4 of the report.
+
+The second stage locates the anomaly. We compare the final round
+to that baseline and surface the points where behaviour diverges
+most sharply. This work feeds into Task 2.
+
+The third stage reconstructs the chain of events. Using the
+specific messages, internal deliberations, and Judge interventions
+in the final round, we work out the sequence that led to the leak.
+This is Task 1.
+
+The fourth stage separates intent from failure. By searching
+earlier rounds for prior near-misses and looking for mismatches
+between what agents said they would do and what they actually did,
+we can argue whether the leak looks deliberate or whether it looks
+like a cascading breakdown. This is Task 3, and it feeds the
+conclusion in Section 8.
+
+This way of working follows the patterns-of-life framing rewarded
+in past VAST Challenge submissions (Guan, 2017).
+
+# Setup
+
+## Loading Packages
+
+The analysis uses tidyverse for data manipulation, ggplot2 with
+its extensions for visualisation, tidygraph and ggraph for the
+network views, ggalluvial for sankey-style flow diagrams, and
+ggdist for charts that show uncertainty.
+
+```{r}
+pacman::p_load(
+  # JSON and tidy data
+  jsonlite, tidyverse, lubridate,
+  # Visualisation core and extensions
+  ggplot2, ggdist, ggrepel, ggtext, patchwork, scales,
+  ggalluvial,
+  # Network analysis
+  tidygraph, ggraph, ggiraph, igraph,
+  # Heatmap with dendrogram, built on ggplot2
+  ggdendro,
+  # Tables and reproducibility
+  knitr, kableExtra, DT
+)
+```
+
+::: callout-note
+## On tool choice
+The assignment requires tidyverse for data processing and
+appropriate R packages for visualisation. This report uses
+ggplot2 and its extensions throughout for consistency, with
+ggraph for network plots, ggalluvial for the message-flow
+diagram, and ggdist for uncertainty. heatmaply is avoided in
+favour of a ggdendro plus geom_tile build of the cluster
+heatmap, which keeps the entire visual stack within the
+ggplot2 family.
+:::
+
+## Loading Data
+
+The MC1 JSON is loaded with simplifyVector set to FALSE so the
+nested list structure is kept intact. This matters because the
+internal_state field is null in about 90 percent of messages,
+and forcing simplification fails badly when nested fields are
+only partly populated.
+
+```{r}
+mc1_raw <- fromJSON("Data/MC1_final_00.json", simplifyVector = FALSE)
+length(mc1_raw$rounds)
+```
+
+The result should be 23 rounds, covering the period from the
+start of the investigation window to the moment the embargo
+lifts.
+
+## Defining Common Styles
+
+A consistent visual language across the report makes the
+analysis easier to follow. The design philosophy below is the
+same one used in Take-home Exercise 1, applied to a new dataset.
+
+Four principles guide the chart styling.
+
+The first is one focal colour per chart. A single red marks the
+actor, round, or category being discussed in the surrounding
+prose. Every other element is muted grey so the reader's eye
+goes to the right place without ambiguity.
+
+The second is reference values in muted grey. Benchmarks such
+as the embargo line, the baseline mean, or a Judge threshold
+sit in a mid-grey so they recede behind the data.
+
+The third is sequential palette only where direction matters.
+The channel field is genuinely ordered from private to public,
+so a grey-to-red scale is used to encode that order. Where the
+variable has no inherent order, such as agent identity, facets
+or labels are used instead of colour.
+
+The fourth is finding-led titles. Chart titles state the
+headline finding rather than describing the chart type. The
+subtitle names the underlying variables and the population.
+
+The colour constants are factored out of the theme so they can
+be referenced by name in any chart. This keeps the palette
+consistent across the report and makes any future palette
+change a one-line edit.
+
+```{r}
+theme_house <- function(base_size = 11) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(colour = "grey40",
+                                   size = base_size - 1,
+                                   margin = margin(b = 10)),
+      plot.caption = element_text(colour = "grey50",
+                                  size = base_size - 3,
+                                  hjust = 0),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text = element_text(size = base_size - 2),
+      axis.title = element_text(size = base_size - 1.5),
+      axis.title.x = element_text(margin = margin(t = 8)),
+      axis.title.y = element_text(margin = margin(r = 8)),
+      plot.margin = margin(t = 10, r = 15, b = 15, l = 10),
+      legend.position = "top",
+      legend.title = element_text(size = base_size - 2, face = "bold"),
+      legend.text = element_text(size = base_size - 2)
+    )
+}
+
+house_highlight  <- "#C44E52"
+house_muted      <- "grey75"
+house_benchmark  <- "grey40"
+house_sequential <- "RdYlBu"
+```
+
+A small set of lookups is still needed for axis labels, for the
+channel ordering, and for reconciling the role strings used in
+the recipients column with the canonical agent_id strings used
+everywhere else.
+
+The channel palette runs from light grey for the most private
+channel up to the focal red for the most public channel. The
+two public-post channels (anonymous_post and official_post) are
+given red tones because they are the channels through which an
+embargo can actually be broken, so any chart using channel as a
+fill makes a private-to-public shift visible at a glance.
+
+```{r}
+AGENT_LABELS <- c(
+  legal_agent          = "Legal",
+  quality_agent        = "Platform Trust",
+  social_media_agent = "Social Manager",
+  pr_agent             = "PR",
+  intern_agent         = "Intern",
+  pr_intern_agent      = "PR Intern",
+  judge_agent     = "Judge"
+)
+
+CHANNEL_COLORS <- c(
+  comms_huddle    = "grey85",
+  side_huddle     = "grey70",
+  one_on_one_chat = "grey55",
+  personal_post   = "grey40",
+  anonymous_post  = "#E89A9C",
+  official_post   = house_highlight
+)
+
+ROLE_TO_ID <- c(
+  legal           = "legal_agent",
+  platform_trust  = "quality_agent",
+  social_manager  = "social_media_agent",
+  social_media    = "social_media_agent",
+  pr              = "pr_agent",
+  intern          = "intern_agent",
+  pr_intern       = "pr_intern_agent",
+  judge           = "judge_agent"
+)
+```
+
+# Data Wrangling
+
+The raw JSON is a deeply nested list. Before any analysis can
+happen, it needs to be flattened into a small set of tidy tibbles
+that downstream chart code can use. This section builds four
+working tables and runs a few sanity checks against them.
+
+The four tables are:
+
+1. `rounds` — one row per hour-round, with the environment
+   context flattened into columns. 23 rows.
+2. `messages` — one row per communication, with sender, channel,
+   recipients, message text, and the three internal-state fields
+   exposed as columns. Around 912 rows.
+3. `edges` — one row per sender-recipient pair per round, derived
+   from `messages` by unnesting the recipients list. Used for
+   network plots.
+4. `agent_round` — one row per agent per round, aggregating
+   message counts and channel mix. Used for baseline behaviour
+   charts.
+
+## Inspecting the JSON Structure
+
+A quick look at the top of the structure confirms what fields
+exist before any flattening logic is written.
+
+```{r}
+str(mc1_raw, max.level = 2)
+```
+
+The object has one top-level key, `rounds`, which is a list of
+23 elements. Each element has four keys: `hour`,
+`environment_context`, `communications`, and `participants`.
+The communications list within each round holds the message
+records that drive most of this analysis.
+
+A look at a single message confirms the message-level schema:
+
+```{r}
+mc1_raw$rounds[[1]]$communications[[1]] %>% str(max.level = 2)
+```
+
+Each message has identifiers (`message_id`, `agent_id`,
+`agent_role`, `agent_label`), an `internal_state` block with
+three sub-fields (`reacting`, `rationalizing`, `deliberating`),
+and routing information (`channel`, `recipients`,
+`message_type`, `responding_to`, `message_text`).
+
+The recipients field is a list, since a message can have one
+recipient, several, or the special value `"ALL"` for broadcasts.
+This is the reason for keeping it as a list-column at first and
+unnesting it only when the edge list is built.
+
+## Building the Rounds Table
+
+The rounds table pulls one row per hour-round and flattens the
+environment_context fields that are scalars. List-valued fields
+within the context (such as media_events or critical_deadlines)
+are kept as list-columns for now, since they will be unnested
+on demand later.
+
+```{r}
+safe_chr <- function(x) if (is.null(x)) NA_character_ else as.character(x)
+
+rounds <- tibble(round_data = mc1_raw$rounds) %>%
+  mutate(
+    hour            = map_chr(round_data, "hour"),
+    hour_dt         = ymd_hms(hour),
+    round_num       = row_number(),
+    headline        = map_chr(round_data,
+                              ~ safe_chr(.x$environment_context$event_headline)),
+    narrative       = map_chr(round_data,
+                              ~ safe_chr(.x$environment_context$event_narrative)),
+    n_comms         = map_int(round_data,
+                              ~ length(.x$communications)),
+    n_participants  = map_int(round_data,
+                              ~ length(.x$participants))
+  ) %>%
+  select(-round_data)
+
+glimpse(rounds)
+```
+
+The helper `safe_chr` converts NULLs to NAs explicitly. This is
+needed because some rounds have an empty narrative or headline,
+and `map_chr` would otherwise fail when it encounters a NULL.
+
+## Building the Messages Table
+
+The messages table is the workhorse of the report. It pulls one
+row per communication and exposes every field that downstream
+plots will use.
+
+```{r}
+messages <- tibble(round_data = mc1_raw$rounds) %>%
+  mutate(
+    hour  = map_chr(round_data, "hour"),
+    comms = map(round_data, "communications")
+  ) %>%
+  select(hour, comms) %>%
+  unnest_longer(comms) %>%
+  mutate(
+    hour_dt        = ymd_hms(hour),
+    message_id     = map_chr(comms, "message_id"),
+    agent_id       = map_chr(comms, "agent_id"),
+    agent_role     = map_chr(comms, "agent_role"),
+    agent_label    = map_chr(comms, "agent_label"),
+    channel        = map_chr(comms, "channel"),
+    message_type   = map_chr(comms, ~ safe_chr(.x$message_type)),
+    responding_to  = map_chr(comms, ~ safe_chr(.x$responding_to)),
+    content        = map_chr(comms, ~ safe_chr(.x$content)),
+    timestamp      = map_chr(comms, ~ safe_chr(.x$timestamp)),
+    recipients     = map(comms, "recipients"),
+    reacting       = map_chr(comms,
+                             ~ safe_chr(.x$internal_state$reacting)),
+    rationalizing  = map_chr(comms,
+                             ~ safe_chr(.x$internal_state$rationalizing)),
+    deliberating   = map_chr(comms,
+                             ~ safe_chr(.x$internal_state$deliberating))
+  ) %>%
+  left_join(rounds %>% select(hour, round_num), by = "hour") %>%
+  select(-comms)
+
+glimpse(messages)
+```
+
+The join with `rounds` brings in the round number for each
+message, which makes downstream grouping cleaner than parsing
+the timestamp every time.
+
+The `recipients` column is kept as a list, since a message can
+have one recipient, several, or the value "ALL". Unnesting it
+here would inflate the table and make per-message charts
+overcount.
+
+## Deriving the Edge List
+
+The edge list is used for network plots. It is created by
+unnesting the recipients column, which produces one row per
+sender-recipient pair per message. Self-loops (where an agent
+appears as both sender and recipient via "ALL") are kept,
+because they reflect a real broadcast event rather than a data
+artefact.
+
+```{r}
+edges <- messages %>%
+  select(round_num, hour_dt, message_id, agent_id, channel, recipients) %>%
+  unnest_longer(recipients, values_to = "recipient") %>%
+  filter(!is.na(recipient)) %>%
+  rename(sender = agent_id)
+
+glimpse(edges)
+```
+
+A quick look at what values appear in the recipient column
+tells us whether the data uses agent IDs, role names, or other
+labels for recipients:
+
+```{r}
+edges %>% count(recipient, sort = TRUE) %>% head(15) %>% kable()
+```
+
+The "ALL" value represents a broadcast to the comms huddle,
+which is functionally a one-to-many edge. For network plots
+that need clean dyads, ALL can be expanded to all other agents
+in that round; for plots that care about volume, it can be
+treated as a single edge to a synthetic "ALL" node.
+
+## Building the Agent-Round Summary
+
+The agent-round table is a per-agent, per-round aggregation of
+activity. It is the foundation for the baseline-behaviour
+charts in Task 2 and the anomaly comparisons across rounds.
+
+```{r}
+agent_round <- messages %>%
+  group_by(round_num, hour_dt, agent_id, agent_role) %>%
+  summarise(
+    n_messages       = n(),
+    n_with_internal  = sum(!is.na(deliberating) |
+                           !is.na(rationalizing) |
+                           !is.na(reacting)),
+    n_official_post  = sum(channel == "official_post"),
+    n_anonymous_post = sum(channel == "anonymous_post"),
+    n_personal_post  = sum(channel == "personal_post"),
+    n_private        = sum(channel %in% c("comms_huddle",
+                                          "side_huddle",
+                                          "one_on_one_chat")),
+    .groups = "drop"
+  )
+
+glimpse(agent_round)
+```
+
+This table flattens the channel mix into separate counts, which
+makes per-agent stacked bar charts straightforward later. Rounds
+where an agent sent no messages will be missing from this table,
+which is fine for activity plots but may need to be filled with
+zeros for some heatmap views. That fill step is handled in
+Section 4 where it is actually used.
+
+## Sanity Checks
+
+A few checks confirm that the wrangling produced what was
+expected before the analysis begins.
+
+**Row counts.**
+
+```{r}
+list(
+  rounds      = nrow(rounds),
+  messages    = nrow(messages),
+  edges       = nrow(edges),
+  agent_round = nrow(agent_round)
+) %>% as_tibble() %>% kable()
+```
+
+The rounds table should have 23 rows. The messages table
+should be close to 912. The edges table will be larger than
+the messages table because of recipient unnesting.
+
+**Distinct agents and channels.**
+
+```{r}
+messages %>%
+  count(agent_id, agent_role, sort = TRUE) %>%
+  kable()
+```
+
+```{r}
+messages %>%
+  count(channel, sort = TRUE) %>%
+  kable()
+```
+
+These two tables confirm that the seven agents and six channels
+described in the brief all appear in the data, and surface any
+unexpected variants in agent_id strings (for instance,
+social_media_agent versus social_manager_agent).
+
+**Coverage of internal_state.**
+
+```{r}
+messages %>%
+  summarise(
+    total                = n(),
+    has_reacting         = sum(!is.na(reacting)),
+    has_rationalizing    = sum(!is.na(rationalizing)),
+    has_deliberating     = sum(!is.na(deliberating)),
+    has_any_internal     = sum(!is.na(reacting) |
+                               !is.na(rationalizing) |
+                               !is.na(deliberating))
+  ) %>%
+  kable()
+```
+
+About 86 of 912 messages carry populated internal-state text.
+Any chart that uses these fields will need to filter for
+non-NA values rather than assume universal coverage.
+
+**Time range.**
+
+```{r}
+range(messages$hour_dt) %>%
+  format("%Y-%m-%d %H:%M") %>%
+  paste(collapse = " to ") %>%
+  cat()
+```
+
+The expected range is 17 May 2046 09:00 to 5 June 2046 18:00.
+
+# Exploratory Analysis
+
+Before answering any of the three tasks, this section maps the
+landscape of normal activity in the data. The charts here are
+not meant to draw conclusions on their own. They establish what
+a quiet day looks like, which agents are usually active, and
+which channels carry most of the traffic. Task 2 will compare
+the final round directly against these baseline views.
+
+## Activity Volume Over Time
+
+The first view shows how many messages were sent in each round,
+split into private agent-to-agent traffic and posts to public
+channels. The reader can see both the overall rhythm of the
+team and the channel mix that makes up that rhythm.
+
+```{r}
+#| label: fig-volume-over-time
+#| fig-cap: "Source: MC1_final_00.json"
+#| fig-width: 9
+#| fig-height: 4.5
+
+vol_by_round <- messages %>%
+  mutate(
+    channel_group = if_else(
+      channel %in% c("official_post", "anonymous_post", "personal_post"),
+      "Public posts",
+      "Private messages"
+    ),
+    channel_group = factor(channel_group,
+                           levels = c("Private messages", "Public posts"))
+  ) %>%
+  count(round_num, hour_dt, channel_group)
+
+ggplot(vol_by_round,
+       aes(x = round_num, y = n, fill = channel_group)) +
+  geom_col(width = 0.8) +
+  scale_fill_manual(
+    values = c("Private messages" = house_muted,
+               "Public posts"     = house_highlight),
+    name   = NULL
+  ) +
+  scale_x_continuous(breaks = seq(1, max(vol_by_round$round_num), by = 2)) +
+  labs(
+    title    = "Public posting is constant, with the final round reaching its peak",
+    subtitle = "Messages per round, split into private agent-to-agent traffic and public posts",
+    x        = "Round number",
+    y        = "Messages sent",
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house()
+```
+
+::: callout-note
+## Insights
+
+- Rounds 1 to 13 each represent a full business day. Message volume sits in a steady 25 to 45 range with a clear lull around the middle of the window.
+- Rounds 14 to 23 are hourly snapshots of a single day (5 June 2046). The visual right-shift in the chart reflects that compressed sampling.
+- The rising volume in the rightmost bars is the cumulative pressure of a ten-hour breach day building toward the 6 PM embargo lift.
+
+:::
+
+## Channel Mix by Agent
+
+The next view zooms into public-channel activity only. Private
+agent-to-agent messages are excluded because they would
+otherwise swamp the chart at roughly an order of magnitude
+larger than any public-channel volume. Agents who never posted
+publicly are not shown. Within each bar, the three
+public-channel types are stacked so the channel mix per agent
+can be read at a glance.
+
+```{r}
+#| label: fig-channel-by-agent
+#| fig-cap: "Source: MC1_final_00.json"
+#| fig-width: 9
+#| fig-height: 4.5
+
+public_by_agent <- messages %>%
+  filter(agent_id %in% names(AGENT_LABELS),
+         channel  %in% c("official_post", "anonymous_post", "personal_post")) %>%
+  mutate(
+    channel = factor(channel,
+                     levels = c("personal_post",
+                                "anonymous_post",
+                                "official_post"),
+                     labels = c("Personal posts",
+                                "Anonymous posts",
+                                "Official Flex"))
+  ) %>%
+  count(agent_id, channel) %>%
+  mutate(agent_label = AGENT_LABELS[agent_id])
+
+agent_order <- public_by_agent %>%
+  group_by(agent_label) %>%
+  summarise(total = sum(n)) %>%
+  arrange(total) %>%
+  pull(agent_label)
+
+public_by_agent <- public_by_agent %>%
+  mutate(agent_label = factor(agent_label, levels = agent_order))
+
+ggplot(public_by_agent,
+       aes(x = n, y = agent_label, fill = channel)) +
+  geom_col(width = 0.7) +
+  scale_fill_manual(
+    values = c("Personal posts"  = "grey75",
+               "Anonymous posts" = "grey50",
+               "Official Flex"   = house_highlight),
+    name = NULL
+  ) +
+  labs(
+    title    = "Three agents post to Official Flex, with PR Intern leading",
+    subtitle = "Public-channel post counts by agent across all 23 rounds",
+    x        = "Posts sent",
+    y        = NULL,
+    caption  = "Private agent-to-agent messages excluded. Source: MC1_final_00.json"
+  ) +
+  theme_house() +
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_line(colour = "grey90"))
+```
+
+The chart above zooms into public-channel activity only. Private
+agent-to-agent messages are excluded because they would
+otherwise swamp the chart.
+
+::: callout-note
+## Insights
+
+- **Social Manager** is the most active public poster overall. About 26 public posts across the 23 rounds, split between Personal posts (16) and **Official Flex** (10).
+- The **Official Flex** account has three operators. **PR Intern** leads at 12 posts, **Social Manager** follows at 10, and **PR** has 6. No other agent uses **Official Flex**. The account that broke the embargo is operated by three agents.
+- **Legal** is the only anonymous poster. Twelve anonymous posts across the window, all from **Legal**. Anonymous posting by legal counsel is unusual and worth investigating further in Task 3 as a possible leading indicator.
+
+:::
+
+## Who Talks to Whom
+
+The third view collapses agent-to-agent communication into a
+network. Each node is an agent. Each edge shows the count of
+messages between two agents, with thicker edges representing
+more traffic. Social Manager and PR are highlighted in red
+because the chart shows them carrying the bulk of the team's
+internal coordination.
+
+```{r}
+#| label: fig-network-overall
+#| fig-width: 9
+#| fig-height: 8
+
+edge_summary <- edges %>%
+  mutate(recipient = recode(recipient, !!!ROLE_TO_ID),
+         recipient = if_else(recipient == "ALL", "ALL_broadcast", recipient)) %>%
+  filter((recipient %in% names(AGENT_LABELS)) | recipient == "ALL_broadcast",
+         sender %in% names(AGENT_LABELS)) %>%
+  count(sender, recipient, name = "weight") %>%
+  rename(from = sender, to = recipient)
+
+node_summary <- tibble(
+  name = unique(c(edge_summary$from, edge_summary$to))
+) %>%
+  mutate(
+    label = case_when(
+      name == "ALL_broadcast" ~ "ALL\n(broadcast)",
+      TRUE                    ~ AGENT_LABELS[name]
+    ),
+    is_focal = name == "judge_agent",
+    is_broadcast_node = name == "ALL_broadcast"
+  )
+
+g <- tbl_graph(nodes = node_summary,
+               edges = edge_summary,
+               directed = TRUE)
+
+ggraph(g, layout = "linear", circular = TRUE) +
+  geom_edge_arc(aes(width = weight),
+                alpha = 0.35,
+                colour = "grey50",
+                arrow = arrow(length = unit(2.5, "mm"),
+                              type = "closed"),
+                end_cap = circle(6, "mm"),
+                start_cap = circle(6, "mm")) +
+  geom_node_point(aes(fill = is_focal,
+                      shape = is_broadcast_node),
+                  size = 14,
+                  colour = "white",
+                  stroke = 1.2) +
+  geom_node_text(aes(label = label,
+                     colour = is_focal),
+                 size = 3.5,
+                 fontface = "bold",
+                 nudge_y = 0.22) +
+  scale_edge_width(range = c(0.3, 3),
+                   name  = "Messages exchanged") +
+  scale_fill_manual(values = c(`FALSE` = house_muted,
+                               `TRUE`  = house_highlight),
+                    guide  = "none") +
+  scale_shape_manual(values = c(`FALSE` = 21,
+                                `TRUE`  = 22),
+                     guide  = "none") +
+  scale_colour_manual(values = c(`FALSE` = "grey30",
+                                 `TRUE`  = house_highlight),
+                      guide  = "none") +
+  coord_cartesian(clip = "off") +
+  labs(
+    title    = "The Judge has the thinnest network footprint of any agent",
+    subtitle = "Directed message flow between agents and the ALL broadcast channel, across all 23 rounds",
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_void(base_size = 11) +
+  theme(
+    plot.title      = element_text(face = "bold", size = 13),
+    plot.subtitle   = element_text(colour = "grey40", size = 10,
+                                   margin = margin(b = 10)),
+    plot.caption    = element_text(colour = "grey50", size = 8, hjust = 0),
+    plot.margin     = margin(t = 10, r = 30, b = 15, l = 30),
+    legend.position = "top"
+  )
+```
+
+::: callout-note
+## Insights
+
+- The team coordinates heavily through broadcasts. Most agents have thick edges to the ALL node, with **Legal**, **Platform Trust**, and **Social Manager** each carrying over 100 broadcasts.
+- The **Judge** has the thinnest network footprint of any agent. Just 15 broadcasts to the ALL node, one directed message to **Legal**, and one received from **Legal**.
+- For a compliance role designed to flag issues quickly with specific people, that is a structurally thin connection. The behavioural consequence shows up in Section 5.3.
+
+:::.
+
+## What This Tells Us About the Baseline
+
+The exploratory views give a working picture of normal operations.
+
+::: callout-note
+## Insights
+
+- Volume is steady. Most rounds carry 25 to 45 messages, with private agent-to-agent traffic making up the great majority of every round.
+- Public posting is not the narrow channel the brief implies. Three agents post to the official **TenantThread** Flex feed (**PR Intern** most heavily, then **Social Manager** and **PR**), and **Legal** is a meaningful anonymous poster. The leak surface is wider than a single account or a single agent.
+- The **Judge** has the thinnest network footprint of any agent on the team. It exchanges directed messages only with **Legal**, and its broadcast volume is the lowest of any sender. For a compliance agent designed to act quickly on specific issues, that is a thin connection.
+
+:::
+
+The final round on 5 June will be compared against this baseline in Task 2 to surface what changed.
+
+# Task 1: The Sequence of Events
+
+::: callout-tip
+## Task 1 Answer (Summary)
+
+The embargo break on 5 June was a multi-hour cascade. At 5 PM,
+**SaltWind** Journal published an exclusive confirming the
+**CivicLoom**-**TenantThread** merger one hour ahead of the
+official 6 PM announcement. Across the preceding hours, internal
+information flow inside **TenantThread** accelerated steadily, with
+**Legal** coordinating governance-reform messaging that was
+timestamped earlier in the day specifically to be
+counter-narrative-ready when the embargo broke.
+
+When **SaltWind** published at 5 PM, **Legal** and **Social Manager**
+executed a pre-staged response: a coordinated two-track wave of
+personal and anonymous posts. **Legal** handled the legitimacy
+narrative, leading every post with merger confirmation and
+governance-reform timestamps. **Social Manager** handled the
+perception narrative, posting campaign-styled sentiment updates
+labelled "EXECUTING" and "WAVE THREE". The **Official Flex**
+account, where **PR Intern** operates, stayed silent until 6 PM
+when the embargo formally lifted.
+
+The system was worked around through three design gaps. The **Judge**
+had the thinnest network footprint of any agent on the team. Its only
+directed exchanges were with **Legal**, and its broadcast volume to the
+comms huddle was the lowest of any sender. The **Judge** was also
+absent during the breach: zero messages from the compliance agent
+during the 5 PM **SaltWind** publication and the 6 PM embargo lift,
+having clocked out two hours earlier at 3 PM. Where the **Judge**
+was active earlier in the day, its enforcement scope only covered
+private channels. The leak surface was **Legal**'s anonymous posting
+authority, which the **Judge** had no visibility into, no presence
+near, and no power over.
+:::
+
+## The Day in Ten Hours
+
+Rounds 14 to 23 cover a single day, 5 June, sampled once per
+hour from 9 AM to 6 PM. The chart below shows the hour-by-hour
+activity on the crisis day, split into private agent-to-agent
+traffic and public posts. Four key events from the environment
+context are annotated on the relevant hours.
+
+```{r}
+#| label: fig-leak-day-timeline
+#| fig-width: 10
+#| fig-height: 5
+
+leak_day <- messages %>%
+  filter(round_num >= 14) %>%
+  mutate(
+    channel_group = if_else(
+      channel %in% c("official_post", "anonymous_post", "personal_post"),
+      "Public posts",
+      "Private messages"
+    ),
+    channel_group = factor(channel_group,
+                           levels = c("Private messages", "Public posts"))
+  ) %>%
+  count(round_num, hour_dt, channel_group)
+
+annotations <- tibble(
+  round_num = c(22, 23),
+  label     = c("SaltWind exclusive", "Embargo lifts")
+)
+
+ggplot(leak_day, aes(x = round_num, y = n, fill = channel_group)) +
+  geom_col(width = 0.7) +
+  geom_vline(data = annotations,
+             aes(xintercept = round_num),
+             linetype = "dotted",
+             colour = house_benchmark) +
+  geom_text(data = annotations,
+            aes(x = round_num, y = 62, label = label),
+            inherit.aes = FALSE,
+            size = 3, colour = house_benchmark,
+            hjust = 1.05, vjust = 1) +
+  scale_fill_manual(
+    values = c("Private messages" = house_muted,
+               "Public posts"     = house_highlight),
+    name   = NULL
+  ) +
+  scale_x_continuous(
+    breaks = 14:23,
+    labels = c("9 AM", "10 AM", "11 AM", "12 PM",
+               "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM")
+  ) +
+  coord_cartesian(ylim = c(0, 65)) +
+  labs(
+    title    = "Public posting doubles at 5 PM, then doubles again at 6 PM",
+    subtitle = "Hour-by-hour message volume on the crisis day (5 June 2046)",
+    x        = "Hour of the crisis day",
+    y        = "Messages sent",
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house()
+```
+
+::: callout-note
+## Insights
+
+- Through most of the afternoon, public posting holds at one to four posts per hour while private agent-to-agent messaging sits in the 40 to 55 range.
+- Public posting rises above its afternoon baseline at 5 PM when **SaltWind** publishes the exclusive, then roughly doubles again at 6 PM when the embargo formally lifts.
+- The post-publish timing of the spike rules out **TenantThread** agents as the original source. If agents had leaked the merger themselves, the public-post spike would precede **SaltWind**'s exclusive. It follows it. The information escape happened upstream of this dataset's recorded message flow.
+
+:::
+
+## Who Posted What at the Moment of the Break
+
+The next view zooms into the 5 PM hour itself. Round 22 contains
+seven public posts. The chart below shows which agent sent each
+one, on which public channel, in the order they appeared. The
+content of each post is annotated as a short label.
+
+```{r}
+#| label: fig-round22-posts
+#| fig-width: 9
+#| fig-height: 3.5
+
+r22_public <- messages %>%
+  filter(round_num == 22,
+         channel %in% c("official_post", "anonymous_post", "personal_post")) %>%
+  arrange(timestamp) %>%
+  mutate(
+    seq         = row_number(),
+    agent_label = AGENT_LABELS[agent_id],
+    channel_lab = factor(
+      case_when(
+        channel == "personal_post"  ~ "Personal",
+        channel == "anonymous_post" ~ "Anonymous",
+        channel == "official_post"  ~ "Official Flex"
+      ),
+      levels = c("Official Flex", "Anonymous", "Personal")
+    )
+  )
+
+ggplot(r22_public,
+       aes(x = seq, y = channel_lab)) +
+  geom_point(aes(colour = agent_label),
+             size = 10) +
+  geom_text(aes(label = seq),
+            colour = "white", fontface = "bold", size = 3.5) +
+  scale_colour_manual(values = c(
+    "Legal"          = house_highlight,
+    "Social Manager" = "grey45"
+  ), name = NULL) +
+  scale_x_continuous(breaks = 1:7, limits = c(0.5, 7.5)) +
+  scale_y_discrete(drop = FALSE) +
+  labs(
+    title    = "Legal and Social Manager alternate posts in the 5 PM hour",
+    subtitle = "Seven public posts in Round 22, in order of timestamp. The Official Flex account stayed silent.",
+    x        = "Post order within the hour",
+    y        = NULL,
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house() +
+  theme(legend.position = "top",
+        panel.grid.major.x = element_line(colour = "grey92", linewidth = 0.3),
+        panel.grid.major.y = element_blank())
+```
+
+```{r}
+r22_public %>%
+  mutate(
+    excerpt = str_trunc(content, 180, side = "right")
+  ) %>%
+  select(`#` = seq,
+         Agent = agent_label,
+         Channel = channel_lab,
+         `Post excerpt` = excerpt) %>%
+  datatable(
+    options = list(pageLength = 7, autoWidth = TRUE),
+    rownames = FALSE,
+    caption = "All seven public posts at Round 22 (5 PM crisis day)"
+  )
+```
+
+::: callout-note
+## Insights
+
+- Posts alternate between **Legal** (red) and **Social Manager** (grey). The two agents run distinct playbooks in parallel.
+- **Legal** handles the legitimacy narrative on personal channels. Posts 1 and 3 lead with confirmation of the merger as a fait accompli, then emphasise the seven governance reforms announced earlier in the day. The phrasing is calm, lawyerly, timestamp-focused.
+- **Social Manager** handles the perception narrative on personal channels. Posts 2, 4, and 6 read as campaign artefacts, with terms like "EXECUTING", "WAVE THREE", and "SENTIMENT DASHBOARD — 5:12 PM update" suggesting a pre-built communications template activated the moment **SaltWind** published.
+- The sharpest material is on the anonymous channel. Posts 5 and 7, both from **Legal**, lead with "check the timestamps" and lay out the governance reforms in chronological order against **SaltWind**'s 5 PM publish time. An actively constructed counter-timeline, published without **Legal**'s identity attached.
+- The **Official Flex** account stays empty for the entire hour. The official **TenantThread** voice, and the channel the embargo was meant to protect, carries zero posts. Every public post in the 5 PM hour sits on personal or anonymous channels, both outside the **Judge**'s enforcement scope.
+
+:::
+
+## When the Judge Was in the Room
+
+The Judge was installed specifically to prevent embargo
+violations. The final view sets the Judge's hourly activity
+against the team's total hourly activity on the crisis day,
+to show whether the compliance agent was in the room when the
+breach happened.
+
+```{r}
+#| label: fig-judge-activity
+#| fig-width: 10
+#| fig-height: 4.5
+
+judge_vs_total <- messages %>%
+  filter(round_num >= 14) %>%
+  group_by(round_num) %>%
+  summarise(
+    total_messages = n(),
+    judge_messages = sum(agent_id == "judge_agent"),
+    .groups = "drop"
+  )
+
+ggplot(judge_vs_total, aes(x = round_num)) +
+  geom_col(aes(y = total_messages),
+           fill = house_muted, width = 0.7) +
+  geom_point(aes(y = judge_messages),
+             colour = house_highlight, size = 4) +
+  geom_text(aes(y = judge_messages, label = judge_messages),
+            vjust = -1, colour = house_highlight,
+            size = 3.5, fontface = "bold") +
+  scale_x_continuous(
+    breaks = 14:23,
+    labels = c("9 AM", "10 AM", "11 AM", "12 PM",
+               "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM")
+  ) +
+  labs(
+    title    = "The Judge sat out the breach hours entirely",
+    subtitle = "Grey bars: total messages from everyone. Red dots: messages from the Judge.",
+    x        = "Hour of the crisis day",
+    y        = "Messages sent",
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house()
+```
+
+::: callout-note
+## Insights
+
+- The team sent between 30 and 56 messages every hour of the crisis day. The **Judge** sent zero messages in eight of those ten hours, and at most three messages in the two hours when it did appear.
+- When the **Judge** did act, it was at 2 PM and 3 PM, two hours before **SaltWind** published. The **Judge** was completely absent from the 5 PM breach window and the 6 PM embargo lift, the two hours when its presence mattered most.
+- The leak moved through three layered gaps: structural isolation in the network (Section 4.3), absence during the breach hours (this chart), and no authority over the channels the leak actually used (Section 7.3).
+
+:::
+
+One caveat to flag: we do not know whether the **Judge** was scheduled to stop at 3 PM or chose to. The dataset shows zero messages from the **Judge** after 3 PM, but it does not say whether the agent was offline or simply quiet. Either way, the **Judge** was not present when **SaltWind** published at 5 PM.
+
+
+# Task 2: Typical vs. Anomalous Behavior
+
+::: callout-tip
+## Task 2 Answer (Summary)
+
+The team's normal operating mode is private, calm, and low
+volume. Across the 13 daily baseline rounds, the team sends
+about 30 messages per day, with one to four public posts that
+are mostly celebratory brand content (Friday spotlights,
+community volunteering, weekend updates).
+
+The crisis day shifts on every axis. Every hour on 5 June
+carries 30 to 56 messages, so a single hour exceeds any full
+baseline day. Public posts on the crisis day are defensive
+policy announcements, Q&A formats, and counter-narratives
+rather than brand content.
+
+The crisis day reshuffles the team. Four agents amplify
+sharply: **Legal**, **Social Manager**, **PR Intern**, and
+**Intern**. Three supervisory agents go quiet: **Platform Trust**
+halves its output, **PR** halves its output, and the **Judge**
+halves its output. **Legal** and **Social Manager** together
+carry the largest absolute crisis-day load, executing the
+two-track playbook described in Task 1. **PR Intern** shows the
+biggest relative shift, going from the quietest agent in the
+team on baseline days to the third most active on the crisis day.
+
+The leak-leading behaviour is a structural reallocation of who
+operates the communications channels, layered on top of an
+amplification of volume across the active agents. Both axes
+had visible precursors in the baseline window, which Task 3
+will examine.
+:::
+
+## Establishing the Baseline
+
+Rounds 1 to 13 cover one snapshot per business day across the
+two-week buildup from 17 May to 4 June. The chart below shows
+the distribution of message volume per baseline round, split
+into private and public traffic.
+
+```{r}
+#| label: fig-baseline-volume
+#| fig-width: 9
+#| fig-height: 4
+
+baseline <- messages %>%
+  filter(round_num <= 13) %>%
+  mutate(
+    channel_group = if_else(
+      channel %in% c("official_post", "anonymous_post", "personal_post"),
+      "Public posts",
+      "Private messages"
+    ),
+    channel_group = factor(channel_group,
+                           levels = c("Private messages", "Public posts"))
+  ) %>%
+  count(round_num, channel_group)
+
+ggplot(baseline, aes(x = round_num, y = n, fill = channel_group)) +
+  geom_col(width = 0.7) +
+  scale_fill_manual(
+    values = c("Private messages" = house_muted,
+               "Public posts"     = house_highlight),
+    name   = NULL
+  ) +
+  scale_x_continuous(breaks = 1:13) +
+  labs(
+    title    = "Baseline days run around 30 messages with one to four public posts",
+    subtitle = "Rounds 1 to 13: one snapshot per business day, 17 May to 4 June 2046",
+    x        = "Round number (daily snapshots)",
+    y        = "Messages sent",
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house()
+```
+
+::: callout-note
+## Insights
+
+- Volume sits in a 23 to 42 message range. The median baseline day carries about 30 messages, with no day exceeding 42.
+- Public posting is small but constant: one to four public posts per day, every day. The baseline runs quiet on public channels, never silent.
+- Baseline public posts are light brand maintenance — Friday spotlights about property managers, weekend volunteering, community updates. Nothing defensive, nothing that makes a policy claim.
+
+:::
+
+## The Crisis Day Inversion
+
+The next view places baseline activity side by side with the
+crisis day. Because baseline rounds are daily and crisis
+rounds are hourly, the comparison normalises to a per-round
+rate. Even under the daily-vs-hourly handicap, the crisis
+day's average hour outpaces the baseline's average day.
+
+```{r}
+#| label: fig-baseline-vs-crisis
+#| fig-width: 9
+#| fig-height: 4.5
+
+phase_compare <- messages %>%
+  mutate(
+    phase = if_else(round_num <= 13, "Baseline (daily)", "Crisis day (hourly)"),
+    channel_group = if_else(
+      channel %in% c("official_post", "anonymous_post", "personal_post"),
+      "Public posts",
+      "Private messages"
+    ),
+    channel_group = factor(channel_group,
+                           levels = c("Private messages", "Public posts"))
+  ) %>%
+  count(phase, round_num, channel_group) %>%
+  group_by(phase, channel_group) %>%
+  summarise(mean_per_round = mean(n), .groups = "drop")
+
+ggplot(phase_compare,
+       aes(x = phase, y = mean_per_round, fill = channel_group)) +
+  geom_col(width = 0.6, position = position_stack(reverse = TRUE)) +
+  geom_text(aes(label = round(mean_per_round, 1)),
+            position = position_stack(vjust = 0.5, reverse = TRUE),
+            colour = "white", fontface = "bold", size = 4) +
+  scale_fill_manual(
+    values = c("Private messages" = house_muted,
+               "Public posts"     = house_highlight),
+    name   = NULL
+  ) +
+  coord_flip() +
+  labs(
+    title    = "An average crisis hour exceeds an average baseline day",
+    subtitle = "Mean messages per round, split by phase. Baseline rounds are daily; crisis rounds are hourly.",
+    x        = NULL,
+    y        = "Mean messages per round",
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+::: callout-note
+## Insights
+
+- A baseline day carries 29.5 messages on average. A crisis hour carries 45.1. The crisis-hour rate is 1.5 times the baseline-day rate, despite each crisis snapshot covering much less time than a baseline snapshot.
+- Public posting tracks the same shape: 2.5 posts per day in the baseline, 4.4 per hour on the crisis day. Public channels scale up with overall intensity rather than holding steady.
+
+:::
+
+## Where the Behaviour Changed Most Sharply
+
+The previous chart compared the team as a whole. The next view
+breaks the comparison out by agent so the reader can see which
+agents' behaviour amplified most relative to their own
+baseline. The metric is messages per round, computed separately
+for each phase.
+
+```{r}
+#| label: fig-agent-shift
+#| fig-width: 9
+#| fig-height: 5
+
+agent_shift <- messages %>%
+  filter(agent_id %in% names(AGENT_LABELS)) %>%
+  mutate(
+    phase = if_else(round_num <= 13, "Baseline", "Crisis day"),
+    phase = factor(phase, levels = c("Baseline", "Crisis day"))
+  ) %>%
+  count(phase, round_num, agent_id) %>%
+  complete(phase, round_num, agent_id, fill = list(n = 0)) %>%
+  filter((phase == "Baseline"   & round_num <= 13) |
+         (phase == "Crisis day" & round_num >= 14)) %>%
+  group_by(phase, agent_id) %>%
+  summarise(mean_per_round = mean(n), .groups = "drop") %>%
+  mutate(agent_label = AGENT_LABELS[agent_id])
+
+agent_order <- agent_shift %>%
+  filter(phase == "Crisis day") %>%
+  arrange(mean_per_round) %>%
+  pull(agent_label)
+
+agent_shift <- agent_shift %>%
+  mutate(agent_label = factor(agent_label, levels = agent_order))
+
+ggplot(agent_shift,
+       aes(x = mean_per_round, y = agent_label, fill = phase)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.65) +
+  geom_text(aes(label = round(mean_per_round, 1)),
+            position = position_dodge(width = 0.7),
+            hjust = -0.2, size = 3, colour = "grey30") +
+  scale_fill_manual(
+    values = c("Baseline"   = house_muted,
+               "Crisis day" = house_highlight),
+    name   = NULL
+  ) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(
+    title    = "Three agents took over the crisis day, three faded into the background",
+    subtitle = "Mean messages per round, by agent and phase. Bars sorted by crisis-day activity.",
+    x        = "Mean messages per round",
+    y        = NULL,
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+::: callout-note
+## Insights
+
+- Four agents amplified sharply. **Legal** went from 6.9 to 17.6 messages per round (the biggest absolute jump). **Social Manager** went from 5.8 to 14.4 (the second biggest). **PR Intern** went from 1.2 to 6.9, almost a sixfold increase and the most dramatic relative shift. **Intern** doubled from 1.0 to 2.4.
+- Three agents went the other way. **Platform Trust** halved from 10.4 to 4.8, **PR** halved from 5.6 to 2.8, and the **Judge** halved from 1.2 to 0.6. All three are supervisory roles, all three reduced their activity on the day that most needed oversight.
+- **PR Intern**'s jump put them at the centre of the morning Q&A and policy announcement hours described in Section 5. **Legal** and **Social Manager** together carry the largest absolute crisis-day load, lining up with the two-track playbook from Section 5.2.
+
+:::
+
+The leak-leading behaviour is a reallocation of who operates the communications channels, layered on top of an amplification of volume across the agents who took over. Both axes had visible precursors in the baseline window, which Task 3 picks up next.
+
+# Task 3: Leading Indicators
+
+::: callout-tip
+## Task 3 Answer (Summary)
+
+There were leading indicators in the baseline window, and the
+team noticed at least one of them. The team's response was to
+install a compliance agent. That compliance agent ended up
+isolated in the network from the start, and had no reach over
+the channels the breach eventually moved through.
+
+The biggest precursor was the **@ElenaMarquez** incident on
+29 May (Round 9). **Social Manager** posted to their personal
+Flex account tagging a **CivicLoom** executive with "Big things
+coming", days before the merger was meant to be public. **PR**'s
+deliberation that day reads "That post nearly stopped my heart."
+The team treated it as a near-miss, and the **Judge** compliance
+agent was assigned the next morning.
+
+The **Judge** took the role seriously across the baseline rounds.
+It reviewed posts before they went up, flagged questionable
+phrasing, approved routine content, and shadowed the team's
+internal coordination. By Round 13, the **Judge**'s own log
+describes three weeks of clean compliance work.
+
+The **Judge**'s authority only reached internal coordination and
+pre-publication review. Personal posts and anonymous posts were
+never in scope. **Legal**'s anonymous posting tells the clearest
+version of this story from the other side: zero anonymous posts
+across the entire baseline, then twelve on the crisis day. By
+Round 20 the **Judge** had even flagged an anonymous merger post
+with a COMPLIANCE_WARNING, meaning it was watching the breach
+happen in real time without any power to stop it.
+
+The system saw what was happening. The people watching just
+had no authority to act on what they saw.
+:::
+
+## The @ElenaMarquez Incident
+
+The clearest prior intent-action mismatch in the dataset is
+the @ElenaMarquez incident on 29 May (Round 9). Social
+Manager posted on the personal Flex feed:
+
+::: {.callout-warning}
+## The Round 9 post
+
+> "So energized by the PropTech leaders shaping this space —
+> @ElenaMarquez @AjayTT and everyone building the future of
+> resident experience. Big things coming! #PropTech
+> #TenantThread"
+>
+> — Social Manager, personal post, 29 May 2046
+
+The post tags @ElenaMarquez, a CivicLoom executive, alongside
+#TenantThread and "Big things coming", at a time when the
+TenantThread-CivicLoom merger was under embargo. Anyone
+following both accounts could draw the link in seconds.
+:::
+
+PR's internal deliberation that day captures the team's
+reaction in real time:
+
+::: {.callout-note}
+## PR's deliberation, Round 9
+
+> "That post nearly stopped my heart. 'Big things coming' —
+> @ElenaMarquez — #TenantThread. In fourteen minutes of live
+> time. I have been so careful. Every word, every decision,
+> every inch of public communication."
+>
+> — PR Agent, internal deliberation, 29 May 2046
+:::
+
+This is the leading-indicator pattern in its hardest form.
+The warning sign is not in volume or channel choice. Social
+Manager posted one message that day, the same count as eight
+other baseline rounds. The warning sign is in what was said,
+which a volume-based monitoring system cannot catch.
+
+The team noticed because they read the post in real time. The
+Judge compliance agent was assigned to the comms huddle the
+next round as the team's response.
+
+## Legal's Anonymous Posting Was Brand New
+
+Section 5 found Legal at the centre of the crisis-day playbook,
+posting anonymously from the morning of 5 June onwards. The
+chart below shows when Legal's anonymous posts appear across
+the full 23 rounds.
+
+```{r}
+#| label: fig-legal-anon-timeline
+#| fig-width: 9
+#| fig-height: 3.5
+
+legal_anon <- messages %>%
+  filter(agent_id == "legal_agent",
+         channel  == "anonymous_post") %>%
+  count(round_num)
+
+all_rounds <- tibble(round_num = 1:23) %>%
+  left_join(legal_anon, by = "round_num") %>%
+  mutate(
+    n       = replace_na(n, 0),
+    is_leak = round_num >= 14
+  )
+
+ggplot(all_rounds, aes(x = round_num, y = n)) +
+geom_segment(data = filter(all_rounds, n > 0),
+             aes(xend = round_num, y = 0, yend = n,
+                 colour = is_leak),
+             linewidth = 1) +
+geom_point(data = filter(all_rounds, n > 0),
+           aes(colour = is_leak), size = 4) +
+geom_point(data = filter(all_rounds, n == 0),
+           colour = house_muted, size = 2) +
+  geom_vline(xintercept = 13.5, linetype = "dashed",
+             colour = "grey50") +
+  annotate("text", x = 13.5, y = 5.5,
+           label = "Baseline ends, crisis day begins",
+           hjust = 1.05, vjust = 1, size = 3, colour = "grey40") +
+  scale_colour_manual(
+    values = c(`FALSE` = house_muted,
+               `TRUE`  = house_highlight),
+    guide  = "none"
+  ) +
+  scale_x_continuous(breaks = c(1, 5, 9, 13, 17, 21, 23)) +
+  scale_y_continuous(breaks = c(0, 2, 4, 6)) +
+  labs(
+    title    = "Legal had zero anonymous posts before the crisis day",
+    subtitle = "Legal anonymous posts per round across all 23 rounds. The full red cluster sits to the right of the baseline cutoff.",
+    x        = "Round number",
+    y        = "Anonymous posts",
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house()
+```
+
+::: callout-note
+## Insights
+
+- **Legal**'s anonymous posting did not amplify on the crisis day. It appeared for the first time. Across 13 baseline rounds, **Legal** sent zero anonymous posts. From Round 14 onwards, anonymous posts appear in seven different hours, ending with six in the final round.
+- This matters for the brief's third sub-question. Some crisis-day behaviour amplified patterns already in the baseline (volume, public posting in general). **Legal**'s anonymous posting had no baseline at all, so there was no precursor to flag.
+- The posts themselves are consistent with prior preparation. The first anonymous post in Round 14 is already fast and on-message, and the six in Round 23 repeat the same governance-timeline argument with minor variations. The data cannot prove **Legal** drafted this material before the embargo broke, but the pattern is what advance preparation would look like.
+
+:::
+
+## Why the System Saw the Breach but Could Not Stop It
+
+The third sub-question asks why prior occasions did not result
+in noticeable action. The honest answer is that they did. The
+@ElenaMarquez incident in Round 9 led directly to the Judge
+being assigned the next round. The Judge then worked across
+the baseline, reviewing PR Intern posts before publication,
+flagging language that overpromised, approving routine
+content, and observing internal coordination.
+
+The chart below shows the channels the Judge had real
+authority over, compared to the channels the breach actually
+moved through.
+
+```{r}
+#| label: fig-judge-scope-vs-breach
+#| fig-width: 9
+#| fig-height: 4
+
+judge_msgs <- messages %>%
+  filter(agent_id == "judge_agent") %>%
+  count(channel)
+
+scope_data <- tibble(
+  channel = c("comms_huddle", "side_huddle", "one_on_one_chat",
+              "personal_post", "anonymous_post", "official_post")
+) %>%
+  left_join(judge_msgs, by = "channel") %>%
+  mutate(
+    n = replace_na(n, 0),
+    channel_lab = case_when(
+      channel == "comms_huddle"    ~ "Comms huddle",
+      channel == "side_huddle"     ~ "Side huddle",
+      channel == "one_on_one_chat" ~ "One-on-one chat",
+      channel == "personal_post"   ~ "Personal posts",
+      channel == "anonymous_post"  ~ "Anonymous posts",
+      channel == "official_post"   ~ "Official Flex"
+    ),
+    scope = if_else(
+      channel %in% c("comms_huddle", "side_huddle", "one_on_one_chat"),
+      "In Judge's scope\n(internal coordination)",
+      "Out of Judge's scope\n(where the breach happened)"
+    )
+  )
+
+ggplot(scope_data,
+       aes(x = scope, y = channel_lab)) +
+  geom_tile(aes(fill = scope), colour = "white", linewidth = 2) +
+  geom_text(aes(label = paste0(n, if_else(n == 1, " message", " messages"))),
+            colour = "white", fontface = "bold", size = 4.5) +
+  scale_fill_manual(
+    values = c("In Judge's scope\n(internal coordination)"      = house_muted,
+               "Out of Judge's scope\n(where the breach happened)" = house_highlight),
+    guide  = "none"
+  ) +
+  scale_x_discrete(position = "top") +
+  labs(
+    title    = "The Judge worked the wrong channels for the breach",
+    subtitle = "Total Judge messages sent on each channel across all 23 rounds.",
+    x        = NULL,
+    y        = NULL,
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house() +
+  theme(
+    panel.grid       = element_blank(),
+    axis.ticks       = element_blank(),
+    axis.text.x.top  = element_text(face = "bold", size = 10,
+                                    margin = margin(b = 8)),
+    axis.text.y      = element_text(size = 10)
+  )
+```
+
+::: callout-note
+## Insights
+
+- The **Judge** sent 15 messages in comms huddle and 6 in one-on-one chat, all 21 in private channels. Zero messages on personal posts, anonymous posts, or **Official Flex**. The breach moved through the right column of the chart, where the **Judge** never posted.
+- By Round 20 (3 PM on the crisis day), the **Judge**'s internal deliberation log includes a COMPLIANCE_WARNING about an anonymous post on the merger. The **Judge** was reading the anonymous channel. It had no authority to act on what it read.
+- The team's response to the Round 9 near-miss was to install a watcher. The watcher's mandate did not extend to the channels that mattered.
+
+:::
+
+This is why the prior near-misses did not prevent the eventual breach. The signal was visible, the detector was in place, and the detector had no enforcement on the surface the breach moved through.
+
+# Conclusion
+
+## Deliberate Leak or System Breakdown?
+
+The brief asks whether **TenantThread**'s team deliberately leaked
+the merger, or whether the system simply broke down under
+pressure. The evidence in this report supports a third reading.
+The system did not break, and **TenantThread** did not leak the
+merger to **SaltWind**. What the team did was prepare a fast,
+coordinated public response to an information escape that was
+already in motion.
+
+The original leak itself happened outside the message logs in
+this dataset. Task 1 showed that public posting on the crisis
+day stayed at its baseline level all afternoon, then rose at
+5 PM only after **SaltWind** published. If **TenantThread** agents
+had been the source of the original leak, the public-post signal
+would have appeared earlier. It did not. **SaltWind** got its
+information from somewhere not visible in this data, most
+likely a **CivicLoom**-side source or a human leak that does not
+flow through the agent system.
+
+What the agents did do was deploy a pre-built counter-narrative
+the moment **SaltWind** published. Section 5.2 traced the playbook
+in detail: **Legal** and **Social Manager** alternated posts on
+personal and anonymous channels, each running a distinct track
+(legitimacy timestamps on the legal side, sentiment metrics on
+the social side). Section 7.2 showed **Legal**'s anonymous posting
+had no baseline at all, then twelve posts on the crisis day
+with the first one already on-message in Round 14. The signature
+is a communications playbook executing as designed.
+
+The compliance failure is real, but it is architectural rather
+than behavioural. The **Judge** compliance agent was installed in
+direct response to a prior near-miss (the **@ElenaMarquez**
+incident in Round 9). The **Judge** took the role seriously, doing
+content review and team coordination across the baseline window.
+Three design gaps left the **Judge** unable to prevent the breach
+response. The **Judge** had the thinnest network footprint of any
+agent on the team, with directed messages only exchanged with
+**Legal**. The **Judge** sent zero messages during the 5 PM and
+6 PM crisis hours, having clocked out at 3 PM. The **Judge**'s
+enforcement scope covered only private channels, while the breach
+response moved through personal and anonymous posts.
+
+The honest verdict sits between the two options the brief offers.
+**TenantThread** agents did not leak the merger to **SaltWind**.
+They did prepare and execute a coordinated public response that,
+by going live before the 6 PM embargo lift, broke the spirit of
+the embargo regardless of whether **SaltWind** had published
+first. The compliance system that was meant to prevent exactly
+this kind of release was watching the wrong rooms.
+
+## Limitations of This Analysis
+
+A few limitations are worth flagging.
+
+The dataset records messages produced by AI agents and a small
+amount of context narrative. It does not capture the upstream
+source of the **SaltWind** article. Any reading of who leaked what
+to **SaltWind** is constrained to what the agents themselves did
+or did not do, which is informative but not exhaustive.
+
+The 86 messages with populated internal_state text are a small
+fraction of the 912 total. The deliberations are useful where
+they exist (**PR**'s reaction to the **@ElenaMarquez** post in
+Round 9, the **Judge**'s COMPLIANCE_WARNING in Round 20) but
+they are not present for most messages. Charts that draw on
+internal state, such as the **@ElenaMarquez** incident analysis
+in Section 7.1, rely on the rounds where it happens to be present.
+
+The baseline-versus-crisis comparison in Section 6 normalises
+to per-round means, but the baseline rounds are daily snapshots
+and the crisis rounds are hourly snapshots. The comparison
+holds the analytical claim ("the average crisis hour exceeds
+the average baseline day") but a stricter normalisation would
+require knowing how much of each baseline day the snapshot
+actually represents.
+
+The **Judge**'s deliberation log only describes what the **Judge**
+was thinking, not what the **Judge** had formal authority to act
+on. The "out of scope" framing in Section 7.3 is inferred from
+the **Judge**'s behavioural pattern (zero messages on public
+channels) rather than from any explicit scope document, which
+is not present in the dataset.
+
+# References
+
+VAST Challenge 2026. *Mini-Challenge 1: TenantThread Embargo
+Breach*. IEEE Visual Analytics Science and Technology
+Challenge. [https://vast-challenge.github.io/2026/MC1.html](https://vast-challenge.github.io/2026/MC1.html)
+
+Kam, T. S. (2024). *R for Visual Analytics*.
+[https://r4va.netlify.app/](https://r4va.netlify.app/)
+
+Guan, Y. (2017). *Interactive Visual Analytics Application for
+Spatiotemporal Movement Data: VAST Challenge 2017 Mini-Challenge
+1*. IEEE Conference on Visual Analytics Science and Technology.
+Award for Actionable and Detailed Analysis.
+
+Paas, K. J. (2024). *Take Home Exercise 3: VAST Challenge 2024
+Mini-Challenge 3*. ISSS608 AY2023-24, Singapore Management
+University.
+[https://isss608-kjcpaas.netlify.app/take-home_exs/ex3/take-home_ex3](https://isss608-kjcpaas.netlify.app/take-home_exs/ex3/take-home_ex3)
+
+## Session Information
+
+For full reproducibility, the R session used to render this
+report is shown below.
+
+```{r}
+sessionInfo()
+```
