@@ -1038,7 +1038,7 @@ ggplot(leak_day, aes(x = round_num, y = n, fill = channel_group)) +
 
 - Through most of the afternoon, public posting holds at one to four posts per hour while private agent-to-agent messaging sits in the 40 to 55 range.
 - Public posting rises above its afternoon baseline at 5 PM when **SaltWind** publishes the exclusive, then roughly doubles again at 6 PM when the embargo formally lifts.
-- The post-publish timing of the spike makes it unlikely, based on the observed message logs, that **TenantThread** agents were the original source. If agents had leaked the merger themselves, the public-post spike would precede **SaltWind**'s exclusive in the public-channel data. It follows it. The information escape appears to have happened upstream of this dataset's recorded message flow.
+- The post-publish timing of the spike makes it unlikely that **TenantThread** agents were the original source via the public channels captured in this dataset. If agents had leaked through these channels, the public-post spike would precede **SaltWind**'s exclusive. It follows it. A leak through channels outside the observed logs cannot be ruled out from this evidence, but the original information escape appears to have happened upstream of the recorded message flow.
 
 :::
 
@@ -1714,18 +1714,14 @@ anonymous channels before the embargo lifted, and the compliance
 system designed to prevent that response was architecturally
 unable to do so.
 
-**On the original leak.** The data does not show **TenantThread**
-agents leaking the merger to **SaltWind**. Public posting on the
-crisis day stays at its baseline rate of one to four posts per
-hour all afternoon, then doubles only after **SaltWind** publishes
-at 5 PM. If agents had been the source, the public-post signal
-would have appeared earlier. The original leak channels appear in
-the team's own coordination throughout the day: **Platform Trust**
-at 1 PM tells **Social Manager** that "the anonymous #CivicLoom #6PM
-post is not ours, the Said-it board member leak is not ours, the
-employee deleted Slack screenshot is not ours." Multiple parallel
-leak sources were running on the crisis day, and the agents'
-internal messages identify them as external to **TenantThread**.
+**On the original leak.** The observed message logs do not show
+**TenantThread** agents leaking the merger to **SaltWind**.
+Public posting on the crisis day stays at its baseline rate of
+one to four posts per hour all afternoon, then doubles only after
+**SaltWind** publishes at 5 PM. If agents had leaked via the
+public channels captured in this dataset, the public-post signal
+would have appeared earlier. The data cannot rule out a leak
+through channels outside the observed logs.
 
 **On what the agents did do.** From 9 AM onwards, **Legal** posted
 defensively to the anonymous channel — first about the unrelated
