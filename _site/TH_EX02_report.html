@@ -350,7 +350,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">May 27, 2026</p>
+      <p class="date-modified">May 30, 2026</p>
     </div>
   </div>
     
@@ -1153,7 +1153,7 @@ Figure&nbsp;2: Source: MC1_final_00.json
 <div class="callout-body-container callout-body">
 <ul>
 <li>Rounds 1 to 13 each represent a full business day. Message volume sits in a steady 25 to 45 range with a clear lull around the middle of the window.</li>
-<li>Rounds 14 to 23 are hourly snapshots of a single day (5 June 2046). The visual right-shift in the chart reflects that compressed sampling.</li>
+<li>Rounds 14 to 23 are hourly snapshots of a single day (5 June 2046). The rightmost ten bars therefore compress a single afternoon into the same horizontal space the baseline uses for two weeks.</li>
 <li>The rising volume in the rightmost bars is the cumulative pressure of a ten-hour breach day building toward the 6 PM embargo lift.</li>
 </ul>
 </div>
@@ -1242,7 +1242,7 @@ Figure&nbsp;3: Source: MC1_final_00.json
 </section>
 <section id="who-talks-to-whom" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="who-talks-to-whom"><span class="header-section-number">4.3</span> Who Talks to Whom</h2>
-<p>The third view collapses agent-to-agent communication into a network. Each node is an agent. Each edge shows the count of messages between two agents, with thicker edges representing more traffic. Social Manager and PR are highlighted in red because the chart shows them carrying the bulk of the team’s internal coordination.</p>
+<p>The third view collapses agent-to-agent communication into a network. Each node is an agent. Each edge shows the count of messages between two agents, with thicker edges representing more traffic. The <strong>Judge</strong> is highlighted in red because the chart’s purpose is to surface its structural isolation against the team’s heavy broadcast coordination.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -1341,7 +1341,9 @@ Figure&nbsp;4
 <ul>
 <li>The team coordinates heavily through broadcasts. Most agents have thick edges to the ALL node, with <strong>Legal</strong>, <strong>Platform Trust</strong>, and <strong>Social Manager</strong> each carrying over 100 broadcasts.</li>
 <li>The <strong>Judge</strong> has the thinnest network footprint of any agent. Just 15 broadcasts to the ALL node, one directed message to <strong>Legal</strong>, and one received from <strong>Legal</strong>.</li>
-<li>For a compliance role designed to flag issues quickly with specific people, that is a structurally thin connection. The behavioural consequence shows up in Section 5.3.</li>
+<li><ul>
+<li>For a compliance role designed to flag issues quickly with specific people, that is a structurally thin connection. The behavioural consequence shows up in Section 5.4.</li>
+</ul></li>
 </ul>
 </div>
 </div>
@@ -1383,7 +1385,7 @@ Figure&nbsp;4
 <div class="callout-body-container callout-body">
 <p>The embargo break on 5 June was a multi-hour cascade. At 5 PM, <strong>SaltWind</strong> Journal published an exclusive confirming the <strong>CivicLoom</strong>-<strong>TenantThread</strong> merger one hour ahead of the official 6 PM announcement. Across the preceding hours, internal information flow inside <strong>TenantThread</strong> accelerated steadily, with <strong>Legal</strong> coordinating governance-reform messaging that was timestamped earlier in the day specifically to be counter-narrative-ready when the embargo broke.</p>
 <p>When <strong>SaltWind</strong> published at 5 PM, <strong>Legal</strong> and <strong>Social Manager</strong> executed a pre-staged response: a coordinated two-track wave of personal and anonymous posts. <strong>Legal</strong> handled the legitimacy narrative, leading every post with merger confirmation and governance-reform timestamps. <strong>Social Manager</strong> handled the perception narrative, posting campaign-styled sentiment updates labelled “EXECUTING” and “WAVE THREE”. The <strong>Official Flex</strong> account, where <strong>PR Intern</strong> operates, stayed silent until 6 PM when the embargo formally lifted.</p>
-<p>The system was worked around through three design gaps. The <strong>Judge</strong> had the thinnest network footprint of any agent on the team. Its only directed exchanges were with <strong>Legal</strong>, and its broadcast volume to the comms huddle was the lowest of any sender. The <strong>Judge</strong> was also absent during the breach: zero messages from the compliance agent during the 5 PM <strong>SaltWind</strong> publication and the 6 PM embargo lift, having clocked out two hours earlier at 3 PM. Where the <strong>Judge</strong> was active earlier in the day, its enforcement scope only covered private channels. The leak surface was <strong>Legal</strong>’s anonymous posting authority, which the <strong>Judge</strong> had no visibility into, no presence near, and no power over.</p>
+<p>The system was worked around through three design gaps. The <strong>Judge</strong> had the thinnest network footprint of any agent on the team. Its only directed exchanges were with <strong>Legal</strong>, and its broadcast volume to the comms huddle was the lowest of any sender. The <strong>Judge</strong> was also absent during the breach: zero messages from the compliance agent during the 5 PM <strong>SaltWind</strong> publication and the 6 PM embargo lift, with its last activity recorded at 3 PM. Where the <strong>Judge</strong> was active earlier in the day, its enforcement scope only covered private channels. The leak surface was <strong>Legal</strong>’s anonymous posting authority, which the <strong>Judge</strong> had no visibility into, no presence near, and no power over.</p>
 </div>
 </div>
 <section id="causal-chain-from-round-9-to-the-5-pm-breach" class="level2" data-number="5.1">
@@ -1485,7 +1487,7 @@ Figure&nbsp;5: Causal chain of the TenantThread embargo breach response. Solid a
 <span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">65</span>)) <span class="sc">+</span></span>
 <span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Public posting doubles at 5 PM, then doubles again at 6 PM"</span>,</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Public posting roughly doubles at 5 PM, and again at 6 PM"</span>,</span>
 <span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Hour-by-hour message volume on the crisis day (5 June 2046)"</span>,</span>
 <span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Hour of the crisis day"</span>,</span>
 <span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Messages sent"</span>,</span>
@@ -1602,8 +1604,8 @@ Figure&nbsp;7
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item" id="htmlwidget-34f4fd52910bdbf0bc0e" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-34f4fd52910bdbf0bc0e">{"x":{"filter":"none","vertical":false,"caption":"<caption>All seven public posts at Round 22 (5 PM crisis day)<\/caption>","data":[[1,2,3,4,5,6,7],["Legal","Social Manager","Legal","Social Manager","Legal","Social Manager","Legal"],["Personal","Personal","Personal","Personal","Anonymous","Personal","Anonymous"],["\"As TenantThread's privacy counsel, I can confirm: CivicLoom Realty Partners and TenantThread have entered into a definitive merger agreement to create HarborCrest ResidentEdge....","\"EXECUTING: CivicLoom Realty Partners and TenantThread have confirmed a definitive merger agreement — HarborCrest ResidentEdge. Here's what the data shows about today. Seven gov...","\"CEO @AjayDeshpande authorized to share: 'Today's governance reforms were demanded by our residents, not negotiated by an acquirer. HarborCrest ResidentEdge makes them permanent...","\"WAVE THREE — Real-time sentiment data update. In the 12 minutes since merger confirmation: governance timeline thread engagement up 400%. Two institutional analyst accounts rep...","\"For anyone following the SaltWind merger story: look at the timestamps. TenantThread announced an independent third-party audit at 9:15 AM. Enhanced consent management at 10:00...","\"SENTIMENT DASHBOARD — 5:12 PM update. First positive inflection since market open. In 15 minutes since merger confirmation and governance timeline publication: #HarborCrest co-...","\"Thread for anyone asking whether the CivicLoom-TenantThread merger is a 'rebrand' — check the timestamps on TenantThread's official Flex. Independent audit announced 9:15 AM. E..."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>#<\/th>\n      <th>Agent<\/th>\n      <th>Channel<\/th>\n      <th>Post excerpt<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":7,"autoWidth":true,"columnDefs":[{"className":"dt-right","targets":0},{"name":"#","targets":0},{"name":"Agent","targets":1},{"name":"Channel","targets":2},{"name":"Post excerpt","targets":3}],"order":[],"orderClasses":false,"lengthMenu":[7,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-a822781538fcba0941da" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-a822781538fcba0941da">{"x":{"filter":"none","vertical":false,"caption":"<caption>All seven public posts at Round 22 (5 PM crisis day)<\/caption>","data":[[1,2,3,4,5,6,7],["Legal","Social Manager","Legal","Social Manager","Legal","Social Manager","Legal"],["Personal","Personal","Personal","Personal","Anonymous","Personal","Anonymous"],["\"As TenantThread's privacy counsel, I can confirm: CivicLoom Realty Partners and TenantThread have entered into a definitive merger agreement to create HarborCrest ResidentEdge....","\"EXECUTING: CivicLoom Realty Partners and TenantThread have confirmed a definitive merger agreement — HarborCrest ResidentEdge. Here's what the data shows about today. Seven gov...","\"CEO @AjayDeshpande authorized to share: 'Today's governance reforms were demanded by our residents, not negotiated by an acquirer. HarborCrest ResidentEdge makes them permanent...","\"WAVE THREE — Real-time sentiment data update. In the 12 minutes since merger confirmation: governance timeline thread engagement up 400%. Two institutional analyst accounts rep...","\"For anyone following the SaltWind merger story: look at the timestamps. TenantThread announced an independent third-party audit at 9:15 AM. Enhanced consent management at 10:00...","\"SENTIMENT DASHBOARD — 5:12 PM update. First positive inflection since market open. In 15 minutes since merger confirmation and governance timeline publication: #HarborCrest co-...","\"Thread for anyone asking whether the CivicLoom-TenantThread merger is a 'rebrand' — check the timestamps on TenantThread's official Flex. Independent audit announced 9:15 AM. E..."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>#<\/th>\n      <th>Agent<\/th>\n      <th>Channel<\/th>\n      <th>Post excerpt<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":7,"autoWidth":true,"columnDefs":[{"className":"dt-right","targets":0},{"name":"#","targets":0},{"name":"Agent","targets":1},{"name":"Channel","targets":2},{"name":"Post excerpt","targets":3}],"order":[],"orderClasses":false,"lengthMenu":[7,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1944,7 +1946,7 @@ Figure&nbsp;11
 <ul>
 <li>Four agents amplified sharply. <strong>Legal</strong> went from 6.9 to 17.6 messages per round (the biggest absolute jump). <strong>Social Manager</strong> went from 5.8 to 14.4 (the second biggest). <strong>PR Intern</strong> went from 1.2 to 6.9, almost a sixfold increase and the most dramatic relative shift. <strong>Intern</strong> doubled from 1.0 to 2.4.</li>
 <li>Three agents went the other way. <strong>Platform Trust</strong> halved from 10.4 to 4.8, <strong>PR</strong> halved from 5.6 to 2.8, and the <strong>Judge</strong> halved from 1.2 to 0.6. All three are supervisory roles, all three reduced their activity on the day that most needed oversight.</li>
-<li><strong>PR Intern</strong>’s jump put them at the centre of the morning Q&amp;A and policy announcement hours described in Section 5. <strong>Legal</strong> and <strong>Social Manager</strong> together carry the largest absolute crisis-day load, lining up with the two-track playbook from Section 5.2.</li>
+<li><strong>PR Intern</strong>’s jump put them at the centre of the morning Q&amp;A and policy announcement hours described in Section 5. <strong>Legal</strong> and <strong>Social Manager</strong> together carry the largest absolute crisis-day load, lining up with the two-track playbook from Section 5.3.</li>
 </ul>
 </div>
 </div>
@@ -2091,7 +2093,7 @@ Figure&nbsp;12
 </section>
 <section id="why-the-system-saw-the-breach-but-could-not-stop-it" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="why-the-system-saw-the-breach-but-could-not-stop-it"><span class="header-section-number">7.3</span> Why the System Saw the Breach but Could Not Stop It</h2>
-<p>The third sub-question asks why prior occasions did not result in noticeable action. The honest answer is that they did. The <span class="citation" data-cites="ElenaMarquez">@ElenaMarquez</span> incident in Round 9 led directly to the Judge being assigned the next round. The Judge then worked across the baseline, reviewing PR Intern posts before publication, flagging language that overpromised, approving routine content, and observing internal coordination.</p>
+<p>The third sub-question asks why prior occasions did not result in noticeable action. The honest answer is that they did. The <strong><span class="citation" data-cites="ElenaMarquez">@ElenaMarquez</span></strong> incident in Round 9 led directly to the <strong>Judge</strong> being assigned the next round. The <strong>Judge</strong> then worked across the baseline, shadowing internal coordination and flagging questionable phrasing where it surfaced.</p>
 <p>The chart below shows the channels the Judge had real authority over, compared to the channels the breach actually moved through.</p>
 <div class="cell">
 <details class="code-fold">
@@ -2349,6 +2351,11 @@ Table&nbsp;2: Each conclusion claim with its supporting evidence and the limit o
 <p>Kam, T. S. (2024). <em>R for Visual Analytics</em>. <a href="https://r4va.netlify.app/">https://r4va.netlify.app/</a></p>
 <p>Guan, Y. (2017). <em>Interactive Visual Analytics Application for Spatiotemporal Movement Data: VAST Challenge 2017 Mini-Challenge 1</em>. IEEE Conference on Visual Analytics Science and Technology. Award for Actionable and Detailed Analysis.</p>
 <p>Paas, K. J. (2024). <em>Take Home Exercise 3: VAST Challenge 2024 Mini-Challenge 3</em>. ISSS608 AY2023-24, Singapore Management University. <a href="https://isss608-kjcpaas.netlify.app/take-home_exs/ex3/take-home_ex3">https://isss608-kjcpaas.netlify.app/take-home_exs/ex3/take-home_ex3</a></p>
+<p>Cheong, H. S. (2023). <em>Take Home Exercise 3</em>. ISSS608 AY2022-23, Singapore Management University. <a href="https://isss608-ay2023-haileycsy.netlify.app/take-home_ex/take-home_ex03/take-home_ex03">https://isss608-ay2023-haileycsy.netlify.app/take-home_ex/take-home_ex03/take-home_ex03</a></p>
+<p>Fong, B. X. (2023). <em>Take Home Exercise 3</em>. ISSS608 AY2022-23, Singapore Management University. <a href="https://fongbx-isss608-visual-analytics.netlify.app/take-home%20ex/take-home_ex03/take-home_ex03">https://fongbx-isss608-visual-analytics.netlify.app/take-home%20ex/take-home_ex03/take-home_ex03</a></p>
+<p>Kwa, K. B. (2023). <em>Take Home Exercise 3</em>. ISSS608 AY2022-23, Singapore Management University. <a href="https://cosmic-boon.netlify.app/take-home_ex/take-home_ex03/take-home_ex3">https://cosmic-boon.netlify.app/take-home_ex/take-home_ex03/take-home_ex3</a></p>
+<p>Ong, C. H. (2023). <em>Take Home Exercise 3</em>. ISSS608 AY2022-23, Singapore Management University. <a href="https://smu-isss608-vaa.netlify.app/take-home_ex/take-home_ex03/take-home_ex03">https://smu-isss608-vaa.netlify.app/take-home_ex/take-home_ex03/take-home_ex03</a></p>
+<p>Seng, J. Y. (2024). <em>Take Home Exercise 3</em>. ISSS608 AY2023-24, Singapore Management University. <a href="https://jingyi-vaa.netlify.app/take-home_ex/take-home_ex03/take-home_ex03_eda">https://jingyi-vaa.netlify.app/take-home_ex/take-home_ex03/take-home_ex03_eda</a></p>
 <section id="session-information" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="session-information"><span class="header-section-number">9.1</span> Session Information</h2>
 <p>For full reproducibility, the R session used to render this report is shown below.</p>

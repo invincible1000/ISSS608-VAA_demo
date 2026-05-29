@@ -677,7 +677,7 @@ ggplot(vol_by_round,
 ## Insights
 
 - Rounds 1 to 13 each represent a full business day. Message volume sits in a steady 25 to 45 range with a clear lull around the middle of the window.
-- Rounds 14 to 23 are hourly snapshots of a single day (5 June 2046). The visual right-shift in the chart reflects that compressed sampling.
+- Rounds 14 to 23 are hourly snapshots of a single day (5 June 2046). The rightmost ten bars therefore compress a single afternoon into the same horizontal space the baseline uses for two weeks.
 - The rising volume in the rightmost bars is the cumulative pressure of a ten-hour breach day building toward the 6 PM embargo lift.
 
 :::
@@ -757,9 +757,9 @@ ggplot(public_by_agent,
 The third view collapses agent-to-agent communication into a
 network. Each node is an agent. Each edge shows the count of
 messages between two agents, with thicker edges representing
-more traffic. Social Manager and PR are highlighted in red
-because the chart shows them carrying the bulk of the team's
-internal coordination.
+more traffic. The **Judge** is highlighted in red because the
+chart's purpose is to surface its structural isolation against
+the team's heavy broadcast coordination.
 
 ```{r}
 #| label: fig-network-overall
@@ -841,7 +841,8 @@ ggraph(g, layout = "linear", circular = TRUE) +
 
 - The team coordinates heavily through broadcasts. Most agents have thick edges to the ALL node, with **Legal**, **Platform Trust**, and **Social Manager** each carrying over 100 broadcasts.
 - The **Judge** has the thinnest network footprint of any agent. Just 15 broadcasts to the ALL node, one directed message to **Legal**, and one received from **Legal**.
-- For a compliance role designed to flag issues quickly with specific people, that is a structurally thin connection. The behavioural consequence shows up in Section 5.3.
+- - For a compliance role designed to flag issues quickly with specific people, that is a structurally thin connection. The behavioural consequence shows up in Section 5.4.
+
 
 :::
 
@@ -890,7 +891,7 @@ directed exchanges were with **Legal**, and its broadcast volume to the
 comms huddle was the lowest of any sender. The **Judge** was also
 absent during the breach: zero messages from the compliance agent
 during the 5 PM **SaltWind** publication and the 6 PM embargo lift,
-having clocked out two hours earlier at 3 PM. Where the **Judge**
+with its last activity recorded at 3 PM. Where the **Judge**
 was active earlier in the day, its enforcement scope only covered
 private channels. The leak surface was **Legal**'s anonymous posting
 authority, which the **Judge** had no visibility into, no presence
@@ -1024,7 +1025,7 @@ ggplot(leak_day, aes(x = round_num, y = n, fill = channel_group)) +
   ) +
   coord_cartesian(ylim = c(0, 65)) +
   labs(
-    title    = "Public posting doubles at 5 PM, then doubles again at 6 PM",
+    title    = "Public posting roughly doubles at 5 PM, and again at 6 PM",
     subtitle = "Hour-by-hour message volume on the crisis day (5 June 2046)",
     x        = "Hour of the crisis day",
     y        = "Messages sent",
@@ -1407,7 +1408,8 @@ ggplot(agent_shift,
 
 - Four agents amplified sharply. **Legal** went from 6.9 to 17.6 messages per round (the biggest absolute jump). **Social Manager** went from 5.8 to 14.4 (the second biggest). **PR Intern** went from 1.2 to 6.9, almost a sixfold increase and the most dramatic relative shift. **Intern** doubled from 1.0 to 2.4.
 - Three agents went the other way. **Platform Trust** halved from 10.4 to 4.8, **PR** halved from 5.6 to 2.8, and the **Judge** halved from 1.2 to 0.6. All three are supervisory roles, all three reduced their activity on the day that most needed oversight.
-- **PR Intern**'s jump put them at the centre of the morning Q&A and policy announcement hours described in Section 5. **Legal** and **Social Manager** together carry the largest absolute crisis-day load, lining up with the two-track playbook from Section 5.2.
+- **PR Intern**'s jump put them at the centre of the morning Q&A and policy announcement hours described in Section 5. **Legal** and **Social Manager** together carry the largest absolute crisis-day load, lining up with the two-track playbook from Section 5.3.
+
 
 :::
 
@@ -1565,11 +1567,10 @@ geom_point(data = filter(all_rounds, n == 0),
 
 The third sub-question asks why prior occasions did not result
 in noticeable action. The honest answer is that they did. The
-@ElenaMarquez incident in Round 9 led directly to the Judge
-being assigned the next round. The Judge then worked across
-the baseline, reviewing PR Intern posts before publication,
-flagging language that overpromised, approving routine
-content, and observing internal coordination.
+**@ElenaMarquez** incident in Round 9 led directly to the
+**Judge** being assigned the next round. The **Judge** then
+worked across the baseline, shadowing internal coordination
+and flagging questionable phrasing where it surfaced.
 
 The chart below shows the channels the Judge had real
 authority over, compared to the channels the breach actually
@@ -1816,6 +1817,26 @@ Paas, K. J. (2024). *Take Home Exercise 3: VAST Challenge 2024
 Mini-Challenge 3*. ISSS608 AY2023-24, Singapore Management
 University.
 [https://isss608-kjcpaas.netlify.app/take-home_exs/ex3/take-home_ex3](https://isss608-kjcpaas.netlify.app/take-home_exs/ex3/take-home_ex3)
+
+Cheong, H. S. (2023). *Take Home Exercise 3*. ISSS608 AY2022-23,
+Singapore Management University.
+[https://isss608-ay2023-haileycsy.netlify.app/take-home_ex/take-home_ex03/take-home_ex03](https://isss608-ay2023-haileycsy.netlify.app/take-home_ex/take-home_ex03/take-home_ex03)
+
+Fong, B. X. (2023). *Take Home Exercise 3*. ISSS608 AY2022-23,
+Singapore Management University.
+[https://fongbx-isss608-visual-analytics.netlify.app/take-home%20ex/take-home_ex03/take-home_ex03](https://fongbx-isss608-visual-analytics.netlify.app/take-home%20ex/take-home_ex03/take-home_ex03)
+
+Kwa, K. B. (2023). *Take Home Exercise 3*. ISSS608 AY2022-23,
+Singapore Management University.
+[https://cosmic-boon.netlify.app/take-home_ex/take-home_ex03/take-home_ex3](https://cosmic-boon.netlify.app/take-home_ex/take-home_ex03/take-home_ex3)
+
+Ong, C. H. (2023). *Take Home Exercise 3*. ISSS608 AY2022-23,
+Singapore Management University.
+[https://smu-isss608-vaa.netlify.app/take-home_ex/take-home_ex03/take-home_ex03](https://smu-isss608-vaa.netlify.app/take-home_ex/take-home_ex03/take-home_ex03)
+
+Seng, J. Y. (2024). *Take Home Exercise 3*. ISSS608 AY2023-24,
+Singapore Management University.
+[https://jingyi-vaa.netlify.app/take-home_ex/take-home_ex03/take-home_ex03_eda](https://jingyi-vaa.netlify.app/take-home_ex/take-home_ex03/take-home_ex03_eda)
 
 ## Session Information
 
