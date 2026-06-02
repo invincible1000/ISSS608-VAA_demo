@@ -841,7 +841,7 @@ ggraph(g, layout = "linear", circular = TRUE) +
 
 - The team coordinates heavily through broadcasts. Most agents have thick edges to the ALL node, with **Legal**, **Platform Trust**, and **Social Manager** each carrying over 100 broadcasts.
 - The **Judge** has the thinnest network footprint of any agent. Just 15 broadcasts to the ALL node, one directed message to **Legal**, and one received from **Legal**.
-- - For a compliance role designed to flag issues quickly with specific people, that is a structurally thin connection. The behavioural consequence shows up in Section 5.4.
+- For a compliance role designed to flag issues quickly with specific people, that is a structurally thin connection. The behavioural consequence shows up in Section 5.4.
 
 
 :::
@@ -1917,9 +1917,7 @@ agent, with directed messages only exchanged with **Legal**. The
 **Judge** sent zero messages between 4 PM and 6 PM, having last
 acted at 3 PM. And the **Judge**'s enforcement scope covered only
 private channels, while the embargo response moved through
-personal and anonymous posts. The detector was in the right
-building. It had no authority over the floor where the breach
-happened.
+personal and anonymous posts. The detector was in the right building, but across the 23-round window, it never reached the channels where the breach moved.
 
 **Verdict.** Neither framing in the brief fits what the data shows.
 **TenantThread**'s agents are not proven to have sourced the
