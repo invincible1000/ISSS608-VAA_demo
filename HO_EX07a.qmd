@@ -17,7 +17,7 @@ execute:
 
 # **Modelling, Visualising and Analysing Network Data with R**
 
-## **Overview**
+## Overview
 
 In this hands-on exercise, you will learn how to model, analyse and visualise network data using R.
 
@@ -209,13 +209,13 @@ GAStech_graph <- tbl_graph(nodes = GAStech_nodes,
                            directed = TRUE)
 ```
 
-### **Reviewing the output tidygraph’s graph object**
+### Reviewing the output tidygraph’s graph object
 
 ```{r}
 GAStech_graph
 ```
 
-### **Reviewing the output tidygraph’s graph object**
+### Reviewing the output tidygraph’s graph object
 
 -   The output above reveals that *GAStech_graph* is a tbl_graph object with 54 nodes and 4541 edges.
 
@@ -237,7 +237,7 @@ GAStech_graph %>%
 
 Visit the reference guide of [*activate()*](https://tidygraph.data-imaginist.com/reference/activate.html) to find out more about the function.
 
-## **Plotting Static Network Graphs with ggraph package**
+## Plotting Static Network Graphs with ggraph package
 
 [**ggraph**](https://ggraph.data-imaginist.com/) is an extension of **ggplot2**, making it easier to carry over basic ggplot skills to the design of network graphs.
 
@@ -251,7 +251,7 @@ As in all network graph, there are three main aspects to a **ggraph**’s networ
 
 For a comprehensive discussion of each of this aspect of graph, please refer to their respective vignettes provided.
 
-### **Plotting a basic network graph**
+### Plotting a basic network graph
 
 The code chunk below uses [*ggraph()*](https://ggraph.data-imaginist.com/reference/ggraph.html), [*geom-edge_link()*](https://ggraph.data-imaginist.com/reference/geom_edge_link.html) and [*geom_node_point()*](https://ggraph.data-imaginist.com/reference/geom_node_point.html) to plot a network graph by using *GAStech_graph*. Before your get started, it is advisable to read their respective reference guide at least once.
 
@@ -265,7 +265,7 @@ ggraph(GAStech_graph) +
 ## The basic plotting function is ggraph(), which takes the data to be used for the graph and the type of layout desired. Both of the arguments for ggraph() are built around igraph. Therefore, ggraph() can use either an igraph object or a tbl_graph object.
 :::
 
-### **Changing the default network graph theme**
+### Changing the default network graph theme
 
 In this section, you will use theme_graph() to remove the x and y axes. Before your get started, it is advisable to read it’s reference guide at least once.
 
@@ -306,7 +306,7 @@ g + theme_graph(background = 'grey10',
 
 ![](Images/Handson7b%20image%205.jpg)
 
-### **Fruchterman and Reingold layout**
+### Fruchterman and Reingold layout
 
 The code chunks below will be used to plot the network graph using Fruchterman and Reingold layout.
 
@@ -323,7 +323,7 @@ Thing to learn from the code chunk above:
 
 -   *layout* argument is used to define the layout to be used.
 
-### **Modifying network nodes**
+### Modifying network nodes
 
 In this section, you will colour each node by referring to their respective departments.
 
@@ -373,7 +373,7 @@ There are three functions in ggraph to implement faceting, they are:
 
 -   [*facet_graph()*](https://ggraph.data-imaginist.com/reference/facet_graph.html) faceting on two variables simultaneously.
 
-### **Working with *facet_edges()***
+### Working with *facet_edges()*
 
 In the code chunk below, facet_edges() is used. Before getting started, it is advisable for you to read it’s reference guide at least once.
 
@@ -452,7 +452,7 @@ g + facet_nodes(~Department)+
 
 ## Network Metrics Analysis
 
-### **Computing centrality indices**
+### Computing centrality indices
 
 Centrality measures are a collection of statistical indices use to describe the relative important of the actors are to a network. There are four well-known centrality measures, namely: degree, betweenness, closeness and eigenvector. It is beyond the scope of this hands-on exercise to cover the principles and mathematics of these measure here. Students are encouraged to refer to Chapter 7: Actor Prominence of A User’s Guide to Network Analysis in R to gain better understanding of theses network measures.
 
@@ -660,3 +660,125 @@ visNetwork(GAStech_nodes,
 ```
 
 Visit [Option](http://datastorm-open.github.io/visNetwork/options.html) to find out more about visOption’s argument.
+
+## Extra Alternative
+
+
+### Core Communicators by Degree Centrality
+
+```{r}
+set.seed(1234)
+
+GAStech_graph %>%
+  activate(nodes) %>%
+  mutate(degree = centrality_degree(mode = "all")) %>%
+  filter(degree >= quantile(degree, 0.75)) %>%
+  ggraph(layout = "kk") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2,
+                 colour = "grey60") +
+  scale_edge_width(range = c(0.2, 2),
+                   guide = "none") +
+  geom_node_point(aes(colour = Department),
+                  size = 6) +
+  geom_node_text(aes(label = label),
+                 repel = TRUE,
+                 size = 3,
+                 max.overlaps = Inf) +
+  labs(title = "Core Communicators: Top 25% by Degree Centrality",
+       subtitle = "Employees with the most distinct email connections") +
+  theme_graph() +
+  theme(legend.position = "right",
+        plot.title = element_text(size = 11),
+        plot.subtitle = element_text(size = 9),
+        plot.margin = margin(10, 20, 10, 20))
+```
+
+The exercise plots the full network of 54 employees, where the most active communicators are difficult to identify amid less-connected staff. This alternative filters the network to only the top 25% of employees by degree centrality (the number of distinct connections each person has), labels each retained employee by name, and keeps the same department colouring, therefore making it immediately clear who the company's core communicators are and how they cluster across departments.
+
+### Department-Level Network (Aggregated)
+
+```{r}
+set.seed(1234)
+
+dept_lookup <- GAStech_graph %>%
+  activate(nodes) %>%
+  as_tibble() %>%
+  select(id, Department)
+
+dept_edges <- GAStech_edges %>%
+  filter(MainSubject == "Work related") %>%
+  left_join(dept_lookup, by = c("source" = "id")) %>%
+  rename(from = Department) %>%
+  left_join(dept_lookup, by = c("target" = "id")) %>%
+  rename(to = Department) %>%
+  filter(from != to) %>%
+  count(from, to, name = "Weight")
+
+dept_nodes <- tibble(name = unique(c(dept_edges$from, dept_edges$to)))
+
+dept_graph <- tbl_graph(nodes = dept_nodes,
+                        edges = dept_edges,
+                        directed = TRUE)
+
+ggraph(dept_graph, layout = "circle") +
+  geom_edge_fan(aes(width = Weight),
+                alpha = 0.5,
+                arrow = arrow(length = unit(3, "mm"), type = "closed"),
+                end_cap = circle(8, "mm"),
+                colour = "grey40") +
+  scale_edge_width(range = c(0.3, 3),
+                   name = "Emails") +
+  geom_node_point(aes(colour = name),
+                  size = 15,
+                  show.legend = FALSE) +
+  geom_node_text(aes(label = name),
+                 size = 3.5,
+                 fontface = "bold") +
+  scale_x_continuous(expand = expansion(mult = 0.2)) +
+  scale_y_continuous(expand = expansion(mult = 0.15)) +
+  labs(title = "Cross-Department Email Flow",
+       subtitle = "Each node is a department; arrow width = volume of emails sent") +
+  theme_graph()
+```
+
+The exercise draws every one of the 54 individual employees as a node, producing a dense graph where the broader organisational pattern of inter-department communication is obscured. This alternative aggregates the same edge data up to the department level, producing a graph of just six nodes arranged in a circle with directional arrows whose width encodes the volume of email between departments, therefore making it immediately clear which departments drive the company's cross-functional communication and which pairs have the strongest reciprocal exchange.
+
+### Interactive Network with Department Filtering
+
+```{r}
+nodes_vis <- GAStech_nodes %>%
+  mutate(title = paste0("<b>", label, "</b><br>", Title))
+
+edges_vis <- GAStech_edges %>%
+  filter(MainSubject == "Work related") %>%
+  group_by(source, target) %>%
+  summarise(weight = n(), .groups = "drop") %>%
+  filter(source != target, weight >= 5) %>%
+  rename(from = source, to = target, width = weight)
+
+visNetwork(nodes_vis, edges_vis,
+           main = "Interactive GAStech Email Network",
+           submain = "Use the dropdown to filter by department; hover a node to highlight its neighbours",
+           height = "600px",
+           width = "100%") %>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visEdges(arrows = "to",
+           color = list(color = "rgba(180,180,180,0.4)", highlight = "black"),
+           smooth = FALSE) %>%
+  visOptions(highlightNearest = list(enabled = TRUE,
+                                     degree = 1,
+                                     hover = TRUE),
+             selectedBy = "group",
+             nodesIdSelection = TRUE) %>%
+  visLegend(position = "right",
+            main = list(text = "Department",
+                        style = "font-family:sans-serif;font-size:16px;font-weight:bold;"),
+            zoom = FALSE) %>%
+  visLayout(randomSeed = 123)
+```
+
+
+The exercise builds an interactive network with basic node selection and nearest-neighbour highlighting, but the reader still has to scan all 54 employees manually to explore by department. This alternative adds two further interactivity features. A "Select by group" dropdown filters the network to a single department at a click, and hover-based highlighting lights up neighbours on mouseover rather than only on click. Tooltips also show each employee's full job title, therefore making it immediately clear how each department's communication subnetwork looks in isolation and what role each person plays.
+
+

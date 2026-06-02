@@ -62,9 +62,9 @@ pacman::p_load(tidytext, widyr, wordcloud, DT, ggwordcloud, textplot, lubridate,
 tidyverse, tidygraph, ggraph, igraph)
 ```
 
-## **Importing Multiple Text Files from Multiple Folders**
+## Importing Multiple Text Files from Multiple Folders
 
-### **Creating a folder list**
+### Creating a folder list
 
 ```{r}
 news20 <- "Data/20news"
@@ -84,9 +84,9 @@ read_folder <- function(infolder) {
 }
 ```
 
-## **Importing Multiple Text Files from Multiple Folders**
+## Importing Multiple Text Files from Multiple Folders
 
-### **Reading in all the messages from the 20news folder**
+### Reading in all the messages from the 20news folder
 
 ```{r}
 raw_text <- tibble(folder = 
@@ -141,7 +141,7 @@ Figure below shows the workflow using tidytext approach for processing and visua
 
 ![](Images/Handson7a%20image%201.jpg)
 
-### **Removing header and automated email signatures**
+### Removing header and automated email signatures
 
 Notice that each message has some structure and extra text that we don’t want to include in our analysis. For example, every message has a header, containing field such as “from:” or “in_reply_to:” that describe the message. Some also have automated email signatures, which occur after a line like “–”.
 
@@ -211,7 +211,7 @@ words_by_newsgroup <- usenet_words %>%
   ungroup()
 ```
 
-### **Visualising Words in newsgroups**
+### Visualising Words in newsgroups
 
 In this code chunk below, `wordcloud()` of **wordcloud** package is used to plot a static wordcloud.
 
@@ -228,7 +228,7 @@ DT::datatable(words_by_newsgroup,
               filter = 'top')
 ```
 
-### **Visualising Words in newsgroups**
+### Visualising Words in newsgroups
 
 The wordcloud below is plotted by using ggwordcloud package.The original `filter(n > 0)` attempts to plot every word across all 20 newsgroups, which causes `geom_text_wordcloud()` to stall while resolving overlaps. Filtering to the top words per newsgroup (via `slice_max()`) keeps each facet readable and renders in reasonable time.
 
@@ -253,7 +253,7 @@ words_by_newsgroup %>%
 
 ![](Images/Handson7a%20image%202.jpg)
 
-### **Computing tf-idf within newsgroups**
+### Computing tf-idf within newsgroups
 
 The code chunk below uses *bind_tf_idf()* of tidytext to compute and bind the term frequency, inverse document frequency and ti-idf of a tidy text dataset to the dataset.
 
@@ -289,7 +289,7 @@ DT::datatable(tf_idf, filter = 'top') %>%
 
 To learn more about customising DT’s table, visit this [link](https://rstudio.github.io/DT/functions.html).
 
-### **Visualising tf-idf within newsgroups**
+### Visualising tf-idf within newsgroups
 
 Facet bar charts technique is used to visualise the tf-idf values of science related newsgroup.The code chunk used to prepare the plot:
 
@@ -332,7 +332,7 @@ newsgroup_cors <- words_by_newsgroup %>%
                sort = TRUE)
 ```
 
-### **Visualising correlation as a network**
+### Visualising correlation as a network
 
 Now, we can visualise the relationship between newgroups in network graph as shown below. The code chunk:
 
@@ -463,7 +463,74 @@ ggraph(bigram_graph,
   theme_void()
 ```
 
-### References
+## Extra Alternative
+
+### Top 8 Most Distinctive Words in talk.* Newsgroups
+
+```{r}
+tf_idf %>%
+  filter(str_detect(newsgroup, "^talk\\.")) %>%
+  group_by(newsgroup) %>%
+  slice_max(tf_idf, n = 8, with_ties = FALSE) %>%
+  ungroup() %>%
+  mutate(word = reorder_within(word, tf_idf, newsgroup)) %>%
+  ggplot(aes(x = tf_idf,
+             y = word)) +
+  geom_segment(aes(x = 0, xend = tf_idf,
+                   y = word, yend = word),
+               colour = "grey70") +
+  geom_point(aes(colour = newsgroup),
+             size = 4,
+             show.legend = FALSE) +
+  scale_y_reordered() +
+  facet_wrap(~ newsgroup, scales = "free", ncol = 2) +
+  labs(title = "Top 8 Most Distinctive Words in talk.* Newsgroups",
+       subtitle = "Ranked by tf-idf within each newsgroup",
+       x = "tf-idf",
+       y = NULL) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 12),
+        plot.subtitle = element_text(size = 10),
+        strip.text = element_text(size = 10, face = "bold"))
+```
+The exercise applies facet bar charts only to science-related newsgroups, and uses reorder() which sorts words globally so the bars inside each panel appear out of order. This alternative points the same technique at the talk.* newsgroups instead, switches to a lollipop chart for a cleaner sparse ranking, and corrects the ordering bug with reorder_within() paired with scale_y_reordered(), therefore making it immediately clear which words most distinctively characterise each politics and religion newsgroup with each facet properly sorted from highest to lowest tf-idf.
+
+### Network of Frequently Co-occurring Words
+
+```{r}
+set.seed(1234)
+
+word_pairs <- usenet_words %>%
+  add_count(word) %>%
+  filter(n >= 20) %>%
+  select(-n) %>%
+  pairwise_count(word, id, sort = TRUE)
+
+word_pairs %>%
+  filter(n >= 5) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n,
+                     edge_width = n),
+                 edge_colour = "steelblue",
+                 show.legend = FALSE) +
+  scale_edge_width(range = c(0.2, 2)) +
+  geom_node_point(size = 4,
+                  colour = "lightblue") +
+  geom_node_text(aes(label = name),
+                 repel = TRUE,
+                 size = 3.5,
+                 fontface = "bold") +
+  labs(title = "Network of Frequently Co-occurring Words",
+       subtitle = "Edges link words that appear in the same messages; thicker edges = more co-occurrences") +
+  theme_void() +
+  theme(plot.title = element_text(size = 12),
+        plot.subtitle = element_text(size = 10))
+```
+
+The exercise builds a correlation network at the newsgroup level, showing which newsgroups share vocabulary, but never examines the relationships between the words themselves. This alternative uses pairwise_count() from widyr to compute how often each pair of common words appears in the same message and draws the result as a network where edge thickness encodes co-occurrence frequency, therefore making it immediately clear which words tend to be discussed together and what thematic clusters of language emerge across the newsgroups.
+
+## References
 
 -   Reference guide
 
