@@ -33,6 +33,10 @@ website:
          href: "HO_EX05d.html"
        - text: "Hands-on Exercise 5e - Treemap Visualisation wtih R"
          href: "HO_EX05e.html"
+       - text: "Hands-on Exercise 7a - Modelling, Visualising and Analysing Network Data with R"
+         href: "HO_EX07a.html"
+       - text: "Hands-on Exercise 7b - Visualising and Analysing Text Data with R: tidytext methods"
+         href: "HO_EX07b.html"
     - text: "Take-home Exercise"
       menu:
         - text: "Take Home Exercise 1 - Executive Summary"

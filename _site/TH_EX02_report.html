@@ -209,6 +209,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./HO_EX05e.html">
  <span class="dropdown-text">Hands-on Exercise 5e - Treemap Visualisation wtih R</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./HO_EX07a.html">
+ <span class="dropdown-text">Hands-on Exercise 7a - Modelling, Visualising and Analysing Network Data with R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./HO_EX07b.html">
+ <span class="dropdown-text">Hands-on Exercise 7b - Visualising and Analysing Text Data with R: tidytext methods</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -293,12 +301,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-day-in-ten-hours" id="toc-the-day-in-ten-hours" class="nav-link" data-scroll-target="#the-day-in-ten-hours"><span class="header-section-number">5.2</span> The Day in Ten Hours</a></li>
   <li><a href="#who-posted-what-at-the-moment-of-the-break" id="toc-who-posted-what-at-the-moment-of-the-break" class="nav-link" data-scroll-target="#who-posted-what-at-the-moment-of-the-break"><span class="header-section-number">5.3</span> Who Posted What at the Moment of the Break</a></li>
   <li><a href="#when-the-judge-was-in-the-room" id="toc-when-the-judge-was-in-the-room" class="nav-link" data-scroll-target="#when-the-judge-was-in-the-room"><span class="header-section-number">5.4</span> When the Judge Was in the Room</a></li>
+  <li><a href="#what-the-vocabulary-reveals" id="toc-what-the-vocabulary-reveals" class="nav-link" data-scroll-target="#what-the-vocabulary-reveals"><span class="header-section-number">5.5</span> What the Vocabulary Reveals</a></li>
   </ul></li>
   <li><a href="#task-2-typical-vs.-anomalous-behavior" id="toc-task-2-typical-vs.-anomalous-behavior" class="nav-link" data-scroll-target="#task-2-typical-vs.-anomalous-behavior"><span class="header-section-number">6</span> Task 2: Typical vs.&nbsp;Anomalous Behavior</a>
   <ul>
   <li><a href="#establishing-the-baseline" id="toc-establishing-the-baseline" class="nav-link" data-scroll-target="#establishing-the-baseline"><span class="header-section-number">6.1</span> Establishing the Baseline</a></li>
   <li><a href="#the-crisis-day-inversion" id="toc-the-crisis-day-inversion" class="nav-link" data-scroll-target="#the-crisis-day-inversion"><span class="header-section-number">6.2</span> The Crisis Day Inversion</a></li>
   <li><a href="#where-the-behaviour-changed-most-sharply" id="toc-where-the-behaviour-changed-most-sharply" class="nav-link" data-scroll-target="#where-the-behaviour-changed-most-sharply"><span class="header-section-number">6.3</span> Where the Behaviour Changed Most Sharply</a></li>
+  <li><a href="#how-the-network-restructures-between-phases" id="toc-how-the-network-restructures-between-phases" class="nav-link" data-scroll-target="#how-the-network-restructures-between-phases"><span class="header-section-number">6.4</span> How the Network Restructures Between Phases</a></li>
   </ul></li>
   <li><a href="#task-3-leading-indicators" id="toc-task-3-leading-indicators" class="nav-link" data-scroll-target="#task-3-leading-indicators"><span class="header-section-number">7</span> Task 3: Leading Indicators</a>
   <ul>
@@ -350,7 +360,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">May 30, 2026</p>
+      <p class="date-modified">June 2, 2026</p>
     </div>
   </div>
     
@@ -1386,6 +1396,7 @@ Figure&nbsp;4
 <p>The embargo break on 5 June was a multi-hour cascade. At 5 PM, <strong>SaltWind</strong> Journal published an exclusive confirming the <strong>CivicLoom</strong>-<strong>TenantThread</strong> merger one hour ahead of the official 6 PM announcement. Across the preceding hours, internal information flow inside <strong>TenantThread</strong> accelerated steadily, with <strong>Legal</strong> coordinating governance-reform messaging that was timestamped earlier in the day specifically to be counter-narrative-ready when the embargo broke.</p>
 <p>When <strong>SaltWind</strong> published at 5 PM, <strong>Legal</strong> and <strong>Social Manager</strong> executed a pre-staged response: a coordinated two-track wave of personal and anonymous posts. <strong>Legal</strong> handled the legitimacy narrative, leading every post with merger confirmation and governance-reform timestamps. <strong>Social Manager</strong> handled the perception narrative, posting campaign-styled sentiment updates labelled “EXECUTING” and “WAVE THREE”. The <strong>Official Flex</strong> account, where <strong>PR Intern</strong> operates, stayed silent until 6 PM when the embargo formally lifted.</p>
 <p>The system was worked around through three design gaps. The <strong>Judge</strong> had the thinnest network footprint of any agent on the team. Its only directed exchanges were with <strong>Legal</strong>, and its broadcast volume to the comms huddle was the lowest of any sender. The <strong>Judge</strong> was also absent during the breach: zero messages from the compliance agent during the 5 PM <strong>SaltWind</strong> publication and the 6 PM embargo lift, with its last activity recorded at 3 PM. Where the <strong>Judge</strong> was active earlier in the day, its enforcement scope only covered private channels. The leak surface was <strong>Legal</strong>’s anonymous posting authority, which the <strong>Judge</strong> had no visibility into, no presence near, and no power over.</p>
+<p>The two-track playbook is also visible at the word level. Section 5.5 uses TF-IDF to surface <strong>Legal</strong>’s distinctive crisis-day vocabulary (governance, harborcrest, reforms, consent) and <strong>Social Manager</strong>’s (harborcrest, denial, sentiment, overnight, stock), confirming the legitimacy-versus-perception split with measurement rather than example quotes.</p>
 </div>
 </div>
 <section id="causal-chain-from-round-9-to-the-5-pm-breach" class="level2" data-number="5.1">
@@ -1604,8 +1615,8 @@ Figure&nbsp;7
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item" id="htmlwidget-a822781538fcba0941da" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-a822781538fcba0941da">{"x":{"filter":"none","vertical":false,"caption":"<caption>All seven public posts at Round 22 (5 PM crisis day)<\/caption>","data":[[1,2,3,4,5,6,7],["Legal","Social Manager","Legal","Social Manager","Legal","Social Manager","Legal"],["Personal","Personal","Personal","Personal","Anonymous","Personal","Anonymous"],["\"As TenantThread's privacy counsel, I can confirm: CivicLoom Realty Partners and TenantThread have entered into a definitive merger agreement to create HarborCrest ResidentEdge....","\"EXECUTING: CivicLoom Realty Partners and TenantThread have confirmed a definitive merger agreement — HarborCrest ResidentEdge. Here's what the data shows about today. Seven gov...","\"CEO @AjayDeshpande authorized to share: 'Today's governance reforms were demanded by our residents, not negotiated by an acquirer. HarborCrest ResidentEdge makes them permanent...","\"WAVE THREE — Real-time sentiment data update. In the 12 minutes since merger confirmation: governance timeline thread engagement up 400%. Two institutional analyst accounts rep...","\"For anyone following the SaltWind merger story: look at the timestamps. TenantThread announced an independent third-party audit at 9:15 AM. Enhanced consent management at 10:00...","\"SENTIMENT DASHBOARD — 5:12 PM update. First positive inflection since market open. In 15 minutes since merger confirmation and governance timeline publication: #HarborCrest co-...","\"Thread for anyone asking whether the CivicLoom-TenantThread merger is a 'rebrand' — check the timestamps on TenantThread's official Flex. Independent audit announced 9:15 AM. E..."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>#<\/th>\n      <th>Agent<\/th>\n      <th>Channel<\/th>\n      <th>Post excerpt<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":7,"autoWidth":true,"columnDefs":[{"className":"dt-right","targets":0},{"name":"#","targets":0},{"name":"Agent","targets":1},{"name":"Channel","targets":2},{"name":"Post excerpt","targets":3}],"order":[],"orderClasses":false,"lengthMenu":[7,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-106aadc8bba36b24d0ff" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-106aadc8bba36b24d0ff">{"x":{"filter":"none","vertical":false,"caption":"<caption>All seven public posts at Round 22 (5 PM crisis day)<\/caption>","data":[[1,2,3,4,5,6,7],["Legal","Social Manager","Legal","Social Manager","Legal","Social Manager","Legal"],["Personal","Personal","Personal","Personal","Anonymous","Personal","Anonymous"],["\"As TenantThread's privacy counsel, I can confirm: CivicLoom Realty Partners and TenantThread have entered into a definitive merger agreement to create HarborCrest ResidentEdge....","\"EXECUTING: CivicLoom Realty Partners and TenantThread have confirmed a definitive merger agreement — HarborCrest ResidentEdge. Here's what the data shows about today. Seven gov...","\"CEO @AjayDeshpande authorized to share: 'Today's governance reforms were demanded by our residents, not negotiated by an acquirer. HarborCrest ResidentEdge makes them permanent...","\"WAVE THREE — Real-time sentiment data update. In the 12 minutes since merger confirmation: governance timeline thread engagement up 400%. Two institutional analyst accounts rep...","\"For anyone following the SaltWind merger story: look at the timestamps. TenantThread announced an independent third-party audit at 9:15 AM. Enhanced consent management at 10:00...","\"SENTIMENT DASHBOARD — 5:12 PM update. First positive inflection since market open. In 15 minutes since merger confirmation and governance timeline publication: #HarborCrest co-...","\"Thread for anyone asking whether the CivicLoom-TenantThread merger is a 'rebrand' — check the timestamps on TenantThread's official Flex. Independent audit announced 9:15 AM. E..."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>#<\/th>\n      <th>Agent<\/th>\n      <th>Channel<\/th>\n      <th>Post excerpt<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":7,"autoWidth":true,"columnDefs":[{"className":"dt-right","targets":0},{"name":"#","targets":0},{"name":"Agent","targets":1},{"name":"Channel","targets":2},{"name":"Post excerpt","targets":3}],"order":[],"orderClasses":false,"lengthMenu":[7,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1697,6 +1708,94 @@ Figure&nbsp;8
 </div>
 <p>One caveat to flag: we do not know whether the <strong>Judge</strong> was scheduled to stop at 3 PM or chose to. The dataset shows zero messages from the <strong>Judge</strong> after 3 PM, but it does not say whether the agent was offline or simply quiet. Either way, the <strong>Judge</strong> was not present when <strong>SaltWind</strong> published at 5 PM.</p>
 </section>
+<section id="what-the-vocabulary-reveals" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="what-the-vocabulary-reveals"><span class="header-section-number">5.5</span> What the Vocabulary Reveals</h2>
+<p>Section 5.3 described the two-track playbook qualitatively through quoted post excerpts. This subsection backs the same claim quantitatively, using term frequency–inverse document frequency (TF-IDF) to surface the words that are distinctively used by each agent in each phase. The method follows Kam (2024), Chapter 29 (tidytext methods).</p>
+<p>A document is built for each agent–phase pair (Legal–Baseline, Legal–Crisis day, and so on). TF-IDF then identifies the words that are common within a document but rare across the others, which is the operational definition of “distinctive vocabulary.” The four agents shown are the ones with meaningful crisis-day activity: <strong>Legal</strong>, <strong>Social Manager</strong>, <strong>PR Intern</strong>, and <strong>Platform Trust</strong>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidytext)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>tfidf_data <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agent_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"legal_agent"</span>, <span class="st">"social_media_agent"</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"pr_intern_agent"</span>, <span class="st">"quality_agent"</span>),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">is.na</span>(content)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">phase =</span> <span class="fu">if_else</span>(round_num <span class="sc">&lt;=</span> <span class="dv">13</span>, <span class="st">"Baseline"</span>, <span class="st">"Crisis day"</span>),</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">agent_label =</span> AGENT_LABELS[agent_id],</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">doc =</span> <span class="fu">paste</span>(agent_label, phase, <span class="at">sep =</span> <span class="st">" — "</span>))</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>tfidf <span class="ot">&lt;-</span> tfidf_data <span class="sc">%&gt;%</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(doc, content) <span class="sc">%&gt;%</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, content) <span class="sc">%&gt;%</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>word <span class="sc">%in%</span> stop_words<span class="sc">$</span>word,</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>         <span class="fu">str_detect</span>(word, <span class="st">"^[a-z']+$"</span>),</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>         <span class="fu">nchar</span>(word) <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(doc, word, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_tf_idf</span>(word, doc, n) <span class="sc">%&gt;%</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tf_idf))</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>top_words <span class="ot">&lt;-</span> tfidf <span class="sc">%&gt;%</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(doc) <span class="sc">%&gt;%</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(tf_idf, <span class="at">n =</span> <span class="dv">8</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">word =</span> <span class="fu">reorder_within</span>(word, tf_idf, doc),</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>         <span class="at">is_crisis =</span> <span class="fu">str_detect</span>(doc, <span class="st">"Crisis day"</span>))</span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(top_words,</span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> tf_idf, <span class="at">y =</span> word, <span class="at">fill =</span> is_crisis)) <span class="sc">+</span></span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reordered</span>() <span class="sc">+</span></span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> house_muted,</span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">TRUE</span><span class="st">`</span>  <span class="ot">=</span> house_highlight),</span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Crisis day"</span>),</span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="cn">NULL</span></span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> doc, <span class="at">scales =</span> <span class="st">"free"</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Crisis-day vocabulary diverges sharply from baseline"</span>,</span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Top 8 distinctive words per agent and phase, by TF-IDF"</span>,</span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"TF-IDF"</span>,</span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>() <span class="sc">+</span></span>
+<span id="cb32-47"><a href="#cb32-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-tfidf-by-agent-phase" class="quarto-float quarto-figure quarto-figure-center anchored" width="1056">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tfidf-by-agent-phase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="TH_EX02_report_files/figure-html/fig-tfidf-by-agent-phase-1.png" id="fig-tfidf-by-agent-phase" class="img-fluid figure-img" width="1056">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-tfidf-by-agent-phase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Insights
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Legal</strong>’s baseline vocabulary is generic legal counsel (guidelines, understood, sensitive, risk, inquiries). On the crisis day, the distinctive words are governance-reform vocabulary (<strong>horizonmgmt</strong>, <strong>horizon</strong>, governance, <strong>harborcrest</strong>, reforms, independent, consent, counsel). This is the legitimacy track of the two-track playbook, surfacing as the language <strong>Legal</strong> actually used.</li>
+<li><strong>Social Manager</strong>’s baseline is brand and social-metric vocabulary (likes, mentions, spotlight, shares, satisfaction). On the crisis day, the distinctive words shift to strategic communications language (<strong>harborcrest</strong>, denial, sentiment, overnight, governance, stock, reforms). This is the perception track of the playbook.</li>
+<li><strong>Platform Trust</strong> shows an unexpected pattern. The baseline is internal-risk vocabulary (risk, demo, guidelines, audit, anonymization). The crisis day shifts to client-facing language (<strong>pinnacle</strong>, walkthrough, <strong>kowalski</strong>, configurations, briefings, memo). <strong>Platform Trust</strong> appears to have pivoted to direct client management during the crisis, a role the report does not discuss in earlier sections.</li>
+<li><strong>PR Intern</strong>’s baseline is community vocabulary (<strong>residentfirst</strong>, commons, thoughtful, feel, culture). The crisis day shifts to holding-line and operations language (rent, independent, morale, metric, opt, firm, templates, audit). The shift fits the policy-announcement Q&amp;A role described in Section 5.3.</li>
+</ul>
+</div>
+</div>
+<p>The vocabulary divergence does two things for the analysis. It confirms the two-track playbook is real at the word level, not just at the channel level (Section 5.3 already showed the channel split). And it surfaces a finding the chart-based analysis missed: <strong>Platform Trust</strong>’s crisis-day pivot to direct client management, which the agent-shift chart in Section 6.3 reads as a “fader” but which is actually a role change rather than disengagement.</p>
+</section>
 </section>
 <section id="task-2-typical-vs.-anomalous-behavior" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Task 2: Typical vs.&nbsp;Anomalous Behavior</h1>
@@ -1714,6 +1813,7 @@ Figure&nbsp;8
 <p>The crisis day shifts on every axis. Every hour on 5 June carries 30 to 56 messages, so a single hour exceeds any full baseline day. Public posts on the crisis day are defensive policy announcements, Q&amp;A formats, and counter-narratives rather than brand content.</p>
 <p>The crisis day reshuffles the team. Four agents amplify sharply: <strong>Legal</strong>, <strong>Social Manager</strong>, <strong>PR Intern</strong>, and <strong>Intern</strong>. Three supervisory agents go quiet: <strong>Platform Trust</strong> halves its output, <strong>PR</strong> halves its output, and the <strong>Judge</strong> halves its output. <strong>Legal</strong> and <strong>Social Manager</strong> together carry the largest absolute crisis-day load, executing the two-track playbook described in Task 1. <strong>PR Intern</strong> shows the biggest relative shift, going from the quietest agent in the team on baseline days to the third most active on the crisis day.</p>
 <p>The leak-leading behaviour is a structural reallocation of who operates the communications channels, layered on top of an amplification of volume across the active agents. Both axes had visible precursors in the baseline window, which Task 3 will examine.</p>
+<p>The reallocation also shows up in the network itself. Section 6.4 splits the team network into baseline and crisis-day panels: the baseline shows pure broadcast coordination through the ALL node, while the crisis day surfaces direct bilateral edges between <strong>Legal</strong>, <strong>Social Manager</strong>, <strong>PR Intern</strong>, and <strong>Platform Trust</strong>. The team shifts from open coordination to targeted dyadic communication as the crisis develops.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -1736,35 +1836,35 @@ Figure&nbsp;8
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>baseline <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(round_num <span class="sc">&lt;=</span> <span class="dv">13</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_group =</span> <span class="fu">if_else</span>(</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"official_post"</span>, <span class="st">"anonymous_post"</span>, <span class="st">"personal_post"</span>),</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Public posts"</span>,</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Private messages"</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_group =</span> <span class="fu">factor</span>(channel_group,</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Private messages"</span>, <span class="st">"Public posts"</span>))</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(round_num, channel_group)</span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(baseline, <span class="fu">aes</span>(<span class="at">x =</span> round_num, <span class="at">y =</span> n, <span class="at">fill =</span> channel_group)) <span class="sc">+</span></span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Private messages"</span> <span class="ot">=</span> house_muted,</span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Public posts"</span>     <span class="ot">=</span> house_highlight),</span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">name   =</span> <span class="cn">NULL</span></span>
-<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">13</span>) <span class="sc">+</span></span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Baseline days run around 30 messages with one to four public posts"</span>,</span>
-<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Rounds 1 to 13: one snapshot per business day, 17 May to 4 June 2046"</span>,</span>
-<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Round number (daily snapshots)"</span>,</span>
-<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Messages sent"</span>,</span>
-<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
-<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>baseline <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(round_num <span class="sc">&lt;=</span> <span class="dv">13</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_group =</span> <span class="fu">if_else</span>(</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"official_post"</span>, <span class="st">"anonymous_post"</span>, <span class="st">"personal_post"</span>),</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Public posts"</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Private messages"</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_group =</span> <span class="fu">factor</span>(channel_group,</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Private messages"</span>, <span class="st">"Public posts"</span>))</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(round_num, channel_group)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(baseline, <span class="fu">aes</span>(<span class="at">x =</span> round_num, <span class="at">y =</span> n, <span class="at">fill =</span> channel_group)) <span class="sc">+</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Private messages"</span> <span class="ot">=</span> house_muted,</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Public posts"</span>     <span class="ot">=</span> house_highlight),</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">name   =</span> <span class="cn">NULL</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Baseline days run around 30 messages with one to four public posts"</span>,</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Rounds 1 to 13: one snapshot per business day, 17 May to 4 June 2046"</span>,</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Round number (daily snapshots)"</span>,</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Messages sent"</span>,</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-baseline-volume" class="quarto-float quarto-figure quarto-figure-center anchored" width="864">
@@ -1773,7 +1873,7 @@ Figure&nbsp;8
 <img src="TH_EX02_report_files/figure-html/fig-baseline-volume-1.png" id="fig-baseline-volume" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-baseline-volume-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9
+Figure&nbsp;10
 </figcaption>
 </figure>
 </div>
@@ -1803,42 +1903,42 @@ Figure&nbsp;9
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>phase_compare <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">phase =</span> <span class="fu">if_else</span>(round_num <span class="sc">&lt;=</span> <span class="dv">13</span>, <span class="st">"Baseline (daily)"</span>, <span class="st">"Crisis day (hourly)"</span>),</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_group =</span> <span class="fu">if_else</span>(</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"official_post"</span>, <span class="st">"anonymous_post"</span>, <span class="st">"personal_post"</span>),</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Public posts"</span>,</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Private messages"</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_group =</span> <span class="fu">factor</span>(channel_group,</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Private messages"</span>, <span class="st">"Public posts"</span>))</span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(phase, round_num, channel_group) <span class="sc">%&gt;%</span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(phase, channel_group) <span class="sc">%&gt;%</span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_per_round =</span> <span class="fu">mean</span>(n), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(phase_compare,</span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> phase, <span class="at">y =</span> mean_per_round, <span class="at">fill =</span> channel_group)) <span class="sc">+</span></span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.6</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">reverse =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span></span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(mean_per_round, <span class="dv">1</span>)),</span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">reverse =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Private messages"</span> <span class="ot">=</span> house_muted,</span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Public posts"</span>     <span class="ot">=</span> house_highlight),</span>
-<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">name   =</span> <span class="cn">NULL</span></span>
-<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"An average crisis hour exceeds an average baseline day"</span>,</span>
-<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mean messages per round, split by phase. Baseline rounds are daily; crisis rounds are hourly."</span>,</span>
-<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
-<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Mean messages per round"</span>,</span>
-<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
-<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>() <span class="sc">+</span></span>
-<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>phase_compare <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">phase =</span> <span class="fu">if_else</span>(round_num <span class="sc">&lt;=</span> <span class="dv">13</span>, <span class="st">"Baseline (daily)"</span>, <span class="st">"Crisis day (hourly)"</span>),</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_group =</span> <span class="fu">if_else</span>(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"official_post"</span>, <span class="st">"anonymous_post"</span>, <span class="st">"personal_post"</span>),</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Public posts"</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Private messages"</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_group =</span> <span class="fu">factor</span>(channel_group,</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Private messages"</span>, <span class="st">"Public posts"</span>))</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(phase, round_num, channel_group) <span class="sc">%&gt;%</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(phase, channel_group) <span class="sc">%&gt;%</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_per_round =</span> <span class="fu">mean</span>(n), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(phase_compare,</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> phase, <span class="at">y =</span> mean_per_round, <span class="at">fill =</span> channel_group)) <span class="sc">+</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.6</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">reverse =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(mean_per_round, <span class="dv">1</span>)),</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">reverse =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Private messages"</span> <span class="ot">=</span> house_muted,</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Public posts"</span>     <span class="ot">=</span> house_highlight),</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">name   =</span> <span class="cn">NULL</span></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"An average crisis hour exceeds an average baseline day"</span>,</span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mean messages per round, split by phase. Baseline rounds are daily; crisis rounds are hourly."</span>,</span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Mean messages per round"</span>,</span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>() <span class="sc">+</span></span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-baseline-vs-crisis" class="quarto-float quarto-figure quarto-figure-center anchored" width="864">
@@ -1847,7 +1947,7 @@ Figure&nbsp;9
 <img src="TH_EX02_report_files/figure-html/fig-baseline-vs-crisis-1.png" id="fig-baseline-vs-crisis" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-baseline-vs-crisis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10
+Figure&nbsp;11
 </figcaption>
 </figure>
 </div>
@@ -1876,49 +1976,49 @@ Figure&nbsp;10
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>agent_shift <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agent_id <span class="sc">%in%</span> <span class="fu">names</span>(AGENT_LABELS)) <span class="sc">%&gt;%</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">phase =</span> <span class="fu">if_else</span>(round_num <span class="sc">&lt;=</span> <span class="dv">13</span>, <span class="st">"Baseline"</span>, <span class="st">"Crisis day"</span>),</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">phase =</span> <span class="fu">factor</span>(phase, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Crisis day"</span>))</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(phase, round_num, agent_id) <span class="sc">%&gt;%</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(phase, round_num, agent_id, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">n =</span> <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>((phase <span class="sc">==</span> <span class="st">"Baseline"</span>   <span class="sc">&amp;</span> round_num <span class="sc">&lt;=</span> <span class="dv">13</span>) <span class="sc">|</span></span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>         (phase <span class="sc">==</span> <span class="st">"Crisis day"</span> <span class="sc">&amp;</span> round_num <span class="sc">&gt;=</span> <span class="dv">14</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(phase, agent_id) <span class="sc">%&gt;%</span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_per_round =</span> <span class="fu">mean</span>(n), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agent_label =</span> AGENT_LABELS[agent_id])</span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>agent_order <span class="ot">&lt;-</span> agent_shift <span class="sc">%&gt;%</span></span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(phase <span class="sc">==</span> <span class="st">"Crisis day"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mean_per_round) <span class="sc">%&gt;%</span></span>
-<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(agent_label)</span>
-<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>agent_shift <span class="ot">&lt;-</span> agent_shift <span class="sc">%&gt;%</span></span>
-<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agent_label =</span> <span class="fu">factor</span>(agent_label, <span class="at">levels =</span> agent_order))</span>
-<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(agent_shift,</span>
-<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> mean_per_round, <span class="at">y =</span> agent_label, <span class="at">fill =</span> phase)) <span class="sc">+</span></span>
-<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.7</span>), <span class="at">width =</span> <span class="fl">0.65</span>) <span class="sc">+</span></span>
-<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(mean_per_round, <span class="dv">1</span>)),</span>
-<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.7</span>),</span>
-<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.2</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"grey30"</span>) <span class="sc">+</span></span>
-<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>   <span class="ot">=</span> house_muted,</span>
-<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Crisis day"</span> <span class="ot">=</span> house_highlight),</span>
-<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">name   =</span> <span class="cn">NULL</span></span>
-<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.15</span>))) <span class="sc">+</span></span>
-<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Three agents took over the crisis day, three faded into the background"</span>,</span>
-<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mean messages per round, by agent and phase. Bars sorted by crisis-day activity."</span>,</span>
-<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Mean messages per round"</span>,</span>
-<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="cn">NULL</span>,</span>
-<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
-<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>() <span class="sc">+</span></span>
-<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>agent_shift <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agent_id <span class="sc">%in%</span> <span class="fu">names</span>(AGENT_LABELS)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">phase =</span> <span class="fu">if_else</span>(round_num <span class="sc">&lt;=</span> <span class="dv">13</span>, <span class="st">"Baseline"</span>, <span class="st">"Crisis day"</span>),</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">phase =</span> <span class="fu">factor</span>(phase, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Crisis day"</span>))</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(phase, round_num, agent_id) <span class="sc">%&gt;%</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(phase, round_num, agent_id, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">n =</span> <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>((phase <span class="sc">==</span> <span class="st">"Baseline"</span>   <span class="sc">&amp;</span> round_num <span class="sc">&lt;=</span> <span class="dv">13</span>) <span class="sc">|</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>         (phase <span class="sc">==</span> <span class="st">"Crisis day"</span> <span class="sc">&amp;</span> round_num <span class="sc">&gt;=</span> <span class="dv">14</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(phase, agent_id) <span class="sc">%&gt;%</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_per_round =</span> <span class="fu">mean</span>(n), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agent_label =</span> AGENT_LABELS[agent_id])</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>agent_order <span class="ot">&lt;-</span> agent_shift <span class="sc">%&gt;%</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(phase <span class="sc">==</span> <span class="st">"Crisis day"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mean_per_round) <span class="sc">%&gt;%</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(agent_label)</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>agent_shift <span class="ot">&lt;-</span> agent_shift <span class="sc">%&gt;%</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agent_label =</span> <span class="fu">factor</span>(agent_label, <span class="at">levels =</span> agent_order))</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(agent_shift,</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> mean_per_round, <span class="at">y =</span> agent_label, <span class="at">fill =</span> phase)) <span class="sc">+</span></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.7</span>), <span class="at">width =</span> <span class="fl">0.65</span>) <span class="sc">+</span></span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(mean_per_round, <span class="dv">1</span>)),</span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.7</span>),</span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.2</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"grey30"</span>) <span class="sc">+</span></span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>   <span class="ot">=</span> house_muted,</span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Crisis day"</span> <span class="ot">=</span> house_highlight),</span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">name   =</span> <span class="cn">NULL</span></span>
+<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.15</span>))) <span class="sc">+</span></span>
+<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Three agents took over the crisis day, three faded into the background"</span>,</span>
+<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mean messages per round, by agent and phase. Bars sorted by crisis-day activity."</span>,</span>
+<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Mean messages per round"</span>,</span>
+<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
+<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>() <span class="sc">+</span></span>
+<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-agent-shift" class="quarto-float quarto-figure quarto-figure-center anchored" width="864">
@@ -1927,7 +2027,7 @@ Figure&nbsp;10
 <img src="TH_EX02_report_files/figure-html/fig-agent-shift-1.png" id="fig-agent-shift" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-agent-shift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11
+Figure&nbsp;12
 </figcaption>
 </figure>
 </div>
@@ -1951,6 +2051,97 @@ Figure&nbsp;11
 </div>
 </div>
 <p>The leak-leading behaviour is a reallocation of who operates the communications channels, layered on top of an amplification of volume across the agents who took over. Both axes had visible precursors in the baseline window, which Task 3 picks up next.</p>
+</section>
+<section id="how-the-network-restructures-between-phases" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="how-the-network-restructures-between-phases"><span class="header-section-number">6.4</span> How the Network Restructures Between Phases</h2>
+<p>The previous chart compared volume per agent across phases. This view compares the <em>structure</em> of who-talks-to-whom across phases. The same nodes appear in both panels; only the edges differ, restricted to messages from that phase. The method follows Kam (2024), Chapter 27 (network analysis with ggraph).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>edges_by_phase <span class="ot">&lt;-</span> edges <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">phase =</span> <span class="fu">if_else</span>(round_num <span class="sc">&lt;=</span> <span class="dv">13</span>, <span class="st">"Baseline"</span>, <span class="st">"Crisis day"</span>),</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">phase =</span> <span class="fu">factor</span>(phase, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Crisis day"</span>)),</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">recipient =</span> <span class="fu">recode</span>(recipient, <span class="sc">!!!</span>ROLE_TO_ID),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">recipient =</span> <span class="fu">if_else</span>(recipient <span class="sc">==</span> <span class="st">"ALL"</span>, <span class="st">"ALL_broadcast"</span>, recipient)) <span class="sc">%&gt;%</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>((recipient <span class="sc">%in%</span> <span class="fu">names</span>(AGENT_LABELS)) <span class="sc">|</span> recipient <span class="sc">==</span> <span class="st">"ALL_broadcast"</span>,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>         sender <span class="sc">%in%</span> <span class="fu">names</span>(AGENT_LABELS)) <span class="sc">%&gt;%</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(phase, sender, recipient, <span class="at">name =</span> <span class="st">"weight"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">from =</span> sender, <span class="at">to =</span> recipient)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>nodes_phase <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">unique</span>(<span class="fu">c</span>(edges_by_phase<span class="sc">$</span>from, edges_by_phase<span class="sc">$</span>to))</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(name <span class="sc">==</span> <span class="st">"ALL_broadcast"</span>, <span class="st">"ALL</span><span class="sc">\n</span><span class="st">(broadcast)"</span>,</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>                         AGENT_LABELS[name]),</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">is_judge =</span> name <span class="sc">==</span> <span class="st">"judge_agent"</span>)</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>g_phase <span class="ot">&lt;-</span> <span class="fu">tbl_graph</span>(<span class="at">nodes =</span> nodes_phase,</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">edges =</span> edges_by_phase,</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">directed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a><span class="fu">ggraph</span>(g_phase, <span class="at">layout =</span> <span class="st">"linear"</span>, <span class="at">circular =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_edge_arc</span>(<span class="fu">aes</span>(<span class="at">width =</span> weight),</span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">alpha =</span> <span class="fl">0.35</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>,</span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>                <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">2</span>, <span class="st">"mm"</span>), <span class="at">type =</span> <span class="st">"closed"</span>),</span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>                <span class="at">end_cap =</span> <span class="fu">circle</span>(<span class="dv">5</span>, <span class="st">"mm"</span>),</span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>                <span class="at">start_cap =</span> <span class="fu">circle</span>(<span class="dv">5</span>, <span class="st">"mm"</span>)) <span class="sc">+</span></span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_point</span>(<span class="fu">aes</span>(<span class="at">fill =</span> is_judge),</span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>                  <span class="at">size =</span> <span class="dv">10</span>, <span class="at">colour =</span> <span class="st">"white"</span>,</span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>                  <span class="at">stroke =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">21</span>) <span class="sc">+</span></span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> label, <span class="at">colour =</span> is_judge),</span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>                 <span class="at">size =</span> <span class="dv">3</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">nudge_y =</span> <span class="fl">0.18</span>) <span class="sc">+</span></span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_edge_width</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">2.5</span>), <span class="at">name =</span> <span class="st">"Messages"</span>) <span class="sc">+</span></span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> house_muted,</span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>                               <span class="st">`</span><span class="at">TRUE</span><span class="st">`</span>  <span class="ot">=</span> house_highlight),</span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>                    <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"grey30"</span>,</span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">`</span><span class="at">TRUE</span><span class="st">`</span>  <span class="ot">=</span> house_highlight),</span>
+<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a>                      <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_edges</span>(<span class="sc">~</span> phase) <span class="sc">+</span></span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Network structure changes between baseline and crisis day"</span>,</span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Same nodes in both panels; edges restricted to messages from that phase"</span>,</span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
+<span id="cb36-45"><a href="#cb36-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb36-46"><a href="#cb36-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>(<span class="at">base_size =</span> <span class="dv">11</span>) <span class="sc">+</span></span>
+<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">13</span>),</span>
+<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">colour =</span> <span class="st">"grey40"</span>, <span class="at">size =</span> <span class="dv">10</span>,</span>
+<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b =</span> <span class="dv">10</span>)),</span>
+<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">colour =</span> <span class="st">"grey50"</span>, <span class="at">size =</span> <span class="dv">8</span>, <span class="at">hjust =</span> <span class="dv">0</span>),</span>
+<span id="cb36-51"><a href="#cb36-51" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">11</span>),</span>
+<span id="cb36-52"><a href="#cb36-52" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-network-by-phase" class="quarto-float quarto-figure quarto-figure-center anchored" width="1152">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-network-by-phase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="TH_EX02_report_files/figure-html/fig-network-by-phase-1.png" id="fig-network-by-phase" class="img-fluid figure-img" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-network-by-phase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Insights
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>In the baseline, the team coordinates exclusively through broadcasts. Every edge converges on the ALL node. No directed dyads appear between named agents. The team operates as an open broadcast group, with no private bilateral coordination visible in the data.</li>
+<li>On the crisis day, the network restructures. Direct agent-to-agent edges fan out across the panel: <strong>Legal</strong> ↔︎ <strong>Social Manager</strong>, <strong>Legal</strong> ↔︎ <strong>PR Intern</strong>, <strong>Platform Trust</strong> ↔︎ <strong>Social Manager</strong>, and several others. The team switches from open coordination to bilateral coordination.</li>
+<li>The <strong>Judge</strong> stays peripheral in both panels. The structural isolation that Section 4.3 surfaces is not a crisis-day artifact. It was present from the start.</li>
+</ul>
+</div>
+</div>
+<p>This is the structural evidence behind the Task 2 callout’s claim of “reallocation of who operates the communications channels.” The reallocation is not only in volume (Section 6.3) but in routing: the team shifts from broadcasting through one shared channel to coordinating through targeted bilateral conversations as the crisis develops.</p>
 </section>
 </section>
 <section id="task-3-leading-indicators" class="level1" data-number="7">
@@ -2018,47 +2209,47 @@ Figure&nbsp;11
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>legal_anon <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agent_id <span class="sc">==</span> <span class="st">"legal_agent"</span>,</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>         channel  <span class="sc">==</span> <span class="st">"anonymous_post"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(round_num)</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>all_rounds <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">round_num =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">23</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(legal_anon, <span class="at">by =</span> <span class="st">"round_num"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">n       =</span> <span class="fu">replace_na</span>(n, <span class="dv">0</span>),</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_leak =</span> round_num <span class="sc">&gt;=</span> <span class="dv">14</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(all_rounds, <span class="fu">aes</span>(<span class="at">x =</span> round_num, <span class="at">y =</span> n)) <span class="sc">+</span></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_segment</span>(<span class="at">data =</span> <span class="fu">filter</span>(all_rounds, n <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">xend =</span> round_num, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> n,</span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour =</span> is_leak),</span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(all_rounds, n <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">colour =</span> is_leak), <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(all_rounds, n <span class="sc">==</span> <span class="dv">0</span>),</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>           <span class="at">colour =</span> house_muted, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">13.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">13.5</span>, <span class="at">y =</span> <span class="fl">5.5</span>,</span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"Baseline ends, crisis day begins"</span>,</span>
-<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>           <span class="at">hjust =</span> <span class="fl">1.05</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
-<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(</span>
-<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> house_muted,</span>
-<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">TRUE</span><span class="st">`</span>  <span class="ot">=</span> house_highlight),</span>
-<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">guide  =</span> <span class="st">"none"</span></span>
-<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">9</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">21</span>, <span class="dv">23</span>)) <span class="sc">+</span></span>
-<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>)) <span class="sc">+</span></span>
-<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Legal had zero anonymous posts before the crisis day"</span>,</span>
-<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Legal anonymous posts per round across all 23 rounds. The full red cluster sits to the right of the baseline cutoff."</span>,</span>
-<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Round number"</span>,</span>
-<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Anonymous posts"</span>,</span>
-<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
-<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>legal_anon <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agent_id <span class="sc">==</span> <span class="st">"legal_agent"</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>         channel  <span class="sc">==</span> <span class="st">"anonymous_post"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(round_num)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>all_rounds <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">round_num =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">23</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(legal_anon, <span class="at">by =</span> <span class="st">"round_num"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">n       =</span> <span class="fu">replace_na</span>(n, <span class="dv">0</span>),</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_leak =</span> round_num <span class="sc">&gt;=</span> <span class="dv">14</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(all_rounds, <span class="fu">aes</span>(<span class="at">x =</span> round_num, <span class="at">y =</span> n)) <span class="sc">+</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_segment</span>(<span class="at">data =</span> <span class="fu">filter</span>(all_rounds, n <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">xend =</span> round_num, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> n,</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour =</span> is_leak),</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(all_rounds, n <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">colour =</span> is_leak), <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(all_rounds, n <span class="sc">==</span> <span class="dv">0</span>),</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>           <span class="at">colour =</span> house_muted, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">13.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">13.5</span>, <span class="at">y =</span> <span class="fl">5.5</span>,</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"Baseline ends, crisis day begins"</span>,</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>           <span class="at">hjust =</span> <span class="fl">1.05</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(</span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> house_muted,</span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">TRUE</span><span class="st">`</span>  <span class="ot">=</span> house_highlight),</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">guide  =</span> <span class="st">"none"</span></span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">9</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">21</span>, <span class="dv">23</span>)) <span class="sc">+</span></span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>)) <span class="sc">+</span></span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Legal had zero anonymous posts before the crisis day"</span>,</span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Legal anonymous posts per round across all 23 rounds. The full red cluster sits to the right of the baseline cutoff."</span>,</span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Round number"</span>,</span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Anonymous posts"</span>,</span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-legal-anon-timeline" class="quarto-float quarto-figure quarto-figure-center anchored" width="864">
@@ -2067,7 +2258,7 @@ Figure&nbsp;11
 <img src="TH_EX02_report_files/figure-html/fig-legal-anon-timeline-1.png" id="fig-legal-anon-timeline" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-legal-anon-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12
+Figure&nbsp;14
 </figcaption>
 </figure>
 </div>
@@ -2098,58 +2289,58 @@ Figure&nbsp;12
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>judge_msgs <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agent_id <span class="sc">==</span> <span class="st">"judge_agent"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(channel)</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>scope_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">channel =</span> <span class="fu">c</span>(<span class="st">"comms_huddle"</span>, <span class="st">"side_huddle"</span>, <span class="st">"one_on_one_chat"</span>,</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>              <span class="st">"personal_post"</span>, <span class="st">"anonymous_post"</span>, <span class="st">"official_post"</span>)</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(judge_msgs, <span class="at">by =</span> <span class="st">"channel"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">replace_na</span>(n, <span class="dv">0</span>),</span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_lab =</span> <span class="fu">case_when</span>(</span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"comms_huddle"</span>    <span class="sc">~</span> <span class="st">"Comms huddle"</span>,</span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"side_huddle"</span>     <span class="sc">~</span> <span class="st">"Side huddle"</span>,</span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"one_on_one_chat"</span> <span class="sc">~</span> <span class="st">"One-on-one chat"</span>,</span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"personal_post"</span>   <span class="sc">~</span> <span class="st">"Personal posts"</span>,</span>
-<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"anonymous_post"</span>  <span class="sc">~</span> <span class="st">"Anonymous posts"</span>,</span>
-<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"official_post"</span>   <span class="sc">~</span> <span class="st">"Official Flex"</span></span>
-<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">scope =</span> <span class="fu">if_else</span>(</span>
-<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"comms_huddle"</span>, <span class="st">"side_huddle"</span>, <span class="st">"one_on_one_chat"</span>),</span>
-<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">"In Judge's scope</span><span class="sc">\n</span><span class="st">(internal coordination)"</span>,</span>
-<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Out of Judge's scope</span><span class="sc">\n</span><span class="st">(where the breach happened)"</span></span>
-<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(scope_data,</span>
-<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> scope, <span class="at">y =</span> channel_lab)) <span class="sc">+</span></span>
-<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> scope), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(n, <span class="fu">if_else</span>(n <span class="sc">==</span> <span class="dv">1</span>, <span class="st">" message"</span>, <span class="st">" messages"</span>))),</span>
-<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="fl">4.5</span>) <span class="sc">+</span></span>
-<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"In Judge's scope</span><span class="sc">\n</span><span class="st">(internal coordination)"</span>      <span class="ot">=</span> house_muted,</span>
-<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Out of Judge's scope</span><span class="sc">\n</span><span class="st">(where the breach happened)"</span> <span class="ot">=</span> house_highlight),</span>
-<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">guide  =</span> <span class="st">"none"</span></span>
-<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"top"</span>) <span class="sc">+</span></span>
-<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"The Judge worked the wrong channels for the breach"</span>,</span>
-<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Total Judge messages sent on each channel across all 23 rounds."</span>,</span>
-<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
-<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="cn">NULL</span>,</span>
-<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
-<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb36-45"><a href="#cb36-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>() <span class="sc">+</span></span>
-<span id="cb36-46"><a href="#cb36-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid       =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.ticks       =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x.top  =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">10</span>,</span>
-<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b =</span> <span class="dv">8</span>)),</span>
-<span id="cb36-51"><a href="#cb36-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y      =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)</span>
-<span id="cb36-52"><a href="#cb36-52" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>judge_msgs <span class="ot">&lt;-</span> messages <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agent_id <span class="sc">==</span> <span class="st">"judge_agent"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(channel)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>scope_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">channel =</span> <span class="fu">c</span>(<span class="st">"comms_huddle"</span>, <span class="st">"side_huddle"</span>, <span class="st">"one_on_one_chat"</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>              <span class="st">"personal_post"</span>, <span class="st">"anonymous_post"</span>, <span class="st">"official_post"</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(judge_msgs, <span class="at">by =</span> <span class="st">"channel"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">replace_na</span>(n, <span class="dv">0</span>),</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">channel_lab =</span> <span class="fu">case_when</span>(</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"comms_huddle"</span>    <span class="sc">~</span> <span class="st">"Comms huddle"</span>,</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"side_huddle"</span>     <span class="sc">~</span> <span class="st">"Side huddle"</span>,</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"one_on_one_chat"</span> <span class="sc">~</span> <span class="st">"One-on-one chat"</span>,</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"personal_post"</span>   <span class="sc">~</span> <span class="st">"Personal posts"</span>,</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"anonymous_post"</span>  <span class="sc">~</span> <span class="st">"Anonymous posts"</span>,</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">==</span> <span class="st">"official_post"</span>   <span class="sc">~</span> <span class="st">"Official Flex"</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">scope =</span> <span class="fu">if_else</span>(</span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>      channel <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"comms_huddle"</span>, <span class="st">"side_huddle"</span>, <span class="st">"one_on_one_chat"</span>),</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">"In Judge's scope</span><span class="sc">\n</span><span class="st">(internal coordination)"</span>,</span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Out of Judge's scope</span><span class="sc">\n</span><span class="st">(where the breach happened)"</span></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(scope_data,</span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> scope, <span class="at">y =</span> channel_lab)) <span class="sc">+</span></span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> scope), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(n, <span class="fu">if_else</span>(n <span class="sc">==</span> <span class="dv">1</span>, <span class="st">" message"</span>, <span class="st">" messages"</span>))),</span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="fl">4.5</span>) <span class="sc">+</span></span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"In Judge's scope</span><span class="sc">\n</span><span class="st">(internal coordination)"</span>      <span class="ot">=</span> house_muted,</span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Out of Judge's scope</span><span class="sc">\n</span><span class="st">(where the breach happened)"</span> <span class="ot">=</span> house_highlight),</span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">guide  =</span> <span class="st">"none"</span></span>
+<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"top"</span>) <span class="sc">+</span></span>
+<span id="cb38-38"><a href="#cb38-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"The Judge worked the wrong channels for the breach"</span>,</span>
+<span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Total Judge messages sent on each channel across all 23 rounds."</span>,</span>
+<span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb38-43"><a href="#cb38-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: MC1_final_00.json"</span></span>
+<span id="cb38-44"><a href="#cb38-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb38-45"><a href="#cb38-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_house</span>() <span class="sc">+</span></span>
+<span id="cb38-46"><a href="#cb38-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb38-47"><a href="#cb38-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid       =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb38-48"><a href="#cb38-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.ticks       =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb38-49"><a href="#cb38-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x.top  =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">10</span>,</span>
+<span id="cb38-50"><a href="#cb38-50" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b =</span> <span class="dv">8</span>)),</span>
+<span id="cb38-51"><a href="#cb38-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y      =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)</span>
+<span id="cb38-52"><a href="#cb38-52" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-judge-scope-vs-breach" class="quarto-float quarto-figure quarto-figure-center anchored" width="864">
@@ -2158,7 +2349,7 @@ Figure&nbsp;12
 <img src="TH_EX02_report_files/figure-html/fig-judge-scope-vs-breach-1.png" id="fig-judge-scope-vs-breach" class="img-fluid figure-img" width="864">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-judge-scope-vs-breach-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13
+Figure&nbsp;15
 </figcaption>
 </figure>
 </div>
@@ -2189,22 +2380,22 @@ Figure&nbsp;13
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="st">`</span><span class="at">Alternative explanation</span><span class="st">`</span>, <span class="sc">~</span><span class="st">`</span><span class="at">Why the data weighs against it</span><span class="st">`</span>,</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Random breakdown under pressure"</span>,</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The 5 PM public posts alternate between Legal and Social Manager on a 1-3-2-4-1-2-1 sequence across personal and anonymous channels. The pacing and channel split suggest coordination rather than chaos. The first merger-specific anonymous post is fully drafted at 5 PM with timestamped governance evidence, indicating prior preparation."</span>,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Official Flex account failure"</span>,</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Official Flex stayed silent through the entire 5 PM hour. The channel the embargo was meant to protect functioned as designed. The breach response moved through personal and anonymous channels, which were not part of the embargo's intended enforcement surface."</span>,</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Judge simply failed to notice"</span>,</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The Judge's deliberation log at Round 20 (3 PM) explicitly records 'aggregation exposure at maximum tolerable threshold' and issues a COMPLIANCE_WARNING. Detection occurred two hours before SaltWind published. The failure is downstream of detection."</span>,</span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Agents leaked the merger directly to SaltWind"</span>,</span>
-<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Public-post timing follows SaltWind's exclusive rather than preceding it. Across the morning of the crisis day, team coordination messages independently identify three external leak sources (CivicLoom board member, employee Slack, anonymous #CivicLoom #6PM accounts) and explicitly note they are 'not ours'."</span></span>
-<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="st">`</span><span class="at">Alternative explanation</span><span class="st">`</span>, <span class="sc">~</span><span class="st">`</span><span class="at">Why the data weighs against it</span><span class="st">`</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Random breakdown under pressure"</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The 5 PM public posts alternate between Legal and Social Manager on a 1-3-2-4-1-2-1 sequence across personal and anonymous channels. The pacing and channel split suggest coordination rather than chaos. The first merger-specific anonymous post is fully drafted at 5 PM with timestamped governance evidence, indicating prior preparation."</span>,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Official Flex account failure"</span>,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Official Flex stayed silent through the entire 5 PM hour. The channel the embargo was meant to protect functioned as designed. The breach response moved through personal and anonymous channels, which were not part of the embargo's intended enforcement surface."</span>,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Judge simply failed to notice"</span>,</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The Judge's deliberation log at Round 20 (3 PM) explicitly records 'aggregation exposure at maximum tolerable threshold' and issues a COMPLIANCE_WARNING. Detection occurred two hours before SaltWind published. The failure is downstream of detection."</span>,</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Agents leaked the merger directly to SaltWind"</span>,</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Public-post timing follows SaltWind's exclusive rather than preceding it. Across the morning of the crisis day, team coordination messages independently identify three external leak sources (CivicLoom board member, employee Slack, anonymous #CivicLoom #6PM accounts) and explicitly note they are 'not ours'."</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-alternatives" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2255,26 +2446,26 @@ Table&nbsp;1: Four alternative explanations and the data that weighs against eac
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Claim, <span class="sc">~</span>Evidence, <span class="sc">~</span>Limitation,</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Agents probably did not cause the original SaltWind leak"</span>,</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Team messages identify external sources: CivicLoom board member leak, employee Slack screenshot, anonymous #CivicLoom #6PM posts that Platform Trust called 'not ours' at 1 PM. Public-post timing follows SaltWind's exclusive rather than preceding it."</span>,</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The dataset does not capture SaltWind's actual upstream source. The external attribution rests on the team's own internal claim."</span>,</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Agents did breach the embargo spirit"</span>,</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Seven public posts in the 5 PM hour by Legal and Social Manager, before the 6 PM embargo lift. Official Flex stayed silent. The two-track playbook (legitimacy + perception) executed as if pre-staged."</span>,</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"'Breach of embargo spirit' is an analytical judgement about coordination intent, not a category labelled in the data."</span>,</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Legal's anonymous posting was a new behaviour"</span>,</span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Zero anonymous posts from Legal across 13 baseline rounds. Twelve anonymous posts on the crisis day, starting at 9 AM with on-message defensive content."</span>,</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Baseline rounds are daily snapshots and crisis rounds are hourly. The behaviour change is qualitative (none to many) so the sampling difference does not weaken the finding."</span>,</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The Judge saw the risk but could not stop it"</span>,</span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Judge issued a COMPLIANCE_WARNING at 3 PM citing 'aggregation exposure at maximum tolerable threshold'. Across all 23 rounds, the Judge sent zero messages on personal, anonymous, or Official Flex channels."</span>,</span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The Judge's formal authority is inferred from its behavioural pattern. The dataset contains no explicit scope or mandate document."</span></span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Claim, <span class="sc">~</span>Evidence, <span class="sc">~</span>Limitation,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Agents probably did not cause the original SaltWind leak"</span>,</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Team messages identify external sources: CivicLoom board member leak, employee Slack screenshot, anonymous #CivicLoom #6PM posts that Platform Trust called 'not ours' at 1 PM. Public-post timing follows SaltWind's exclusive rather than preceding it."</span>,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The dataset does not capture SaltWind's actual upstream source. The external attribution rests on the team's own internal claim."</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Agents did breach the embargo spirit through a coordinated two-track playbook"</span>,</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Seven public posts in the 5 PM hour by Legal and Social Manager, before the 6 PM embargo lift. Official Flex stayed silent. TF-IDF analysis in Section 5.5 confirms the legitimacy versus perception split at the word level: Legal's distinctive crisis-day vocabulary is governance-focused (governance, harborcrest, reforms, consent), Social Manager's is sentiment-focused (denial, sentiment, overnight, stock)."</span>,</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"'Breach of embargo spirit' is an analytical judgement about coordination intent, not a category labelled in the data."</span>,</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Legal's anonymous posting was a new behaviour"</span>,</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Zero anonymous posts from Legal across 13 baseline rounds. Twelve anonymous posts on the crisis day, starting at 9 AM with on-message defensive content."</span>,</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Baseline rounds are daily snapshots and crisis rounds are hourly. The behaviour change is qualitative (none to many) so the sampling difference does not weaken the finding."</span>,</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The Judge saw the risk but could not stop it"</span>,</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Judge issued a COMPLIANCE_WARNING at 3 PM citing 'aggregation exposure at maximum tolerable threshold'. Across all 23 rounds, the Judge sent zero messages on personal, anonymous, or Official Flex channels. The faceted network in Section 6.4 shows the Judge stayed peripheral in both baseline and crisis-day panels, confirming the isolation was structural rather than crisis-driven."</span>,</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The Judge's formal authority is inferred from its behavioural pattern. The dataset contains no explicit scope or mandate document."</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-claim-evidence" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2286,8 +2477,8 @@ Table&nbsp;2: Each conclusion claim with its supporting evidence and the limit o
 <table class="cell caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 11%">
-<col style="width: 52%">
-<col style="width: 36%">
+<col style="width: 61%">
+<col style="width: 26%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -2303,8 +2494,8 @@ Table&nbsp;2: Each conclusion claim with its supporting evidence and the limit o
 <td style="text-align: left;">The dataset does not capture SaltWind’s actual upstream source. The external attribution rests on the team’s own internal claim.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Agents did breach the embargo spirit</td>
-<td style="text-align: left;">Seven public posts in the 5 PM hour by Legal and Social Manager, before the 6 PM embargo lift. Official Flex stayed silent. The two-track playbook (legitimacy + perception) executed as if pre-staged.</td>
+<td style="text-align: left;">Agents did breach the embargo spirit through a coordinated two-track playbook</td>
+<td style="text-align: left;">Seven public posts in the 5 PM hour by Legal and Social Manager, before the 6 PM embargo lift. Official Flex stayed silent. TF-IDF analysis in Section 5.5 confirms the legitimacy versus perception split at the word level: Legal’s distinctive crisis-day vocabulary is governance-focused (governance, harborcrest, reforms, consent), Social Manager’s is sentiment-focused (denial, sentiment, overnight, stock).</td>
 <td style="text-align: left;">‘Breach of embargo spirit’ is an analytical judgement about coordination intent, not a category labelled in the data.</td>
 </tr>
 <tr class="odd">
@@ -2314,7 +2505,7 @@ Table&nbsp;2: Each conclusion claim with its supporting evidence and the limit o
 </tr>
 <tr class="even">
 <td style="text-align: left;">The Judge saw the risk but could not stop it</td>
-<td style="text-align: left;">Judge issued a COMPLIANCE_WARNING at 3 PM citing ‘aggregation exposure at maximum tolerable threshold’. Across all 23 rounds, the Judge sent zero messages on personal, anonymous, or Official Flex channels.</td>
+<td style="text-align: left;">Judge issued a COMPLIANCE_WARNING at 3 PM citing ‘aggregation exposure at maximum tolerable threshold’. Across all 23 rounds, the Judge sent zero messages on personal, anonymous, or Official Flex channels. The faceted network in Section 6.4 shows the Judge stayed peripheral in both baseline and crisis-day panels, confirming the isolation was structural rather than crisis-driven.</td>
 <td style="text-align: left;">The Judge’s formal authority is inferred from its behavioural pattern. The dataset contains no explicit scope or mandate document.</td>
 </tr>
 </tbody>
@@ -2332,7 +2523,7 @@ Table&nbsp;2: Each conclusion claim with its supporting evidence and the limit o
 <h2 data-number="8.1" class="anchored" data-anchor-id="deliberate-leak-or-system-breakdown"><span class="header-section-number">8.1</span> Deliberate Leak or System Breakdown?</h2>
 <p>The brief frames the question as deliberate leak versus system breakdown. The data supports neither framing cleanly. The evidence points to a more specific picture: original information escape happened outside the agent system, but <strong>TenantThread</strong>’s agents executed a prepared counter-narrative on personal and anonymous channels before the embargo lifted, and the compliance system designed to prevent that response was architecturally unable to do so.</p>
 <p><strong>On the original leak.</strong> The observed message logs do not show <strong>TenantThread</strong> agents leaking the merger to <strong>SaltWind</strong>. Public posting on the crisis day stays at its baseline rate of one to four posts per hour all afternoon, then doubles only after <strong>SaltWind</strong> publishes at 5 PM. If agents had leaked via the public channels captured in this dataset, the public-post signal would have appeared earlier. The data cannot rule out a leak through channels outside the observed logs.</p>
-<p><strong>On what the agents did do.</strong> From 9 AM onwards, <strong>Legal</strong> posted defensively to the anonymous channel — first about the unrelated <strong>SaltWind</strong> tenant-scoring exposé, then denying a non-existent “ResidentIQ deal” at noon. These posts were technically compliant: not about the merger, but normalising anonymous use of the channel. At 5 PM, when <strong>SaltWind</strong> published the merger exclusive, <strong>Legal</strong> and <strong>Social Manager</strong> activated a prepared two-track playbook. Seven public posts in the 5 PM hour, alternating between <strong>Legal</strong>’s legitimacy timestamps and <strong>Social Manager</strong>’s sentiment campaign, all on personal and anonymous channels, with <strong>Official Flex</strong> held silent until 6 PM. The first merger-specific anonymous post is already fully drafted at 5 PM, which is the signature of advance preparation, not real-time reaction.</p>
+<p><strong>On what the agents did do.</strong> From 9 AM onwards, <strong>Legal</strong> posted defensively to the anonymous channel — first about the unrelated <strong>SaltWind</strong> tenant-scoring exposé, then denying a non-existent “ResidentIQ deal” at noon. These posts were technically compliant: not about the merger, but normalising anonymous use of the channel. At 5 PM, when <strong>SaltWind</strong> published the merger exclusive, <strong>Legal</strong> and <strong>Social Manager</strong> activated a prepared two-track playbook. Seven public posts in the 5 PM hour, alternating between <strong>Legal</strong>’s legitimacy timestamps and <strong>Social Manager</strong>’s sentiment campaign, all on personal and anonymous channels, with <strong>Official Flex</strong> held silent until 6 PM. Section 5.5 confirms the same split at the word level: <strong>Legal</strong>’s distinctive crisis-day vocabulary leans on governance terms (governance, harborcrest, reforms, consent), <strong>Social Manager</strong>’s on sentiment terms (denial, sentiment, overnight, stock). The first merger-specific anonymous post is already fully drafted at 5 PM, which is the signature of advance preparation, not real-time reaction.</p>
 <p><strong>On the compliance failure.</strong> The system did break, but the break was architectural rather than behavioural. The <strong>Judge</strong> was installed in direct response to the Round 9 <strong><span class="citation" data-cites="ElenaMarquez">@ElenaMarquez</span></strong> near-miss and took the role seriously across the baseline. By 3 PM on the crisis day, the <strong>Judge</strong>’s deliberation log explicitly recorded aggregation exposure at “maximum tolerable threshold” and issued a COMPLIANCE_WARNING. The signal was visible to the <strong>Judge</strong> in real time. Three design gaps stopped it from acting. The <strong>Judge</strong> had the thinnest network footprint of any senior agent, with directed messages only exchanged with <strong>Legal</strong>. The <strong>Judge</strong> sent zero messages between 4 PM and 6 PM, having last acted at 3 PM. And the <strong>Judge</strong>’s enforcement scope covered only private channels, while the embargo response moved through personal and anonymous posts. The detector was in the right building. It had no authority over the floor where the breach happened.</p>
 <p><strong>Verdict.</strong> Neither framing in the brief fits what the data shows. <strong>TenantThread</strong>’s agents are not proven to have sourced the <strong>SaltWind</strong> exclusive, and the team’s own internal messages point to external sources for the upstream leak, which appears to have happened outside this dataset. Once <strong>SaltWind</strong> published at 5 PM, <strong>Legal</strong> and <strong>Social Manager</strong> used personal and anonymous channels to publish a prepared counter-narrative before the embargo lifted. The <strong>Judge</strong> detected the rising risk at 3 PM and warned the team. The channels the response actually moved through were outside the <strong>Judge</strong>’s authority from the start.</p>
 </section>
@@ -2362,7 +2553,7 @@ Table&nbsp;2: Each conclusion claim with its supporting evidence and the limit o
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.5.3 (2026-03-11 ucrt)
@@ -2384,26 +2575,27 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] DT_0.34.0       knitr_1.51      ggraph_2.2.2    tidygraph_1.3.1
- [5] lubridate_1.9.5 forcats_1.0.1   stringr_1.6.0   dplyr_1.2.1    
- [9] purrr_1.2.2     readr_2.2.0     tidyr_1.3.2     tibble_3.3.1   
-[13] ggplot2_4.0.2   tidyverse_2.0.0 jsonlite_2.0.0 
+ [1] tidytext_0.4.3  DT_0.34.0       knitr_1.51      ggraph_2.2.2   
+ [5] tidygraph_1.3.1 lubridate_1.9.5 forcats_1.0.1   stringr_1.6.0  
+ [9] dplyr_1.2.1     purrr_1.2.2     readr_2.2.0     tidyr_1.3.2    
+[13] tibble_3.3.1    ggplot2_4.0.2   tidyverse_2.0.0 jsonlite_2.0.0 
 
 loaded via a namespace (and not attached):
- [1] viridis_0.6.5      sass_0.4.10        generics_0.1.4     stringi_1.8.7     
- [5] hms_1.1.4          digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5    
- [9] grid_4.5.3         timechange_0.4.0   RColorBrewer_1.1-3 fastmap_1.2.0     
-[13] ggrepel_0.9.8      gridExtra_2.3      crosstalk_1.2.2    viridisLite_0.4.3 
-[17] scales_1.4.0       tweenr_2.0.3       jquerylib_0.1.4    cli_3.6.5         
-[21] rlang_1.2.0        graphlayouts_1.2.3 polyclip_1.10-7    cachem_1.1.0      
-[25] withr_3.0.2        yaml_2.3.12        otel_0.2.0         tools_4.5.3       
-[29] tzdb_0.5.0         memoise_2.0.1      pacman_0.5.1       vctrs_0.7.2       
-[33] R6_2.6.1           lifecycle_1.0.5    htmlwidgets_1.6.4  MASS_7.3-65       
-[37] pkgconfig_2.0.3    bslib_0.10.0       pillar_1.11.1      gtable_0.3.6      
-[41] glue_1.8.1         Rcpp_1.1.1         ggforce_0.5.0      xfun_0.57         
-[45] tidyselect_1.2.1   rstudioapi_0.18.0  farver_2.1.2       htmltools_0.5.9   
-[49] igraph_2.3.1       labeling_0.4.3     rmarkdown_2.31     compiler_4.5.3    
-[53] S7_0.2.1          </code></pre>
+ [1] gtable_0.3.6       xfun_0.57          bslib_0.10.0       htmlwidgets_1.6.4 
+ [5] ggrepel_0.9.8      lattice_0.22-9     tzdb_0.5.0         vctrs_0.7.2       
+ [9] tools_4.5.3        crosstalk_1.2.2    generics_0.1.4     janeaustenr_1.0.0 
+[13] pacman_0.5.1       tokenizers_0.3.0   pkgconfig_2.0.3    Matrix_1.7-4      
+[17] RColorBrewer_1.1-3 S7_0.2.1           lifecycle_1.0.5    compiler_4.5.3    
+[21] farver_2.1.2       ggforce_0.5.0      graphlayouts_1.2.3 SnowballC_0.7.1   
+[25] htmltools_0.5.9    sass_0.4.10        yaml_2.3.12        pillar_1.11.1     
+[29] jquerylib_0.1.4    MASS_7.3-65        cachem_1.1.0       viridis_0.6.5     
+[33] tidyselect_1.2.1   digest_0.6.39      stringi_1.8.7      labeling_0.4.3    
+[37] polyclip_1.10-7    fastmap_1.2.0      grid_4.5.3         cli_3.6.5         
+[41] magrittr_2.0.5     withr_3.0.2        scales_1.4.0       timechange_0.4.0  
+[45] rmarkdown_2.31     igraph_2.3.1       otel_0.2.0         gridExtra_2.3     
+[49] hms_1.1.4          memoise_2.0.1      evaluate_1.0.5     viridisLite_0.4.3 
+[53] rlang_1.2.0        Rcpp_1.1.1         glue_1.8.1         tweenr_2.0.3      
+[57] rstudioapi_0.18.0  R6_2.6.1          </code></pre>
 </div>
 </div>
 

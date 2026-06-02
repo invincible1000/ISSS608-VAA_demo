@@ -896,6 +896,13 @@ was active earlier in the day, its enforcement scope only covered
 private channels. The leak surface was **Legal**'s anonymous posting
 authority, which the **Judge** had no visibility into, no presence
 near, and no power over.
+
+The two-track playbook is also visible at the word level. Section 5.5
+uses TF-IDF to surface **Legal**'s distinctive crisis-day vocabulary
+(governance, harborcrest, reforms, consent) and **Social Manager**'s
+(harborcrest, denial, sentiment, overnight, stock), confirming the
+legitimacy-versus-perception split with measurement rather than
+example quotes.
 :::
 
 ## Causal Chain: From Round 9 to the 5 PM Breach
@@ -1180,6 +1187,78 @@ ggplot(judge_vs_total, aes(x = round_num)) +
 
 One caveat to flag: we do not know whether the **Judge** was scheduled to stop at 3 PM or chose to. The dataset shows zero messages from the **Judge** after 3 PM, but it does not say whether the agent was offline or simply quiet. Either way, the **Judge** was not present when **SaltWind** published at 5 PM.
 
+## What the Vocabulary Reveals
+
+Section 5.3 described the two-track playbook qualitatively through quoted post excerpts. This subsection backs the same claim quantitatively, using term frequency–inverse document frequency (TF-IDF) to surface the words that are distinctively used by each agent in each phase. The method follows Kam (2024), Chapter 29 (tidytext methods).
+
+A document is built for each agent–phase pair (Legal–Baseline, Legal–Crisis day, and so on). TF-IDF then identifies the words that are common within a document but rare across the others, which is the operational definition of "distinctive vocabulary." The four agents shown are the ones with meaningful crisis-day activity: **Legal**, **Social Manager**, **PR Intern**, and **Platform Trust**.
+
+```{r}
+#| label: fig-tfidf-by-agent-phase
+#| fig-width: 11
+#| fig-height: 7
+
+pacman::p_load(tidytext)
+
+tfidf_data <- messages %>%
+  filter(agent_id %in% c("legal_agent", "social_media_agent",
+                         "pr_intern_agent", "quality_agent"),
+         !is.na(content)) %>%
+  mutate(phase = if_else(round_num <= 13, "Baseline", "Crisis day"),
+         agent_label = AGENT_LABELS[agent_id],
+         doc = paste(agent_label, phase, sep = " — "))
+
+tfidf <- tfidf_data %>%
+  select(doc, content) %>%
+  unnest_tokens(word, content) %>%
+  filter(!word %in% stop_words$word,
+         str_detect(word, "^[a-z']+$"),
+         nchar(word) > 2) %>%
+  count(doc, word, sort = TRUE) %>%
+  bind_tf_idf(word, doc, n) %>%
+  arrange(desc(tf_idf))
+
+top_words <- tfidf %>%
+  group_by(doc) %>%
+  slice_max(tf_idf, n = 8, with_ties = FALSE) %>%
+  ungroup() %>%
+  mutate(word = reorder_within(word, tf_idf, doc),
+         is_crisis = str_detect(doc, "Crisis day"))
+
+ggplot(top_words,
+       aes(x = tf_idf, y = word, fill = is_crisis)) +
+  geom_col() +
+  scale_y_reordered() +
+  scale_fill_manual(
+    values = c(`FALSE` = house_muted,
+               `TRUE`  = house_highlight),
+    labels = c("Baseline", "Crisis day"),
+    name = NULL
+  ) +
+  facet_wrap(~ doc, scales = "free", ncol = 2) +
+  labs(
+    title    = "Crisis-day vocabulary diverges sharply from baseline",
+    subtitle = "Top 8 distinctive words per agent and phase, by TF-IDF",
+    x        = "TF-IDF",
+    y        = NULL,
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_house() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+::: callout-note
+## Insights
+
+- **Legal**'s baseline vocabulary is generic legal counsel (guidelines, understood, sensitive, risk, inquiries). On the crisis day, the distinctive words are governance-reform vocabulary (**horizonmgmt**, **horizon**, governance, **harborcrest**, reforms, independent, consent, counsel). This is the legitimacy track of the two-track playbook, surfacing as the language **Legal** actually used.
+- **Social Manager**'s baseline is brand and social-metric vocabulary (likes, mentions, spotlight, shares, satisfaction). On the crisis day, the distinctive words shift to strategic communications language (**harborcrest**, denial, sentiment, overnight, governance, stock, reforms). This is the perception track of the playbook.
+- **Platform Trust** shows an unexpected pattern. The baseline is internal-risk vocabulary (risk, demo, guidelines, audit, anonymization). The crisis day shifts to client-facing language (**pinnacle**, walkthrough, **kowalski**, configurations, briefings, memo). **Platform Trust** appears to have pivoted to direct client management during the crisis, a role the report does not discuss in earlier sections.
+- **PR Intern**'s baseline is community vocabulary (**residentfirst**, commons, thoughtful, feel, culture). The crisis day shifts to holding-line and operations language (rent, independent, morale, metric, opt, firm, templates, audit). The shift fits the policy-announcement Q&A role described in Section 5.3.
+
+:::
+
+The vocabulary divergence does two things for the analysis. It confirms the two-track playbook is real at the word level, not just at the channel level (Section 5.3 already showed the channel split). And it surfaces a finding the chart-based analysis missed: **Platform Trust**'s crisis-day pivot to direct client management, which the agent-shift chart in Section 6.3 reads as a "fader" but which is actually a role change rather than disengagement.
+
 
 # Task 2: Typical vs. Anomalous Behavior
 
@@ -1213,6 +1292,14 @@ operates the communications channels, layered on top of an
 amplification of volume across the active agents. Both axes
 had visible precursors in the baseline window, which Task 3
 will examine.
+
+The reallocation also shows up in the network itself. Section 6.4
+splits the team network into baseline and crisis-day panels: the
+baseline shows pure broadcast coordination through the ALL node,
+while the crisis day surfaces direct bilateral edges between
+**Legal**, **Social Manager**, **PR Intern**, and **Platform Trust**.
+The team shifts from open coordination to targeted dyadic
+communication as the crisis develops.
 :::
 
 ::: callout-warning
@@ -1414,6 +1501,81 @@ ggplot(agent_shift,
 :::
 
 The leak-leading behaviour is a reallocation of who operates the communications channels, layered on top of an amplification of volume across the agents who took over. Both axes had visible precursors in the baseline window, which Task 3 picks up next.
+
+## How the Network Restructures Between Phases
+
+The previous chart compared volume per agent across phases. This view compares the *structure* of who-talks-to-whom across phases. The same nodes appear in both panels; only the edges differ, restricted to messages from that phase. The method follows Kam (2024), Chapter 27 (network analysis with ggraph).
+
+```{r}
+#| label: fig-network-by-phase
+#| fig-width: 12
+#| fig-height: 6
+
+edges_by_phase <- edges %>%
+  mutate(phase = if_else(round_num <= 13, "Baseline", "Crisis day"),
+         phase = factor(phase, levels = c("Baseline", "Crisis day")),
+         recipient = recode(recipient, !!!ROLE_TO_ID),
+         recipient = if_else(recipient == "ALL", "ALL_broadcast", recipient)) %>%
+  filter((recipient %in% names(AGENT_LABELS)) | recipient == "ALL_broadcast",
+         sender %in% names(AGENT_LABELS)) %>%
+  count(phase, sender, recipient, name = "weight") %>%
+  rename(from = sender, to = recipient)
+
+nodes_phase <- tibble(
+  name = unique(c(edges_by_phase$from, edges_by_phase$to))
+) %>%
+  mutate(label = if_else(name == "ALL_broadcast", "ALL\n(broadcast)",
+                         AGENT_LABELS[name]),
+         is_judge = name == "judge_agent")
+
+g_phase <- tbl_graph(nodes = nodes_phase,
+                     edges = edges_by_phase,
+                     directed = TRUE)
+
+ggraph(g_phase, layout = "linear", circular = TRUE) +
+  geom_edge_arc(aes(width = weight),
+                alpha = 0.35, colour = "grey50",
+                arrow = arrow(length = unit(2, "mm"), type = "closed"),
+                end_cap = circle(5, "mm"),
+                start_cap = circle(5, "mm")) +
+  geom_node_point(aes(fill = is_judge),
+                  size = 10, colour = "white",
+                  stroke = 1, shape = 21) +
+  geom_node_text(aes(label = label, colour = is_judge),
+                 size = 3, fontface = "bold", nudge_y = 0.18) +
+  scale_edge_width(range = c(0.2, 2.5), name = "Messages") +
+  scale_fill_manual(values = c(`FALSE` = house_muted,
+                               `TRUE`  = house_highlight),
+                    guide = "none") +
+  scale_colour_manual(values = c(`FALSE` = "grey30",
+                                 `TRUE`  = house_highlight),
+                      guide = "none") +
+  facet_edges(~ phase) +
+  labs(
+    title    = "Network structure changes between baseline and crisis day",
+    subtitle = "Same nodes in both panels; edges restricted to messages from that phase",
+    caption  = "Source: MC1_final_00.json"
+  ) +
+  theme_void(base_size = 11) +
+  theme(plot.title = element_text(face = "bold", size = 13),
+        plot.subtitle = element_text(colour = "grey40", size = 10,
+                                     margin = margin(b = 10)),
+        plot.caption = element_text(colour = "grey50", size = 8, hjust = 0),
+        strip.text = element_text(face = "bold", size = 11),
+        legend.position = "top")
+```
+
+::: callout-note
+## Insights
+
+- In the baseline, the team coordinates exclusively through broadcasts. Every edge converges on the ALL node. No directed dyads appear between named agents. The team operates as an open broadcast group, with no private bilateral coordination visible in the data.
+- On the crisis day, the network restructures. Direct agent-to-agent edges fan out across the panel: **Legal** ↔ **Social Manager**, **Legal** ↔ **PR Intern**, **Platform Trust** ↔ **Social Manager**, and several others. The team switches from open coordination to bilateral coordination.
+- The **Judge** stays peripheral in both panels. The structural isolation that Section 4.3 surfaces is not a crisis-day artifact. It was present from the start.
+
+:::
+
+This is the structural evidence behind the Task 2 callout's claim of "reallocation of who operates the communications channels." The reallocation is not only in volume (Section 6.3) but in routing: the team shifts from broadcasting through one shared channel to coordinating through targeted bilateral conversations as the crisis develops.
+
 
 # Task 3: Leading Indicators
 
@@ -1687,8 +1849,8 @@ tibble::tribble(
   "Team messages identify external sources: CivicLoom board member leak, employee Slack screenshot, anonymous #CivicLoom #6PM posts that Platform Trust called 'not ours' at 1 PM. Public-post timing follows SaltWind's exclusive rather than preceding it.",
   "The dataset does not capture SaltWind's actual upstream source. The external attribution rests on the team's own internal claim.",
 
-  "Agents did breach the embargo spirit",
-  "Seven public posts in the 5 PM hour by Legal and Social Manager, before the 6 PM embargo lift. Official Flex stayed silent. The two-track playbook (legitimacy + perception) executed as if pre-staged.",
+  "Agents did breach the embargo spirit through a coordinated two-track playbook",
+  "Seven public posts in the 5 PM hour by Legal and Social Manager, before the 6 PM embargo lift. Official Flex stayed silent. TF-IDF analysis in Section 5.5 confirms the legitimacy versus perception split at the word level: Legal's distinctive crisis-day vocabulary is governance-focused (governance, harborcrest, reforms, consent), Social Manager's is sentiment-focused (denial, sentiment, overnight, stock).",
   "'Breach of embargo spirit' is an analytical judgement about coordination intent, not a category labelled in the data.",
 
   "Legal's anonymous posting was a new behaviour",
@@ -1696,7 +1858,7 @@ tibble::tribble(
   "Baseline rounds are daily snapshots and crisis rounds are hourly. The behaviour change is qualitative (none to many) so the sampling difference does not weaken the finding.",
 
   "The Judge saw the risk but could not stop it",
-  "Judge issued a COMPLIANCE_WARNING at 3 PM citing 'aggregation exposure at maximum tolerable threshold'. Across all 23 rounds, the Judge sent zero messages on personal, anonymous, or Official Flex channels.",
+  "Judge issued a COMPLIANCE_WARNING at 3 PM citing 'aggregation exposure at maximum tolerable threshold'. Across all 23 rounds, the Judge sent zero messages on personal, anonymous, or Official Flex channels. The faceted network in Section 6.4 shows the Judge stayed peripheral in both baseline and crisis-day panels, confirming the isolation was structural rather than crisis-driven.",
   "The Judge's formal authority is inferred from its behavioural pattern. The dataset contains no explicit scope or mandate document."
 ) |>
   knitr::kable()
@@ -1734,10 +1896,13 @@ and **Social Manager** activated a prepared two-track playbook.
 Seven public posts in the 5 PM hour, alternating between
 **Legal**'s legitimacy timestamps and **Social Manager**'s
 sentiment campaign, all on personal and anonymous channels, with
-**Official Flex** held silent until 6 PM. The first
-merger-specific anonymous post is already fully drafted at 5 PM,
-which is the signature of advance preparation, not real-time
-reaction.
+**Official Flex** held silent until 6 PM. Section 5.5 confirms the
+same split at the word level: **Legal**'s distinctive crisis-day
+vocabulary leans on governance terms (governance, harborcrest,
+reforms, consent), **Social Manager**'s on sentiment terms
+(denial, sentiment, overnight, stock). The first merger-specific
+anonymous post is already fully drafted at 5 PM, which is the
+signature of advance preparation, not real-time reaction.
 
 **On the compliance failure.** The system did break, but the break
 was architectural rather than behavioural. The **Judge** was
