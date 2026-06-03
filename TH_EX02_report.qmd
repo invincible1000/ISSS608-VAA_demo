@@ -25,9 +25,9 @@ execute:
 On 5 June 2046 at 6:00 PM, the **Project HarborCrest** merger between
 **TenantThread** and **CivicLoom** was scheduled to be publicly announced.
 At around 5:00 PM that afternoon, an hour before the embargo lifted,
-details of the deal began appearing on the **TenantThread** Flex account.
-The embargo had been broken. **CivicLoom**'s legal team now needs to
-understand what happened.
+details of the deal began appearing on Flex through accounts
+associated with **TenantThread**'s automated communications and
+public-reaction system. The embargo had been broken. **CivicLoom**'s legal team now needs to understand what happened.
 
 This is the backdrop. **TenantThread** sells property management software
 to landlords, and one of its products scores tenants based on payment
@@ -360,7 +360,7 @@ Each message has identifiers (`message_id`, `agent_id`,
 `agent_role`, `agent_label`), an `internal_state` block with
 three sub-fields (`reacting`, `rationalizing`, `deliberating`),
 and routing information (`channel`, `recipients`,
-`message_type`, `responding_to`, `message_text`).
+`message_type`, `responding_to`, `content`).
 
 The recipients field is a list, since a message can have one
 recipient, several, or the special value `"ALL"` for broadcasts.
@@ -532,8 +532,11 @@ list(
 ```
 
 The rounds table should have 23 rows. The messages table
-should be close to 912. The edges table will be larger than
-the messages table because of recipient unnesting.
+should be close to 912. The edges table is slightly smaller
+than the messages table because some messages do not generate
+sender-recipient pairs after recipient cleaning, and `ALL`
+broadcasts are retained as one broadcast recipient rather than
+expanded to every participant.
 
 **Distinct agents and channels.**
 
@@ -1480,7 +1483,7 @@ ggplot(agent_shift,
   ) +
   scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
   labs(
-    title    = "Three agents took over the crisis day, three faded into the background",
+    title    = "Legal, Social Manager, and PR Intern drove the crisis-day surge",
     subtitle = "Mean messages per round, by agent and phase. Bars sorted by crisis-day activity.",
     x        = "Mean messages per round",
     y        = NULL,
@@ -1493,7 +1496,7 @@ ggplot(agent_shift,
 ::: callout-note
 ## Insights
 
-- Four agents amplified sharply. **Legal** went from 6.9 to 17.6 messages per round (the biggest absolute jump). **Social Manager** went from 5.8 to 14.4 (the second biggest). **PR Intern** went from 1.2 to 6.9, almost a sixfold increase and the most dramatic relative shift. **Intern** doubled from 1.0 to 2.4.
+- Three agents drove the bulk of the surge. **Legal** went from 6.9 to 17.6 messages per round (the biggest absolute jump). **Social Manager** went from 5.8 to 14.4 (the second biggest). **PR Intern** went from 1.2 to 6.9, almost a sixfold increase and the most dramatic relative shift. **Intern** also amplified, but from a smaller base (1.0 to 2.4).
 - Three agents went the other way. **Platform Trust** halved from 10.4 to 4.8, **PR** halved from 5.6 to 2.8, and the **Judge** halved from 1.2 to 0.6. All three are supervisory roles, all three reduced their activity on the day that most needed oversight.
 - **PR Intern**'s jump put them at the centre of the morning Q&A and policy announcement hours described in Section 5. **Legal** and **Social Manager** together carry the largest absolute crisis-day load, lining up with the two-track playbook from Section 5.3.
 
