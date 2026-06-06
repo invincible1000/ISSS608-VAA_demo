@@ -329,7 +329,7 @@ The four tables are:
    sampled daily and crisis-day rounds sampled hourly. The
    environment context is flattened into columns. 23 rows.
 2. `messages` — one row per communication, with sender, channel,
-   recipients, message text, and the three internal-state fields
+   recipients, content, and the three internal-state fields
    exposed as columns. Around 912 rows.
 3. `edges` — one row per sender-recipient pair per round, derived
    from `messages` by unnesting the recipients list. Used for
@@ -337,6 +337,22 @@ The four tables are:
 4. `agent_round` — one row per agent per round, aggregating
    message counts and channel mix. Used for baseline behaviour
    charts.
+   
+Beyond the message logs, the `environment_context` block was
+also surveyed for context: media events, external actor actions,
+social-manager alerts, market snapshots, and agent availability.
+These are treated as contextual signals rather than direct agent
+behaviour, and are drawn on selectively where they corroborate a
+finding (the market decline in Section 1, the external-source
+signals in Section 5.1). The `participants` metadata lists the
+active agent roster each round, along with a `declared_action`
+and `action_classification` label for a subset of agent-rounds.
+The roster was checked against the senders observed in the
+message logs and matched in every round, confirming that no agent
+acted without appearing in the round roster. The communications
+table remained the primary source of truth for post counts,
+ordering, and channel-level behaviour, since the classification
+labels are populated for only about a third of agent-rounds.
 
 ## Inspecting the JSON Structure
 
@@ -985,12 +1001,14 @@ not independently verify this — the 12 anonymous posts in the
 message log are all attributable to **Legal**, but anonymous
 posts originating outside the agent system would not appear in
 the log at all. The external attribution is the team's own
-internal claim, but it has one independent corroboration: the
-**#CivicLoom #6PM** hashtags appear in the dataset's own
+internal claim, but it has two independent corroborations. First,
+the **#CivicLoom #6PM** hashtags appear in the dataset's own
 trending-hashtag field at 1 PM, the same hour **Platform Trust**
-flagged them internally as "not ours." Two separate signals, the
-agent's private message and the public trending data, support the
-same external-source reading.
+flagged them internally as "not ours." Second, the
+external-actor-actions field records on 31 May, five days before
+the crisis, that the **SaltWind** reporter already had an internal
+source. Both signals sit outside the agents' own public posts and
+support the same external-source reading.
 
 ## The Day in Ten Hours
 
@@ -1823,7 +1841,19 @@ ggplot(scope_data,
 
 :::
 
-This is why the prior near-misses did not prevent the eventual breach. The signal was visible, the detector was in place, and the detector had no enforcement on the surface the breach moved through.
+This is why the prior near-misses did not prevent the eventual
+breach. The signal was visible, the detector was in place, and
+the detector had no enforcement on the surface the breach moved
+through.
+
+A second control weakness appears earlier, at 1 PM. The
+environment context for that round lists **Legal**, the **Judge**,
+and **PR** as unavailable, and **PR Intern**'s own message confirms
+it: "PR is on Kowalski call, Legal and Judge offline." With the
+senior compliance actors out of the room as external speculation
+hardened, tactical posting decisions shifted to **PR Intern**,
+**Platform Trust**, and **Social Manager**. The escalation point
+arrived while the agents meant to govern it were absent.
 
 ## Alternative Explanations Considered
 
@@ -1984,11 +2014,24 @@ is not present in the dataset.
 The dataset also includes a market snapshot per round. The
 baseline price series is clean and is used for motive context in
 Section 1, but the crisis-day series is incomplete (no price is
-recorded for the decisive 4 PM to 6 PM window) and contains at
-least one anomalous value. It could not support a reliable
-price-reaction or manipulation analysis, so no such analysis is
-attempted. The only crisis-day element drawn from it is the trending-hashtag field, which corroborates the external-source reading in
-Section 5.1.
+recorded for the decisive 4 PM to 6 PM window) and shows field
+contamination (one round records a stock price of $180, which is
+the distressed-sale valuation from the article bleeding into the
+price field). The crisis-day environment fields also carry
+timestamp inconsistencies, so event chronology is anchored to the
+round hour and message timestamp fields rather than to the
+narrative or market text. The market data could not support a
+reliable price-reaction or manipulation analysis, so none is
+attempted. The only crisis-day element drawn from it is the
+trending-hashtag field, which corroborates the external-source
+reading in Section 5.1.
+
+Agent-reported after-hours market figures that appear inside
+messages (for example, **Social Manager**'s 6 PM after-hours
+$TTHR bid-ask updates) are treated as evidence of the agents'
+monitoring and narrative strategy, not as independent market
+data. They sit inside agent posts rather than in the structured
+market snapshot.
 
 # References
 
