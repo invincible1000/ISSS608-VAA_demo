@@ -55,14 +55,14 @@ at once:
 
 1. **The agents probably did not cause the original merger leak.**
 The original information escape came from sources the team
-themselves flagged as external — a **CivicLoom** board member
+themselves flagged as external: a **CivicLoom** board member
 leak, an employee Slack screenshot, and anonymous accounts using
 **#CivicLoom #6PM** that **Platform Trust** explicitly called
 "not ours" in an internal message at 1 PM.
 
 2. **The agents did breach the spirit of the embargo.** At 5 PM,
 once **SaltWind** published, **Legal** and **Social Manager**
-executed a pre-staged two-track response across personal and
+executed a prepared two-track response across personal and
 anonymous channels while **Official Flex** stayed silent. The
 counter-narrative was ready to deploy the moment **SaltWind**
 gave it cover.
@@ -606,7 +606,7 @@ the **Judge** has no targeted connections.
 
 2. **Empty recipient lists left unjoined.** The `one_on_one_chat`
 and `side_huddle` channels contain messages with empty
-`recipients` arrays — the recipient is implied by conversational
+`recipients` arrays, where the recipient is implied by conversational
 context rather than listed. These messages are excluded from the
 edge list and therefore do not appear in the network plot.
 Volume-based charts (Sections 4.1, 5.1, 6) include these messages
@@ -669,7 +669,7 @@ ggplot(vol_by_round,
   ) +
   scale_x_continuous(breaks = seq(1, max(vol_by_round$round_num), by = 2)) +
   labs(
-    title    = "Public posting is constant, with the final round reaching its peak",
+    title    = "Public posting stays low until the final crisis rounds",
     subtitle = "Messages per round, split into private agent-to-agent traffic and public posts",
     x        = "Round number",
     y        = "Messages sent",
@@ -877,11 +877,11 @@ The embargo break on 5 June was a multi-hour cascade. At 5 PM,
 official 6 PM announcement. Across the preceding hours, internal
 information flow inside **TenantThread** accelerated steadily, with
 **Legal** coordinating governance-reform messaging that was
-timestamped earlier in the day specifically to be
+timestamped earlier in the day, which left it
 counter-narrative-ready when the embargo broke.
 
 When **SaltWind** published at 5 PM, **Legal** and **Social Manager**
-executed a pre-staged response: a coordinated two-track wave of
+executed a prepared response: a coordinated two-track wave of
 personal and anonymous posts. **Legal** handled the legitimacy
 narrative, leading every post with merger confirmation and
 governance-reform timestamps. **Social Manager** handled the
@@ -969,14 +969,12 @@ response activates after **SaltWind** publishes, drawing on the
 prepared anonymous channel that **Legal** had been normalising all
 morning.
 
-The two architectural failures are visible in the diagram. The
-**Judge** node at Round 20 has incoming arrows from both internal
-(F) and external (E) signals — the warning fired correctly. But
-the outgoing arrow at "Judge absent" (H) shows the **Judge**
-silent through the entire breach window. And the final breach
-node (J) has no arrow connecting it back to the **Judge** at all:
-the response channels were outside the **Judge**'s scope from the
-start.
+The two architectural failures are visible in the diagram. The **Judge** node at Round 20 has incoming arrows from both internal
+(F) and external (E) signals, and the warning fired correctly. The
+outgoing arrow at "Judge absent" (H) shows the **Judge** silent
+through the entire breach window. The final breach node (J) has no
+arrow connecting it back to the **Judge** at all: the response
+channels were outside the **Judge**'s scope from the start.
 
 One attribution caveat. The "external" labels on the three leak
 sources in node E rest on **Platform Trust**'s internal statement
@@ -1281,11 +1279,12 @@ about 30 messages per day, with one to four public posts that
 are mostly celebratory brand content (Friday spotlights,
 community volunteering, weekend updates).
 
-The crisis day shifts on every axis. Every hour on 5 June
-carries 30 to 56 messages, so a single hour exceeds any full
-baseline day. Public posts on the crisis day are defensive
-policy announcements, Q&A formats, and counter-narratives
-rather than brand content.
+The crisis day shifts upward on every axis. Every hour on
+5 June carries 30 to 56 messages, meaning even the quietest
+crisis hour sits near the baseline daily average, while the
+busiest crisis hours exceed any full baseline day. Public posts
+on the crisis day are defensive policy announcements, Q&A
+formats, and counter-narratives rather than brand content.
 
 The crisis day reshuffles the team. Three agents drive the bulk
 of the surge (**Legal**, **Social Manager**, and **PR Intern**),
@@ -1831,7 +1830,7 @@ tibble::tribble(
   ~`Alternative explanation`, ~`Why the data weighs against it`,
 
   "Random breakdown under pressure",
-  "The 5 PM public posts alternate between Legal and Social Manager on a 1-3-2-4-1-2-1 sequence across personal and anonymous channels. The pacing and channel split suggest coordination rather than chaos. The first merger-specific anonymous post is fully drafted at 5 PM with timestamped governance evidence, indicating prior preparation.",
+  "The 5 PM public posts alternate between Legal and Social Manager on a 1-3-2-4-1-2-1 sequence across personal and anonymous channels. The pacing and channel split suggest coordination rather than chaos. The first merger-specific anonymous post appears immediately at 5 PM, already specific and structured with timestamped governance evidence, more consistent with prior preparation than real-time reaction.",
 
   "Official Flex account failure",
   "Official Flex stayed silent through the entire 5 PM hour. The channel the embargo was meant to protect functioned as designed. The breach response moved through personal and anonymous channels, which were not part of the embargo's intended enforcement surface.",
@@ -1890,15 +1889,16 @@ unable to do so.
 
 **On the original leak.** The observed message logs do not show
 **TenantThread** agents leaking the merger to **SaltWind**.
-Public posting on the crisis day stays at its baseline rate of
-one to four posts per hour all afternoon, then doubles only after
-**SaltWind** publishes at 5 PM. If agents had leaked via the
+Public posting on the crisis day remains low through the
+afternoon, broadly comparable to the one-to-four public posts
+seen in baseline snapshots, then rises only after **SaltWind**
+publishes at 5 PM. If agents had leaked via the
 public channels captured in this dataset, the public-post signal
 would have appeared earlier. The data cannot rule out a leak
 through channels outside the observed logs.
 
 **On what the agents did do.** From 9 AM onwards, **Legal** posted
-defensively to the anonymous channel — first about the unrelated
+defensively to the anonymous channel, first about the unrelated
 **SaltWind** tenant-scoring exposé, then denying a non-existent
 "ResidentIQ deal" at noon. These posts were technically compliant:
 not about the merger, but normalising anonymous use of the channel.
@@ -1911,9 +1911,10 @@ sentiment campaign, all on personal and anonymous channels, with
 same split at the word level: **Legal**'s distinctive crisis-day
 vocabulary leans on governance terms (governance, harborcrest,
 reforms, consent), **Social Manager**'s on sentiment terms
-(denial, sentiment, overnight, stock). The first merger-specific
-anonymous post is already fully drafted at 5 PM, which is the
-signature of advance preparation, not real-time reaction.
+(denial, sentiment, overnight, stock). The immediate appearance
+of a specific, structured, on-message anonymous post at 5 PM is
+more consistent with advance preparation than with a purely
+real-time reaction.
 
 **On the compliance failure.** The system did break, but the break
 was architectural rather than behavioural. The **Judge** was
