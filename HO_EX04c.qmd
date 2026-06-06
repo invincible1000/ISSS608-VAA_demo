@@ -481,6 +481,7 @@ ggplot(data = exam,
   theme_bw() + 
   transition_states(.draw, 1, 3)
 ```
+
 ## Extra Alternative
 
 ```{r}
@@ -514,6 +515,5 @@ exam %>%
     colour = "Interval"
   )
 ```
+
 The exercise uses stat_pointinterval() to visualise uncertainty in Maths scores by Race. This alternative applies the same function to English scores by Gender instead, making it easier to see whether the gap between male and female students is statistically meaningful. A manual colour scale is added to clearly distinguish the 95% and 99% confidence intervals.
-
-

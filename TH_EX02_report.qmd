@@ -33,8 +33,10 @@ This is the backdrop. **TenantThread** sells property management software
 to landlords, and one of its products scores tenants based on payment
 timing, maintenance requests, and message tone. A local newspaper has
 been running an exposé on these practices for weeks, and the hashtag
-**#AlgorithmicEviction** has been gaining traction. The merger with
-**CivicLoom** was meant to bring in capital and rebrand the platform.
+**#AlgorithmicEviction** has been gaining traction. The pressure was
+visible in the market: **TenantThread**'s stock fell steadily across
+the two-week baseline, from $38.70 to $31.50, as the exposé built.
+The merger with **CivicLoom** was meant to bring in capital and rebrand the platform, which gives the team a strong incentive to protect the announcement once it was under embargo.
 
 Seven AI agents run **TenantThread**'s corporate communications. They
 cover legal, PR, social media, trust and safety, two intern roles,
@@ -983,7 +985,12 @@ not independently verify this — the 12 anonymous posts in the
 message log are all attributable to **Legal**, but anonymous
 posts originating outside the agent system would not appear in
 the log at all. The external attribution is the team's own
-internal claim and is treated as such throughout this report.
+internal claim, but it has one independent corroboration: the
+**#CivicLoom #6PM** hashtags appear in the dataset's own
+trending-hashtag field at 1 PM, the same hour **Platform Trust**
+flagged them internally as "not ours." Two separate signals, the
+agent's private message and the public trending data, support the
+same external-source reading.
 
 ## The Day in Ten Hours
 
@@ -1973,6 +1980,15 @@ on. The "out of scope" framing in Section 7.3 is inferred from
 the **Judge**'s behavioural pattern (zero messages on public
 channels) rather than from any explicit scope document, which
 is not present in the dataset.
+
+The dataset also includes a market snapshot per round. The
+baseline price series is clean and is used for motive context in
+Section 1, but the crisis-day series is incomplete (no price is
+recorded for the decisive 4 PM to 6 PM window) and contains at
+least one anomalous value. It could not support a reliable
+price-reaction or manipulation analysis, so no such analysis is
+attempted. The only crisis-day element drawn from it is the trending-hashtag field, which corroborates the external-source reading in
+Section 5.1.
 
 # References
 
