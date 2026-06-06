@@ -72,9 +72,9 @@ gave it cover.
 3. **The compliance architecture failed at the point that
 mattered.** The **Judge** was watching aggregation exposure climb
 all afternoon and issued a COMPLIANCE_WARNING at 3 PM. It then
-sent zero messages between 4 PM and 6 PM, and its scope never
-covered the personal and anonymous channels where the response
-moved through anyway.
+sent zero messages between 4 PM and 6 PM, and it was never active
+on the personal and anonymous channels where the response moved
+through anyway.
 
 The detailed reconstruction follows in Sections 5 through 8.
 
@@ -149,7 +149,7 @@ flowchart LR
 
     M1["<b>Method</b><br/>Hour-by-hour timeline<br/>+ post-sequence analysis<br/>+ Judge presence check"]
     M2["<b>Method</b><br/>Baseline (rounds 1–13)<br/>vs crisis day (rounds 14–23)<br/>per-agent rate comparison"]
-    M3["<b>Method</b><br/>Near-miss audit<br/>+ anonymous-channel scan<br/>+ Judge scope vs breach"]
+    M3["<b>Method</b><br/>Near-miss audit<br/>+ anonymous-channel scan<br/>+ Judge reach vs breach"]
 
     S1["<b>Section 5</b><br/>Task 1 answer"]
     S2["<b>Section 6</b><br/>Task 2 answer"]
@@ -915,10 +915,10 @@ comms huddle was the lowest of any sender. The **Judge** was also
 absent during the breach: zero messages from the compliance agent
 during the 5 PM **SaltWind** publication and the 6 PM embargo lift,
 with its last activity recorded at 3 PM. Where the **Judge**
-was active earlier in the day, its enforcement scope only covered
-private channels. The leak surface was **Legal**'s anonymous posting
-authority, which the **Judge** had no visibility into, no presence
-near, and no power over.
+was active earlier in the day, its messages stayed on private
+channels. The leak surface was **Legal**'s anonymous posting, which
+the **Judge** never engaged with, was never present on, and sent
+no messages to across the entire window.
 
 The two-track playbook is also visible at the word level. Section 5.5
 uses TF-IDF to surface **Legal**'s distinctive crisis-day vocabulary
@@ -943,7 +943,7 @@ deliberations and side huddles) as driving the crisis.
 
 flowchart TD
     A["<b>Round 9 (29 May)</b><br/>Social Manager tags @ElenaMarquez<br/>'Big things coming!' — near-miss"]
-    B["<b>Round 10</b><br/>Judge installed in comms huddle<br/>(scope: private channels only)"]
+    B["<b>Round 10</b><br/>Judge installed in comms huddle<br/>(active on private channels only)"]
     F["<b>Crisis day, 9 AM – 3 PM</b><br/>Legal normalises anonymous channel<br/>with exposé-defence and denials"]
     E["<b>External leak pressure (parallel)</b><br/>CivicLoom board, employee Slack,<br/>anonymous #CivicLoom #6PM"]
     G["<b>Round 20 (3 PM)</b><br/>Judge COMPLIANCE_WARNING:<br/>aggregation exposure at max threshold"]
@@ -1637,17 +1637,16 @@ phrasing, approved routine content, and shadowed the team's
 internal coordination. By Round 13, the **Judge**'s own log
 describes three weeks of clean compliance work.
 
-The **Judge**'s authority only reached internal coordination and
-pre-publication review. Personal posts and anonymous posts were
-never in scope. **Legal**'s anonymous posting tells the clearest
-version of this story from the other side: zero anonymous posts
+The **Judge**'s activity only reached internal coordination and
+pre-publication review. It sent no messages on personal or
+anonymous posts at any point. **Legal**'s anonymous posting tells the clearest version of this story from the other side: zero anonymous posts
 across the entire baseline, then twelve on the crisis day. By
 Round 20 the **Judge** had even flagged an anonymous merger post
 with a COMPLIANCE_WARNING, meaning it was watching the breach
 happen in real time without any power to stop it.
 
-The system saw what was happening. The people watching just
-had no authority to act on what they saw.
+The system saw what was happening. The watcher just never
+reached the channels where it was happening.
 :::
 
 ## The @ElenaMarquez Incident
@@ -2007,9 +2006,10 @@ actually represents.
 
 The **Judge**'s deliberation log only describes what the **Judge**
 was thinking, not what the **Judge** had formal authority to act
-on. The "out of scope" framing in Section 7.3 is inferred from
-the **Judge**'s behavioural pattern (zero messages on public
-channels) rather than from any explicit scope document, which
+on. The reading in Section 7.3, that the breach moved through
+channels the **Judge** never reached, is inferred from the
+**Judge**'s behavioural pattern (zero messages on public
+channels) rather than from any explicit mandate document, which
 is not present in the dataset.
 
 The dataset also includes a market snapshot per round. The
