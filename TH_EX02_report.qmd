@@ -991,8 +991,8 @@ The two architectural failures are visible in the diagram. The **Judge** node at
 (F) and external (E) signals, and the warning fired correctly. The
 outgoing arrow at "Judge absent" (H) shows the **Judge** silent
 through the entire breach window. The final breach node (J) has no
-arrow connecting it back to the **Judge** at all: the response
-channels were outside the **Judge**'s scope from the start.
+arrow connecting it back to the **Judge** at all: the response channels were outside the **Judge**'s observed reach from the start.
+
 
 One attribution caveat. The "external" labels on the three leak
 sources in node E rest on **Platform Trust**'s internal statement
@@ -1159,7 +1159,7 @@ r22_public %>%
 - **Legal** handles the legitimacy narrative on personal channels. Posts 1 and 3 lead with confirmation of the merger as a fait accompli, then emphasise the seven governance reforms announced earlier in the day. The phrasing is calm, lawyerly, timestamp-focused.
 - **Social Manager** handles the perception narrative on personal channels. Posts 2, 4, and 6 read as campaign artefacts, with terms like "EXECUTING", "WAVE THREE", and "SENTIMENT DASHBOARD — 5:12 PM update" suggesting a pre-built communications template activated the moment **SaltWind** published.
 - The sharpest material is on the anonymous channel. Posts 5 and 7, both from **Legal**, lead with "check the timestamps" and lay out the governance reforms in chronological order against **SaltWind**'s 5 PM publish time. An actively constructed counter-timeline, published without **Legal**'s identity attached.
-- The **Official Flex** account stays empty for the entire hour. The official **TenantThread** voice, and the channel the embargo was meant to protect, carries zero posts. Every public post in the 5 PM hour sits on personal or anonymous channels, both outside the **Judge**'s enforcement scope.
+- The **Official Flex** account stays empty for the entire hour. The official **TenantThread** voice, and the channel the embargo was meant to protect, carries zero posts. Every public post in the 5 PM hour sits on personal or anonymous channels, both outside the channels the **Judge** was ever active on.
 
 :::
 
@@ -1799,8 +1799,8 @@ scope_data <- tibble(
     ),
     scope = if_else(
       channel %in% c("comms_huddle", "side_huddle", "one_on_one_chat"),
-      "In Judge's scope\n(internal coordination)",
-      "Out of Judge's scope\n(where the breach happened)"
+      "Where the Judge was active\n(internal coordination)",
+      "Where the breach happened\n(no Judge activity)"
     )
   )
 
@@ -1810,8 +1810,8 @@ ggplot(scope_data,
   geom_text(aes(label = paste0(n, if_else(n == 1, " message", " messages"))),
             colour = "white", fontface = "bold", size = 4.5) +
   scale_fill_manual(
-    values = c("In Judge's scope\n(internal coordination)"      = house_muted,
-               "Out of Judge's scope\n(where the breach happened)" = house_highlight),
+    values = c("Where the Judge was active\n(internal coordination)"      = house_muted,
+               "Where the breach happened\n(no Judge activity)" = house_highlight),
     guide  = "none"
   ) +
   scale_x_discrete(position = "top") +
@@ -1937,10 +1937,9 @@ through channels outside the observed logs.
 **On what the agents did do.** From 9 AM onwards, **Legal** posted
 defensively to the anonymous channel, first about the unrelated
 **SaltWind** tenant-scoring exposé, then denying a non-existent
-"ResidentIQ deal" at noon. These posts were technically compliant:
-not about the merger, but normalising anonymous use of the channel.
-At 5 PM, when **SaltWind** published the merger exclusive, **Legal**
-and **Social Manager** activated a prepared two-track playbook.
+"ResidentIQ deal" at noon. These posts did not disclose
+the merger directly, but they normalised anonymous use of the
+channel.At 5 PM, when **SaltWind** published the merger exclusive, **Legal** and **Social Manager** activated a prepared two-track playbook.
 Seven public posts in the 5 PM hour, alternating between
 **Legal**'s legitimacy timestamps and **Social Manager**'s
 sentiment campaign, all on personal and anonymous channels, with
@@ -1964,19 +1963,21 @@ issued a COMPLIANCE_WARNING. The signal was visible to the
 The **Judge** had the thinnest network footprint of any senior
 agent, with directed messages only exchanged with **Legal**. The
 **Judge** sent zero messages between 4 PM and 6 PM, having last
-acted at 3 PM. And the **Judge**'s enforcement scope covered only
-private channels, while the embargo response moved through
-personal and anonymous posts. The detector was in the right building, but across the 23-round window, it never reached the channels where the breach moved.
+acted at 3 PM. And the **Judge**'s observed activity was confined to
+private coordination channels, while the embargo response moved
+through personal and anonymous posts. The detector was in the right building, but across the 23-round window, it never reached the channels where the breach moved.
 
-**Verdict.** Neither framing in the brief fits what the data shows.
-**TenantThread**'s agents are not proven to have sourced the
+**Verdict.** Neither framing in the brief fully fits what the data
+shows. **TenantThread**'s agents are not proven to have sourced the
 **SaltWind** exclusive, and the team's own internal messages point
-to external sources for the upstream leak, which appears to have happened outside this dataset. Once **SaltWind**
-published at 5 PM, **Legal** and **Social Manager** used personal
-and anonymous channels to publish a prepared counter-narrative
-before the embargo lifted. The **Judge** detected the rising risk
-at 3 PM and warned the team. The channels the response actually
-moved through were outside the **Judge**'s authority from the start.
+to external sources for the upstream leak, which appears to have
+happened outside this dataset. Once **SaltWind** published at 5 PM,
+**Legal** and **Social Manager** used personal and anonymous
+channels to publish a prepared counter-narrative before the embargo
+lifted. The **Judge** detected the rising risk at 3 PM and warned
+the team. The detector was in the right building, but across the
+23-round window, it never reached the channels where the breach
+moved.
 
 ## Limitations of This Analysis
 

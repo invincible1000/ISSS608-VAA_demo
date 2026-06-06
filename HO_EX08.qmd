@@ -168,7 +168,321 @@ theme(axis.ticks = element_blank(),
 ```
 
 ::: callout-tip
-a tibble data table called grouped is derived by aggregating the attack by wkday and hour fields. a new field called n is derived by using group_by() and count() functions. na.omit() is used to exclude missing value. geom_tile() is used to plot tiles (grids) at each x and y position. color and size arguments are used to specify the border color and line size of the tiles. theme_tufte() of ggthemes package is used to remove unnecessary chart junk. To learn which visual components of default ggplot2 have been excluded, you are encouraged to comment out this line to examine the default plot. coord_equal() is used to ensure the plot will have an aspect ratio of 1:1. scale_fill_gradient() function is used to creates a two colour gradient (low-high).
+-   a tibble data table called *grouped* is derived by aggregating the attack by *wkday* and *hour* fields.
+
+-   a new field called *n* is derived by using `group_by()` and `count()` functions.
+
+-   `na.omit()` is used to exclude missing value.
+
+-   `geom_tile()` is used to plot tiles (grids) at each x and y position. `color` and `size` arguments are used to specify the border color and line size of the tiles.
+
+-   [`theme_tufte()`](https://jrnold.github.io/ggthemes/reference/theme_tufte.html) of [**ggthemes**](https://jrnold.github.io/ggthemes/reference/index.html) package is used to remove unnecessary chart junk. To learn which visual components of default ggplot2 have been excluded, you are encouraged to comment out this line to examine the default plot.
+
+-   `coord_equal()` is used to ensure the plot will have an aspect ratio of 1:1.
+
+-   `scale_fill_gradient()` function is used to creates a two colour gradient (low-high).
 :::
 
 Then we can simply group the count by hour and wkday and plot it, since we know that we have values for every combination there’s no need to further preprocess the data.
+
+### Building Multiple Calendar Heatmaps
+
+**Challenge:** Building multiple heatmaps for the top four countries with the highest number of attacks.
+
+### Plotting Multiple Calendar Heatmaps
+
+Step 1: Deriving attack by country object
+
+In order to identify the top 4 countries with the highest number of attacks, you are required to do the followings:
+
+-   count the number of attacks by country,
+
+-   calculate the percent of attackes by country, and
+
+-   save the results in a tibble data frame.
+
+```{r}
+attacks_by_country <- count(
+  attacks, source_country) %>%
+  mutate(percent = percent(n/sum(n))) %>%
+  arrange(desc(n))
+```
+
+Step 2: Preparing the tidy data frame
+
+In this step, you are required to extract the attack records of the top 4 countries from *attacks* data frame and save the data in a new tibble data frame (i.e. *top4_attacks*).
+
+```{r}
+top4 <- attacks_by_country$source_country[1:4]
+top4_attacks <- attacks %>%
+  filter(source_country %in% top4) %>%
+  count(source_country, wkday, hour) %>%
+  ungroup() %>%
+  mutate(source_country = factor(
+    source_country, levels = top4)) %>%
+  na.omit()
+```
+
+### Plotting Multiple Calendar Heatmaps
+
+Step 3: Plotting the Multiple Calender Heatmap by using ggplot2 package.
+
+```{r}
+ggplot(top4_attacks, 
+       aes(hour, 
+           wkday, 
+           fill = n)) + 
+  geom_tile(color = "white", 
+          size = 0.1) + 
+  theme_tufte(base_family = "Helvetica") + 
+  coord_equal() +
+  scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue", 
+                    high = "dark blue") +
+  facet_wrap(~source_country, ncol = 2) +
+  labs(x = NULL, y = NULL, 
+     title = "Attacks on top 4 countries by weekday and time of day") +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 7),
+        plot.title = element_text(hjust = 0.5),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6) )
+```
+
+## Plotting Cycle Plot
+
+In this section, you will learn how to plot a cycle plot showing the time-series patterns and trend of visitor arrivals from Vietnam programmatically by using ggplot2 functions.
+
+### Step 1: Data Import
+
+For the purpose of this hands-on exercise, *arrivals_by_air.xlsx* will be used.
+
+The code chunk below imports *arrivals_by_air.xlsx* by using `read_excel()` of **readxl** package and save it as a tibble data frame called *air*.
+
+```{r}
+air <- read_excel("data/arrivals_by_air.xlsx")
+
+```
+
+### Step 2: Deriving month and year fields
+
+Next, two new fields called *month* and *year* are derived from *Month-Year* field.
+
+```{r}
+air$month <- factor(month(air$`Month-Year`), 
+                    levels=1:12, 
+                    labels=month.abb, 
+                    ordered=TRUE) 
+air$year <- year(ymd(air$`Month-Year`))
+```
+
+### Step 3: Extracting the target country
+
+Next, the code chunk below is use to extract data for the target country (i.e. Vietnam)
+
+```{r}
+Vietnam <- air %>% 
+  select(`Vietnam`, 
+         month, 
+         year) %>%
+  filter(year >= 2010)
+```
+
+### Step 4: Computing year average arrivals by month
+
+The code chunk below uses `group_by()` and `summarise()` of **dplyr** to compute year average arrivals by month.
+
+```{r}
+hline.data <- Vietnam %>% 
+  group_by(month) %>%
+  summarise(avgvalue = mean(`Vietnam`))
+```
+
+### Step 5: Plotting the cycle plot
+
+The code chunk below is used to plot the cycle plot as shown in Slide 12/23.
+
+```{r}
+ggplot() + 
+  geom_line(data=Vietnam,
+            aes(x=year, 
+                y=`Vietnam`, 
+                group=month), 
+            colour="black") +
+  geom_hline(aes(yintercept=avgvalue), 
+             data=hline.data, 
+             linetype=6, 
+             colour="red", 
+             size=0.5) + 
+  facet_grid(~month) +
+  labs(axis.text.x = element_blank(),
+       title = "Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019") +
+  xlab("") +
+  ylab("No. of Visitors") +
+  theme_tufte(base_family = "Helvetica")
+```
+
+## Plotting Slopegraph
+
+In this section you will learn how to plot a [slopegraph](https://www.storytellingwithdata.com/blog/2020/7/27/what-is-a-slopegraph) by using R.
+
+Before getting start, make sure that **CGPfunctions** has been installed and loaded onto R environment. Then, refer to [Using newggslopegraph](https://cran.r-project.org/web/packages/CGPfunctions/vignettes/Using-newggslopegraph.html) to learn more about the function. Lastly, read more about `newggslopegraph()` and its arguments by referring to this [link](https://www.rdocumentation.org/packages/CGPfunctions/versions/0.6.3/topics/newggslopegraph).
+
+### Step 1: Data Import
+
+Import the rice data set into R environment by using the code chunk below.
+
+```{r}
+rice <- read_csv("data/rice.csv")
+```
+
+### Step 2: Plotting the slopegraph
+
+Next, code chunk below will be used to plot a basic slopegraph as shown below.
+
+```{r}
+rice %>% 
+  mutate(Year = factor(Year)) %>%
+  filter(Year %in% c(1961, 1980)) %>%
+  newggslopegraph(Year, Yield, Country,
+                Title = "Rice Yield of Top 11 Asian Counties",
+                SubTitle = "1961-1980",
+                Caption = "Prepared by: Dr. Kam Tin Seong")
+```
+
+::: callout-tip
+## Things to learn from the codechunk above
+
+For effective data visualisation design, `factor()` is used convert the value type of *Year* field from numeric to factor.
+:::
+
+## Extra Alternative
+
+### Extra Alternative 1: Calendar Heatmap with Diverging Colour Scale Around the Median
+
+```{r, fig.width=10, fig.height=4}
+grouped <- attacks %>%
+  count(wkday, hour) %>%
+  ungroup() %>%
+  na.omit()
+
+ggplot(grouped,
+       aes(hour, wkday, fill = n)) +
+  geom_tile(colour = "white", size = 0.1) +
+  theme_tufte(base_family = "Helvetica") +
+  coord_equal() +
+  scale_fill_gradient2(name = "# of attacks",
+                       low = "#2c7fb8",
+                       mid = "#f7f7f7",
+                       high = "#d7191c",
+                       midpoint = median(grouped$n)) +
+  labs(x = NULL, y = NULL,
+       title = "Attacks by Weekday and Time of Day",
+       subtitle = "Diverging scale: blue = below-median activity, red = above-median") +
+  theme(axis.ticks = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6))
+```
+
+The exercise uses a sequential blue gradient, which makes it hard to see which weekday-hour combinations are quieter than average versus unusually busy. This alternative replaces the gradient with a diverging blue-white-red scale anchored at the median attack count, therefore making it immediately clear which cells are above-average attack hotspots and which are quiet windows.
+
+### Extra Alternative 2: Top 4 Countries Stacked with Magma Colour Scale
+
+```{r, fig.width=10, fig.height=8}
+ggplot(top4_attacks,
+       aes(hour, wkday, fill = n)) +
+  geom_tile(colour = "white", size = 0.1) +
+  theme_tufte(base_family = "Helvetica") +
+  coord_equal() +
+  scale_fill_viridis_c(name = "# of attacks",
+                       option = "magma",
+                       direction = -1) +
+  facet_wrap(~ source_country, ncol = 1) +
+  labs(x = NULL, y = NULL,
+       title = "Attacks on Top 4 Countries by Weekday and Time of Day") +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 7),
+        plot.title = element_text(hjust = 0.5),
+        strip.text = element_text(face = "bold"),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6))
+```
+
+The exercise arranges the top 4 countries in a 2x2 grid using a low-contrast blue gradient, which makes cross-country comparison of hourly activity patterns difficult. This alternative stacks the four countries vertically in a single column and applies a perceptually uniform magma colour scale, therefore making it immediately clear how each country's attack pattern differs by hour-of-day and which hours are universally peak across all four.
+
+### Extra Alternative 3: Cycle Plot with Year-on-Year Trend Line
+
+```{r, fig.width=12, fig.height=5}
+ggplot() +
+  geom_line(data = Vietnam,
+            aes(x = year, y = Vietnam, group = month),
+            colour = "grey40") +
+  geom_smooth(data = Vietnam,
+              aes(x = year, y = Vietnam, group = month),
+              method = "lm",
+              se = FALSE,
+              colour = "steelblue",
+              linewidth = 0.6) +
+  geom_hline(aes(yintercept = avgvalue),
+             data = hline.data,
+             linetype = "dashed",
+             colour = "red",
+             linewidth = 0.4) +
+  facet_grid(~ month) +
+  labs(title = "Visitor Arrivals from Vietnam by Air, Jan 2010-2019",
+       subtitle = "Blue line = linear trend within month; red dashed = decade mean",
+       x = NULL,
+       y = "No. of Visitors") +
+  theme_tufte(base_family = "Helvetica")
+```
+
+The exercise plots the raw monthly trajectory across years with only a horizontal mean line, leaving the reader to eyeball whether each month is growing, flat, or shrinking. This alternative adds a linear trend line within each month panel on top of the existing mean reference line, therefore making it immediately clear which months show strong year-on-year growth in Vietnamese arrivals and which are stagnant or declining.
+
+### Extra Alternative 4: Highlighted Cycle Plot for a Different Source Country
+
+```{r, fig.width=12, fig.height=5}
+Japan <- air %>%
+  select(Japan, month, year) %>%
+  filter(year >= 2010)
+
+hline_japan <- Japan %>%
+  group_by(month) %>%
+  summarise(avgvalue = mean(Japan))
+
+ggplot() +
+  geom_line(data = Japan,
+            aes(x = year, y = Japan, group = month),
+            colour = "grey50") +
+  geom_point(data = Japan,
+             aes(x = year, y = Japan),
+             colour = "darkorange",
+             size = 1) +
+  geom_hline(aes(yintercept = avgvalue),
+             data = hline_japan,
+             linetype = "dashed",
+             colour = "red",
+             linewidth = 0.4) +
+  facet_grid(~ month) +
+  labs(title = "Visitor Arrivals from Japan by Air, Jan 2010-2019",
+       subtitle = "Orange points highlight individual yearly observations within each month",
+       x = NULL,
+       y = "No. of Visitors") +
+  theme_tufte(base_family = "Helvetica")
+```
+
+The exercise applies the cycle plot only to Vietnamese arrivals, and shows year-to-year movement as a single line where individual data points are not visible. This alternative applies the same technique to Japanese arrivals and overlays orange points on each yearly observation within every month panel, therefore making it immediately clear how Japanese arrivals fluctuate year-to-year within each month and how that seasonal pattern differs from Vietnam.
+
+### Extra Alternative 5: Slopegraph Across Three Time Points
+
+```{r, fig.width=10, fig.height=7}
+rice %>%
+  mutate(Year = factor(Year)) %>%
+  filter(Year %in% c(1961, 1980, 2000)) %>%
+  newggslopegraph(Year, Yield, Country,
+                  Title = "Rice Yield of Top 11 Asian Countries",
+                  SubTitle = "1961 vs 1980 vs 2000",
+                  Caption = "Extended comparison across three decades")
+```
+
+The exercise plots a two-point slopegraph comparing rice yields in 1961 and 1980, which shows change over a 20-year window but hides whether the trend continued, accelerated, or reversed in the decades after. This alternative extends the slopegraph to three time points by adding 2000, therefore making it immediately clear which countries sustained yield growth into the new millennium, which plateaued, and which fell behind.
