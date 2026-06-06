@@ -323,8 +323,9 @@ working tables and runs a few sanity checks against them.
 
 The four tables are:
 
-1. `rounds` — one row per hour-round, with the environment
-   context flattened into columns. 23 rows.
+1. `rounds` — one row per round/snapshot, with baseline rounds
+   sampled daily and crisis-day rounds sampled hourly. The
+   environment context is flattened into columns. 23 rows.
 2. `messages` — one row per communication, with sender, channel,
    recipients, message text, and the three internal-state fields
    exposed as columns. Around 912 rows.
@@ -369,7 +370,8 @@ unnesting it only when the edge list is built.
 
 ## Building the Rounds Table
 
-The rounds table pulls one row per hour-round and flattens the
+The rounds table pulls one row per round/snapshot (daily for
+the baseline, hourly for the crisis day) and flattens the
 environment_context fields that are scalars. List-valued fields
 within the context (such as media_events or critical_deadlines)
 are kept as list-columns for now, since they will be unnested
@@ -1188,7 +1190,7 @@ ggplot(judge_vs_total, aes(x = round_num)) +
 
 - The team sent between 30 and 56 messages every hour of the crisis day. The **Judge** sent zero messages in eight of those ten hours, and at most three messages in the two hours when it did appear.
 - When the **Judge** did act, it was at 2 PM and 3 PM, two hours before **SaltWind** published. The **Judge** was completely absent from the 5 PM breach window and the 6 PM embargo lift, the two hours when its presence mattered most.
-- The leak moved through three layered gaps: structural isolation in the network (Section 4.3), absence during the breach hours (this chart), and no authority over the channels the leak actually used (Section 7.3).
+- The leak moved through three layered gaps: structural isolation in the network (Section 4.3), absence during the breach hours (this chart), and no observed activity in the channels the leak actually used (Section 7.3).
 
 :::
 
@@ -1744,9 +1746,8 @@ in noticeable action. The honest answer is that they did. The
 worked across the baseline, shadowing internal coordination
 and flagging questionable phrasing where it surfaced.
 
-The chart below shows the channels the Judge had real
-authority over, compared to the channels the breach actually
-moved through.
+The chart below shows the channels the Judge actually reached,
+compared to the channels the breach moved through.
 
 ```{r}
 #| label: fig-judge-scope-vs-breach
