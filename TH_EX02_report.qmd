@@ -952,11 +952,15 @@ flowchart TD
     class F judge
 ```
 
-**Reading the diagram.** The chain has two parallel tracks. The
-top track shows the governance response: a Round 9 near-miss
-prompts **Judge** installation, which then performs internal
-review across the baseline. The bottom track shows the external
-leak pressure building independently. Both tracks converge at the
+**Reading the diagram.** The chain has two parallel tracks and
+two key decision points: the **Judge**'s installation at Round 10
+(the team's governance response to the near-miss) and the
+**Legal**/**Social Manager** activation at Round 22 (the choice to
+publish through personal and anonymous channels). The top track
+shows the governance response: a Round 9 near-miss prompts
+**Judge** installation, which then performs internal review across
+the baseline. The bottom track shows the external leak pressure
+building independently. Both tracks converge at the
 3 PM COMPLIANCE_WARNING, where the **Judge** sees the aggregation
 exposure but cannot act on the public channels. The 5 PM breach
 response activates after **SaltWind** publishes, drawing on the
@@ -1260,7 +1264,8 @@ ggplot(top_words,
 
 :::
 
-The vocabulary divergence does two things for the analysis. It confirms the two-track playbook is real at the word level, not just at the channel level (Section 5.3 already showed the channel split). And it surfaces a finding the chart-based analysis missed: **Platform Trust**'s crisis-day pivot to direct client management, which the agent-shift chart in Section 6.3 reads as a "fader" but which is actually a role change rather than disengagement.
+The vocabulary divergence does two things for the analysis. It confirms the two-track playbook is real at the word level, not just at the channel level (Section 5.3 already showed the channel split). And it surfaces a finding the chart-based analysis missed: **Platform Trust**'s crisis-day pivot to direct client management. The agent-shift chart in Section 6.3 shows **Platform Trust** reducing its message volume (halving from 10.4 to 4.8 per round), which reads as disengagement. The vocabulary suggests the opposite, a shift in what it was doing, not a step back.
+
 
 
 # Task 2: Typical vs. Anomalous Behavior
@@ -1280,9 +1285,9 @@ baseline day. Public posts on the crisis day are defensive
 policy announcements, Q&A formats, and counter-narratives
 rather than brand content.
 
-The crisis day reshuffles the team. Four agents amplify
-sharply: **Legal**, **Social Manager**, **PR Intern**, and
-**Intern**. Three supervisory agents go quiet: **Platform Trust**
+The crisis day reshuffles the team. Three agents drive the bulk
+of the surge (**Legal**, **Social Manager**, and **PR Intern**),
+with **Intern** also rising from a smaller base. Three supervisory agents go quiet: **Platform Trust**
 halves its output, **PR** halves its output, and the **Judge**
 halves its output. **Legal** and **Social Manager** together
 carry the largest absolute crisis-day load, executing the
@@ -1319,9 +1324,10 @@ than precise.
 The comparison is therefore used conservatively. If a single
 crisis hour matches or exceeds a full baseline day, the crisis
 behaviour is materially elevated even under the least aggressive
-reading of the sampling difference. The amplifier and fader
-findings in Section 6.3 hold for the same reason: they describe
-direction and order of magnitude, not precise multiples.
+reading of the sampling difference. The per-agent findings in
+Section 6.3, which agents increased their output and which
+reduced it, hold for the same reason: they describe direction
+and order of magnitude, not precise multiples.
 :::
 
 ## Establishing the Baseline
@@ -1725,6 +1731,7 @@ geom_point(data = filter(all_rounds, n == 0),
 - **Legal**'s anonymous posting did not amplify on the crisis day. It appeared for the first time. Across 13 baseline rounds, **Legal** sent zero anonymous posts. From Round 14 onwards, anonymous posts appear in seven different hours, ending with six in the final round.
 - This matters for the brief's third sub-question. Some crisis-day behaviour amplified patterns already in the baseline (volume, public posting in general). **Legal**'s anonymous posting had no baseline at all, so there was no precursor to flag.
 - The posts themselves are consistent with prior preparation. The first anonymous post in Round 14 is already fast and on-message, and the six in Round 23 repeat the same governance-timeline argument with minor variations. The data cannot prove **Legal** drafted this material before the embargo broke, but the pattern is what advance preparation would look like.
+- No earlier baseline round shows the same release-like behaviour on the anonymous or personal channels. The final breach pattern has no exact precedent in the observed window, which answers the brief's sub-question about prior occasions: there were warning signs (the Round 9 near-miss), but no recurring release-like pattern for the team to escalate.
 
 :::
 
