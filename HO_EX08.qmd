@@ -21,13 +21,13 @@ execute:
 
 By the end of this hands-on exercise you will be able create the followings data visualisation by using R packages:
 
--   plotting a calender heatmap by using ggplot2 functions,
+- plotting a calender heatmap by using ggplot2 functions,
 
--   plotting a cycle plot by using ggplot2 function,
+- plotting a cycle plot by using ggplot2 function,
 
--   plotting a slopegraph
+- plotting a slopegraph
 
--   plotting a horizon chart
+- plotting a horizon chart
 
 ## Getting Started
 
@@ -47,13 +47,13 @@ In this section, you will learn how to plot a calender heatmap programmatically 
 
 By the end of this section, you will be able to:
 
--   plot a calender heatmap by using ggplot2 functions and extension,
+- plot a calender heatmap by using ggplot2 functions and extension,
 
--   to write function using R programming,
+- to write function using R programming,
 
--   to derive specific date and time related field by using base R and lubridate packages
+- to derive specific date and time related field by using base R and lubridate packages
 
--   to perform data preparation task by using tidyr and dplyr packages.
+- to perform data preparation task by using tidyr and dplyr packages.
 
 ### The Data
 
@@ -64,7 +64,7 @@ For the purpose of this hands-on exercise, *eventlog.csv* file will be used. Thi
 First, you will use the code chunk below to import *eventlog.csv* file into R environment and called the data frame as *attacks*.
 
 ```{r}
-attacks <- read_csv("data/eventlog.csv")
+attacks <- read_csv("Data/eventlog.csv")
 ```
 
 ### Examining the Data Structure
@@ -79,11 +79,11 @@ kable(head(attacks))
 
 There are three columns, namely *timestamp*, *source_country* and *tz*.
 
--   *timestamp* field stores date-time values in POSIXct format.
+- *timestamp* field stores date-time values in POSIXct format.
 
--   *source_country* field stores the source of the attack. It is in *ISO 3166-1 alpha-2* country code.
+- *source_country* field stores the source of the attack. It is in *ISO 3166-1 alpha-2* country code.
 
--   *tz* field stores time zone of the source IP address.
+- *tz* field stores time zone of the source IP address.
 
 ### Data Preparation
 
@@ -104,9 +104,9 @@ make_hr_wkday <- function(ts, sc, tz) {
 ```
 
 ::: callout-note
--   [`ymd_hms()`](https://lubridate.tidyverse.org/reference/ymd_hms.html) and [`hour()`](https://lubridate.tidyverse.org/reference/hour.html) are from [**lubridate**](https://lubridate.tidyverse.org/) package, and
+- [`ymd_hms()`](https://lubridate.tidyverse.org/reference/ymd_hms.html) and [`hour()`](https://lubridate.tidyverse.org/reference/hour.html) are from [**lubridate**](https://lubridate.tidyverse.org/) package, and
 
--   [`weekdays()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/weekdays) is a **base** R function.
+- [`weekdays()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/weekdays) is a **base** R function.
 :::
 
 Step 2: Deriving the attacks tibble data frame
@@ -168,19 +168,19 @@ theme(axis.ticks = element_blank(),
 ```
 
 ::: callout-tip
--   a tibble data table called *grouped* is derived by aggregating the attack by *wkday* and *hour* fields.
+- a tibble data table called *grouped* is derived by aggregating the attack by *wkday* and *hour* fields.
 
--   a new field called *n* is derived by using `group_by()` and `count()` functions.
+- a new field called *n* is derived by using `group_by()` and `count()` functions.
 
--   `na.omit()` is used to exclude missing value.
+- `na.omit()` is used to exclude missing value.
 
--   `geom_tile()` is used to plot tiles (grids) at each x and y position. `color` and `size` arguments are used to specify the border color and line size of the tiles.
+- `geom_tile()` is used to plot tiles (grids) at each x and y position. `color` and `size` arguments are used to specify the border color and line size of the tiles.
 
--   [`theme_tufte()`](https://jrnold.github.io/ggthemes/reference/theme_tufte.html) of [**ggthemes**](https://jrnold.github.io/ggthemes/reference/index.html) package is used to remove unnecessary chart junk. To learn which visual components of default ggplot2 have been excluded, you are encouraged to comment out this line to examine the default plot.
+- [`theme_tufte()`](https://jrnold.github.io/ggthemes/reference/theme_tufte.html) of [**ggthemes**](https://jrnold.github.io/ggthemes/reference/index.html) package is used to remove unnecessary chart junk. To learn which visual components of default ggplot2 have been excluded, you are encouraged to comment out this line to examine the default plot.
 
--   `coord_equal()` is used to ensure the plot will have an aspect ratio of 1:1.
+- `coord_equal()` is used to ensure the plot will have an aspect ratio of 1:1.
 
--   `scale_fill_gradient()` function is used to creates a two colour gradient (low-high).
+- `scale_fill_gradient()` function is used to creates a two colour gradient (low-high).
 :::
 
 Then we can simply group the count by hour and wkday and plot it, since we know that we have values for every combination there’s no need to further preprocess the data.
@@ -195,11 +195,11 @@ Step 1: Deriving attack by country object
 
 In order to identify the top 4 countries with the highest number of attacks, you are required to do the followings:
 
--   count the number of attacks by country,
+- count the number of attacks by country,
 
--   calculate the percent of attackes by country, and
+- calculate the percent of attackes by country, and
 
--   save the results in a tibble data frame.
+- save the results in a tibble data frame.
 
 ```{r}
 attacks_by_country <- count(
@@ -260,7 +260,7 @@ For the purpose of this hands-on exercise, *arrivals_by_air.xlsx* will be used.
 The code chunk below imports *arrivals_by_air.xlsx* by using `read_excel()` of **readxl** package and save it as a tibble data frame called *air*.
 
 ```{r}
-air <- read_excel("data/arrivals_by_air.xlsx")
+air <- read_excel("Data/arrivals_by_air.xlsx")
 
 ```
 
@@ -333,7 +333,7 @@ Before getting start, make sure that **CGPfunctions** has been installed and loa
 Import the rice data set into R environment by using the code chunk below.
 
 ```{r}
-rice <- read_csv("data/rice.csv")
+rice <- read_csv("Data/rice.csv")
 ```
 
 ### Step 2: Plotting the slopegraph
