@@ -45,6 +45,8 @@ website:
          href: "HO_EX09b.html"
        - text: "Hands-on Exercise 9c - Analytical Mapping"
          href: "HO_EX09c.html"
+       - text: "Hands-on Exercise 10 - Information Dashboard Design: R methods"
+         href: "HO_EX010.html"
     - text: "Take-home Exercise"
       menu:
         - text: "Take Home Exercise 1 - Executive Summary"

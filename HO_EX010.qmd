@@ -1,0 +1,573 @@
+---
+title: "Hands-on Exercise 10 - Information Dashboard Design: R methods"
+author: "Yap Jit Wei"
+date: "June 22, 2026"
+date-modified: "last-modified"
+
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    number-sections: true
+    
+execute:
+  warning: false 
+  freeze: auto
+---
+
+# Information Dashboard Design: R methods
+
+## Overview
+
+By the end of this hands-on exercise, you will be able to:
+
+- create bullet chart by using ggplot2,
+
+- create sparklines by using ggplot2 ,
+
+- build industry standard dashboard by using R Shiny.
+
+## Getting Started
+
+For the purpose of this hands-on exercise, the following R packages will be used.
+
+```{r}
+pacman::p_load(lubridate, ggthemes, reactable,
+reactablefmtr, gt, gtExtras, tidyverse)
+```
+
+- [tidyverse](https://www.tidyverse.org/) provides a collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data. It is not a single package but a collection of modern R packages including but not limited to [readr](https://readr.tidyverse.org/), [tidyr](https://tidyr.tidyverse.org/), [dplyr](https://dplyr.tidyverse.org/), [ggplot](https://ggplot2.tidyverse.org/), [tibble](https://tibble.tidyverse.org/), [stringr](https://stringr.tidyverse.org/), [forcats](https://forcats.tidyverse.org/) and [purrr](https://purrr.tidyverse.org/).
+
+- [lubridate](https://r4va.netlify.app/chap31) provides functions to work with dates and times more efficiently.
+
+- [ggthemes](https://r4va.netlify.app/chap31) is an extension of ggplot2. It provides additional [themes](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) beyond the basic themes of ggplot2.
+
+- [gtExtras](https://jthomasmock.github.io/gtExtras/index.html) provides some additional helper functions to assist in creating beautiful tables with [gt](https://gt.rstudio.com/), an R package specially designed for anyone to make wonderful-looking tables using the R programming language.
+
+- [reactable](https://glin.github.io/reactable/index.html) provides functions to create interactive data tables for R, based on the [React Table](https://github.com/tanstack/table/tree/v7) library and made with [reactR](https://github.com/react-R/reactR).
+
+- [reactablefmtr](https://kcuilla.github.io/reactablefmtr/index.html) provides various features to streamline and enhance the styling of interactive reactable tables with easy-to-use and highly-customizable functions and themes.
+
+## Importing Microsoft Access database
+
+### The dataset
+
+For the purpose of this study, a personal database in Microsoft Access mdb format called *Coffee Chain* will be used.
+
+### Importing Database into R
+
+In the code chunk below, `odbcConnectAccess()` of [**RODBC**](https://cran.r-project.org/web/packages/RODBC/index.html) package is used used to import a database query table into R.
+
+```{r}
+library(RODBC)
+con <- odbcConnectAccess2007('Data/Coffee Chain.mdb')
+coffeechain <- sqlFetch(con, 'CoffeeChain Query')
+write_rds(coffeechain, "Data/CoffeeChain.rds")
+odbcClose(con)
+```
+
+Note: Before running the code chunk, you need to change the R system to 32bit version. This is because the `odbcConnectAccess()` is based on 32bit and not 64bit
+
+### Data Preparation
+
+The code chunk below is used to import CoffeeChain.rds into R.
+
+```{r}
+coffeechain <- read_rds("Data/CoffeeChain.rds")
+```
+
+Note: This step is optional if coffeechain is already available in R.
+
+The code chunk below is used to aggregate Sales and Budgeted Sales at the Product level.
+
+```{r}
+product <- coffeechain %>%
+  group_by(`Product`) %>%
+  summarise(`target` = sum(`Budget Sales`),
+            `current` = sum(`Sales`)) %>%
+  ungroup()
+```
+
+### Bullet chart in ggplot2
+
+The code chunk below is used to plot the bullet charts using ggplot2 functions.
+
+```{r}
+ggplot(product, aes(Product, current)) + 
+  geom_col(aes(Product, max(target) * 1.01),
+           fill="grey85", width=0.85) +
+  geom_col(aes(Product, target * 0.75),
+           fill="grey60", width=0.85) +
+  geom_col(aes(Product, target * 0.5),
+           fill="grey50", width=0.85) +
+  geom_col(aes(Product, current), 
+           width=0.35,
+           fill = "black") + 
+  geom_errorbar(aes(y = target,
+                    x = Product, 
+                    ymin = target,
+                    ymax= target), 
+                width = .4,
+                colour = "red",
+                size = 1) +
+  coord_flip()
+```
+
+## Plotting sparklines using ggplot2
+
+In this section, you will learn how to plot sparklines by using ggplot2.
+
+### Preparing the data
+
+```{r}
+sales_report <- coffeechain %>%
+  filter(Date >= "2013-01-01") %>%
+  mutate(Month = month(Date)) %>%
+  group_by(Month, Product) %>%
+  summarise(Sales = sum(Sales)) %>%
+  ungroup() %>%
+  select(Month, Product, Sales)
+```
+
+The code chunk below is used to compute the minimum, maximum and end othe the month sales.
+
+```{r}
+mins <- group_by(sales_report, Product) %>% 
+  slice(which.min(Sales))
+maxs <- group_by(sales_report, Product) %>% 
+  slice(which.max(Sales))
+ends <- group_by(sales_report, Product) %>% 
+  filter(Month == max(Month))
+```
+
+The code chunk below is used to compute the 25 and 75 quantiles.
+
+```{r}
+quarts <- sales_report %>%
+  group_by(Product) %>%
+  summarise(quart1 = quantile(Sales, 
+                              0.25),
+            quart2 = quantile(Sales, 
+                              0.75)) %>%
+  right_join(sales_report)
+```
+
+### sparklines in ggplot2
+
+The code chunk used:
+
+```{r}
+ggplot(sales_report, aes(x=Month, y=Sales)) + 
+  facet_grid(Product ~ ., scales = "free_y") + 
+  geom_ribbon(data = quarts, aes(ymin = quart1, max = quart2), 
+              fill = 'grey90') +
+  geom_line(size=0.3) +
+  geom_point(data = mins, col = 'red') +
+  geom_point(data = maxs, col = 'blue') +
+  geom_text(data = mins, aes(label = Sales), vjust = -1) +
+  geom_text(data = maxs, aes(label = Sales), vjust = 2.5) +
+  geom_text(data = ends, aes(label = Sales), hjust = 0, nudge_x = 0.5) +
+  geom_text(data = ends, aes(label = Product), hjust = 0, nudge_x = 1.0) +
+  expand_limits(x = max(sales_report$Month) + 
+                  (0.25 * (max(sales_report$Month) - min(sales_report$Month)))) +
+  scale_x_continuous(breaks = seq(1, 12, 1)) +
+  scale_y_continuous(expand = c(0.1, 0)) +
+  theme_tufte(base_size = 3, base_family = "Helvetica") +
+  theme(axis.title=element_blank(), axis.text.y = element_blank(), 
+        axis.ticks = element_blank(), strip.text = element_blank())
+```
+
+## Static Information
+
+In this section, you will learn how to create static information dashboard by using [gt](https://gt.rstudio.com/) and [gtExtras](https://jthomasmock.github.io/gtExtras/index.html) packages. Before getting started, it is highly recommended for you to visit the webpage of these two packages and review all the materials provided on the webpages at least once. You done not have to understand and remember everything provided but at least have an overview of the purposes and functions provided by them.
+
+### Plotting a simple bullet chart
+
+In this section, you will learn how to prepare a bullet chart report by using functions of gt and gtExtras packages.
+
+```{r}
+product %>%
+  gt::gt() %>%
+  gt_plt_bullet(column = current, 
+              target = target, 
+              width = 60,
+              palette = c("lightblue", 
+                          "black")) %>%
+  gt_theme_538()
+```
+
+### sparklines: gtExtras method
+
+Before we can prepare the sales report by product by using gtExtras functions, code chunk below will be used to prepare the data.
+
+```{r}
+report <- coffeechain %>%
+  mutate(Year = year(Date)) %>%
+  filter(Year == "2013") %>%
+  mutate (Month = month(Date, 
+                        label = TRUE, 
+                        abbr = TRUE)) %>%
+  group_by(Product, Month) %>%
+  summarise(Sales = sum(Sales)) %>%
+  ungroup()
+```
+
+It is important to note that one of the requirement of gtExtras functions is that almost exclusively they require you to pass data.frame with list columns. In view of this, code chunk below will be used to convert the report data.frame into list columns.
+
+```{r}
+report %>%
+  group_by(Product) %>%
+  summarize('Monthly Sales' = list(Sales), 
+            .groups = "drop")
+```
+
+### Plotting Coffechain Sales report
+
+```{r}
+report %>%
+  group_by(Product) %>%
+  summarize('Monthly Sales' = list(Sales), 
+            .groups = "drop") %>%
+   gt() %>%
+   gt_plt_sparkline('Monthly Sales',
+                    same_limit = FALSE)
+```
+
+### Adding statistics
+
+First, calculate summary statistics by using the code chunk below.
+
+```{r}
+report %>% 
+  group_by(Product) %>% 
+  summarise("Min" = min(Sales, na.rm = T),
+            "Max" = max(Sales, na.rm = T),
+            "Average" = mean(Sales, na.rm = T)
+            ) %>%
+  gt() %>%
+  fmt_number(columns = 4,
+    decimals = 2)
+```
+
+### Combining the data.frame
+
+Next, use the code chunk below to add the statistics on the table.
+
+```{r}
+spark <- report %>%
+  group_by(Product) %>%
+  summarize('Monthly Sales' = list(Sales), 
+            .groups = "drop")
+```
+
+```{r}
+sales <- report %>% 
+  group_by(Product) %>% 
+  summarise("Min" = min(Sales, na.rm = T),
+            "Max" = max(Sales, na.rm = T),
+            "Average" = mean(Sales, na.rm = T)
+            )
+```
+
+```{r}
+sales_data = left_join(sales, spark)
+```
+
+### Plotting the updated data.table
+
+```{r}
+sales_data %>%
+  gt() %>%
+  gt_plt_sparkline('Monthly Sales',
+                   same_limit = FALSE)
+```
+
+### Combining bullet charts and sparklines
+
+Similarly, we can combining the bullet chart and sparklines using the steps below.
+
+```{r}
+bullet <- coffeechain %>%
+  filter(Date >= "2013-01-01") %>%
+  group_by(`Product`) %>%
+  summarise(`Target` = sum(`Budget Sales`),
+            `Actual` = sum(`Sales`)) %>%
+  ungroup() 
+```
+
+```{r}
+sales_data = sales_data %>%
+  left_join(bullet)
+```
+
+```{r}
+sales_data %>%
+  gt() %>%
+  gt_plt_sparkline('Monthly Sales') %>%
+  gt_plt_bullet(column = Actual, 
+                target = Target, 
+                width = 28,
+                palette = c("lightblue", 
+                          "black")) %>%
+  gt_theme_538()
+```
+
+## Interactive Information Dashboard Design: reactable and reactablefmtr methods
+
+In this section, you will learn how to create interactive information dashboard by using [reactable](https://glin.github.io/reactable/index.html) and [reactablefmtr](https://kcuilla.github.io/reactablefmtr/index.html) packages. Before getting started, it is highly recommended for you to visit the webpage of these two packages and review all the materials provided on the webpages at least once. You done not have to understand and remember everything provided but at least have an overview of the purposes and functions provided by them.
+
+In order to build an interactive sparklines, we need to install **dataui** R package by using the code chunk below.
+
+```{r}
+remotes::install_github("timelyportfolio/dataui")
+
+```
+
+Next, I will load the package onto R environment by using the code chunk below:
+
+```{r}
+library(dataui)
+```
+
+### Plotting interactive sparklines
+
+Similar to gtExtras, to plot an interactive sparklines by using reactablefmtr package we need to prepare the list field by using the code chunk below.
+
+```{r}
+report <- report %>%
+  group_by(Product) %>%
+  summarize(`Monthly Sales` = list(Sales))
+```
+
+Next, [react_sparkline](https://kcuilla.github.io/reactablefmtr/reference/react_sparkline.html) will be to plot the sparklines as shown below.
+
+```{r}
+reactable(
+  report,
+  columns = list(
+    Product = colDef(maxWidth = 200),
+    `Monthly Sales` = colDef(
+      cell = react_sparkline(report)
+    )
+  )
+)
+```
+
+### Changing the pagesize
+
+By default the pagesize is 10. In the code chunk below, arguments defaultPageSize is used to change the default setting.
+
+```{r}
+reactable(
+  report,
+  defaultPageSize = 13,
+  columns = list(
+    Product = colDef(maxWidth = 200),
+    `Monthly Sales` = colDef(
+      cell = react_sparkline(report)
+    )
+  )
+)
+```
+
+### Adding points and labels
+
+In the code chunk below `highlight_points` argument is used to show the minimum and maximum values points and `label` argument is used to label first and last values.
+
+```{r}
+reactable(
+  report,
+  defaultPageSize = 13,
+  columns = list(
+    Product = colDef(maxWidth = 200),
+    `Monthly Sales` = colDef(
+      cell = react_sparkline(
+        report,
+        highlight_points = highlight_points(
+          min = "red", max = "blue"),
+        labels = c("first", "last")
+      )
+    )
+  )
+)
+```
+
+### Adding the reference line
+
+In the code chunk below `statline` argument is used to show the mean line.
+
+```{r}
+reactable(
+  report,
+  defaultPageSize = 13,
+  columns = list(
+    Product = colDef(maxWidth = 200),
+    `Monthly Sales` = colDef(
+      cell = react_sparkline(
+        report,
+        highlight_points = highlight_points(
+          min = "red", max = "blue"),
+        statline = "mean"
+        )
+    )
+  )
+)
+```
+### Adding the bandline
+
+Instead adding reference line, bandline can be added by using the `bandline` argument.
+
+```{r}
+reactable(
+  report,
+  defaultPageSize = 13,
+  columns = list(
+    Product = colDef(maxWidth = 200),
+    `Monthly Sales` = colDef(
+      cell = react_sparkline(
+        report,
+        highlight_points = highlight_points(
+          min = "red", max = "blue"),
+        line_width = 1,
+        bandline = "innerquartiles",
+        bandline_color = "green"
+        )
+    )
+  )
+)
+```
+
+### Changing from sparkline to sparkbar
+
+Instead of displaying the values as sparklines, we can display them as sparkbars as shiwn below.
+
+```{r}
+reactable(
+  report,
+  defaultPageSize = 13,
+  columns = list(
+    Product = colDef(maxWidth = 200),
+    `Monthly Sales` = colDef(
+      cell = react_sparkbar(
+        report,
+        highlight_bars = highlight_bars(
+          min = "red", max = "blue"),
+        bandline = "innerquartiles",
+        statline = "mean")
+    )
+  )
+)
+```
+## Extra Alternative
+
+### Extra Alternative 1: Consistent bands and met-or-missed colour
+
+```{r}
+product_bullet <- product %>%
+  mutate(met = current >= target)
+
+ggplot(product_bullet, aes(Product, current)) +
+  geom_col(aes(y = target * 1.1), fill = "grey90", width = 0.7) +
+  geom_col(aes(y = target * 0.9), fill = "grey80", width = 0.7) +
+  geom_col(aes(y = target * 0.6), fill = "grey70", width = 0.7) +
+  geom_col(aes(y = current, fill = met), width = 0.3) +
+  geom_errorbar(aes(ymin = target, ymax = target),
+                width = 0.5, colour = "red", linewidth = 1) +
+  scale_fill_manual(values = c(`TRUE` = "black", `FALSE` = "firebrick"),
+                    labels = c(`TRUE` = "Met target", `FALSE` = "Missed target")) +
+  labs(title = "Sales vs budget by product", x = NULL, y = "Sales", fill = NULL) +
+  coord_flip() +
+  theme_minimal()
+```
+
+The exercise builds the qualitative ranges inconsistently, setting the lightest band to a single global maximum while the two darker bands scale to each product's own target, and it gives no signal of which products actually met budget. This alternative ties all three grey bands to each product's target at 60, 90 and 110 percent, colours the actual bar by whether it cleared the target, and adds a title and an axis label. The result makes it immediately clear how each product performed against its own budget on one consistent reference scale and whether it passed, which the original shading obscured.
+
+### Extra Alternative 2: Sorting the bullet table by attainment
+
+```{r}
+product_ranked <- product %>%
+  mutate(Attainment = current / target) %>%
+  arrange(desc(Attainment))
+
+product_ranked %>%
+  gt() %>%
+  gt_plt_bullet(column = current,
+                target = target,
+                width = 60,
+                palette = c("lightblue", "black")) %>%
+  fmt_percent(columns = Attainment, decimals = 0) %>%
+  gt_theme_538()
+```
+
+The exercise lists the products in alphabetical order, so the reader has to scan every row to find who beat budget and who fell short. This alternative computes attainment as current over target, sorts the table from highest to lowest, and keeps the same bullet encoding alongside a clean percentage column. Ranking the rows by performance makes it immediately clear which products are over and under budget without reading a single number.
+
+### Extra Alternative 3: Shared sparkline scale for honest comparison
+
+```{r}
+sparkline_same <- sales %>%
+  left_join(spark, by = "Product")
+
+sparkline_same %>%
+  gt() %>%
+  gt_plt_sparkline('Monthly Sales', same_limit = TRUE) %>%
+  fmt_number(columns = c(Min, Max, Average), decimals = 0) %>%
+  gt_theme_538()
+```
+
+The exercise plots each product's sparkline on its own y-axis by setting same_limit to FALSE, so a product selling a thousand units and one selling five thousand reach the same peak height and read as equal. This alternative sets same_limit to TRUE so every sparkline shares one scale, and formats the Min, Max and Average columns to whole units. Putting all rows on a common scale makes it immediately clear which products genuinely sell more, because the height of each line now maps to real magnitude across the table.
+
+### Extra Alternative 4: Colour-encoding target attainment
+
+```{r}
+combined <- sales %>%
+  left_join(spark, by = "Product") %>%
+  left_join(bullet, by = "Product") %>%
+  mutate(Attainment = Actual / Target) %>%
+  arrange(desc(Attainment))
+
+combined %>%
+  gt() %>%
+  gt_plt_sparkline('Monthly Sales') %>%
+  gt_plt_bullet(column = Actual, target = Target, width = 28,
+                palette = c("lightblue", "black")) %>%
+  fmt_percent(columns = Attainment, decimals = 0) %>%
+  fmt_number(columns = c(Min, Max, Average), decimals = 0) %>%
+  data_color(columns = Attainment,
+             fn = scales::col_bin(
+               palette = c("#f4cccc", "#d9ead3"),
+               domain = NULL,
+               bins = c(0, 1, 5))) %>%
+  gt_theme_538()
+```
+
+The exercise pairs the bullet and sparkline but leaves target attainment for the reader to infer from the bar sitting against the red tick, with no flag for products that missed. This alternative adds an attainment column, sorts by it, and fills it red below target and green at or above using a two-bin colour cut. Carrying the exception in colour makes it immediately clear at a glance which products missed budget, before the reader parses any bar or number.
+
+### Extra Alternative 5: Sortable data-bar magnitude column
+
+```{r}
+report_bars <- report %>%
+  mutate(Total = map_dbl(`Monthly Sales`, sum)) %>%
+  select(Product, Total, `Monthly Sales`)
+
+reactable(
+  report_bars,
+  defaultPageSize = 13,
+  defaultSorted = "Total",
+  defaultSortOrder = "desc",
+  columns = list(
+    Product = colDef(maxWidth = 200),
+    Total = colDef(
+      cell = data_bars(report_bars,
+                       fill_color = "#1f77b4",
+                       text_position = "outside-end",
+                       number_fmt = scales::comma)),
+    `Monthly Sales` = colDef(
+      cell = react_sparkline(
+        report_bars,
+        highlight_points = highlight_points(min = "red", max = "blue")))
+  )
+)
+```
+
+The exercise renders the interactive table with only the product name and its sparkline, so the reader sees each trend but cannot rank the products or sort on anything meaningful. This alternative adds a Total column drawn as a horizontal data bar, sorts the table by it from highest to lowest, and leaves every column sortable. Adding a sortable magnitude bar alongside the trend makes it immediately clear how the products rank by total sales while keeping the sparkline, which turns a fixed list into a dashboard the reader can reorder.
+
