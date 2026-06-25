@@ -27,11 +27,6 @@ By the end of this hands-on exercise, you will be able to:
 
 - build industry standard dashboard by using R Shiny.
 
-```{r}
-#| include: false
-options(bitmapType = "cairo")
-```
-
 ## Getting Started
 
 For the purpose of this hands-on exercise, the following R packages will be used.
@@ -509,33 +504,20 @@ product_ranked %>%
 
 The exercise lists the products in alphabetical order, so the reader has to scan every row to find who beat budget and who fell short. This alternative computes attainment as current over target, sorts the table from highest to lowest, and keeps the same bullet encoding alongside a clean percentage column. Ranking the rows by performance makes it immediately clear which products are over and under budget without reading a single number.
 
-### Extra Alternative 3: Per-product trend with reference line
+### Extra Alternative 3: Shared sparkline scale for honest comparison
 
 ```{r}
-sparkline_compare <- sales %>%
+sparkline_same <- sales %>%
   left_join(spark, by = "Product")
 
-reactable(
-  sparkline_compare,
-  defaultPageSize = 13,
-  columns = list(
-    Product = colDef(maxWidth = 160),
-    Min = colDef(format = colFormat(separators = TRUE)),
-    Max = colDef(format = colFormat(separators = TRUE)),
-    Average = colDef(format = colFormat(separators = TRUE, digits = 0)),
-    `Monthly Sales` = colDef(
-      cell = react_sparkline(
-        sparkline_compare,
-        line_color = "black",
-        highlight_points = highlight_points(min = "red", max = "blue"),
-        statline = "mean"
-      )
-    )
-  )
-)
+sparkline_same %>%
+  gt() %>%
+  gt_plt_sparkline('Monthly Sales', same_limit = TRUE) %>%
+  fmt_number(columns = c(Min, Max, Average), decimals = 0) %>%
+  gt_theme_538()
 ```
 
-The exercise renders each product's sparkline as a static image on its own y-axis, so the reader cannot read where any month sits against that product's typical level. This alternative draws the sparklines interactively and adds a mean reference line per row, while the Min, Max and Average columns carry the true cross-product magnitude. Pairing each trend with its own average line makes it immediately clear when a product is running above or below its normal level, month by month.
+The exercise plots each product's sparkline on its own y-axis by setting same_limit to FALSE, so a product selling a thousand units and one selling five thousand reach the same peak height and read as equal. This alternative sets same_limit to TRUE so every sparkline shares one scale, and formats the Min, Max and Average columns to whole units. Putting all rows on a common scale makes it immediately clear which products genuinely sell more, because the height of each line now maps to real magnitude across the table.
 
 
 ### Extra Alternative 4: Colour-encoding target attainment
@@ -545,28 +527,24 @@ combined <- sales %>%
   left_join(spark, by = "Product") %>%
   left_join(bullet, by = "Product") %>%
   mutate(Attainment = Actual / Target) %>%
-  arrange(desc(Attainment)) %>%
-  select(Product, Attainment, `Monthly Sales`)
+  arrange(desc(Attainment))
 
-reactable(
-  combined,
-  defaultPageSize = 13,
-  columns = list(
-    Product = colDef(maxWidth = 160),
-    Attainment = colDef(
-      cell = color_tiles(combined,
-                         colors = c("#f4cccc", "#ffffff", "#d9ead3"),
-                         number_fmt = scales::percent)),
-    `Monthly Sales` = colDef(
-      cell = react_sparkline(
-        combined,
-        line_color = "black",
-        highlight_points = highlight_points(min = "red", max = "blue")))
-  )
-)
+combined %>%
+  gt() %>%
+  gt_plt_sparkline('Monthly Sales') %>%
+  gt_plt_bullet(column = Actual, target = Target, width = 28,
+                palette = c("lightblue", "black")) %>%
+  fmt_percent(columns = Attainment, decimals = 0) %>%
+  fmt_number(columns = c(Min, Max, Average), decimals = 0) %>%
+  data_color(columns = Attainment,
+             fn = scales::col_bin(
+               palette = c("#f4cccc", "#d9ead3"),
+               domain = NULL,
+               bins = c(0, 1, 5))) %>%
+  gt_theme_538()
 ```
 
-The exercise pairs the bullet and sparkline but leaves target attainment for the reader to infer from the bar against the tick, with no flag for products that missed. This alternative draws each product's attainment as a colour-filled tile, red below target and green above, sorts by it, and keeps the trend sparkline alongside. Carrying the exception in colour makes it immediately clear at a glance which products missed budget, before the reader parses any trend line.
+The exercise pairs the bullet and sparkline but leaves target attainment for the reader to infer from the bar sitting against the red tick, with no flag for products that missed. This alternative adds an attainment column, sorts by it, and fills it red below target and green at or above using a two-bin colour cut. Carrying the exception in colour makes it immediately clear at a glance which products missed budget, before the reader parses any bar or number.
 
 
 ### Extra Alternative 5: Sortable data-bar magnitude column
